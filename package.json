@@ -4,7 +4,7 @@
   "description": "KeepIt Habit Tracker with OTP Verification and Gmail SMTP",
   "main": "index.html",
   "scripts": {
-    "start": "serve ."
+    "start": "node server.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
