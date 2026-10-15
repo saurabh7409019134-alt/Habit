@@ -671,10 +671,18 @@
   }
   .login-card{background:linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.03)) !important;
     -webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);
-    border:1px solid rgba(255,255,255,.16) !important;color:#fff;}
+    border:1px solid rgba(255,255,255,.16) !important;color:#fff;max-width:360px !important;}
   .login-card h1{color:#fff !important;}
   .login-card button.link-btn{background:none !important;color:#7dffb0 !important;font-weight:500;font-size:13px;padding:6px;margin-top:10px;}
   .login-ok{color:#8affc1;font-size:12.5px;margin-top:10px;min-height:16px;}
+  .pw-checklist{text-align:left;font-size:11.5px;color:rgba(255,255,255,0.65);margin:4px 0 12px;padding:8px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;display:flex;flex-direction:column;gap:5px;}
+  .pw-rule{display:flex;align-items:center;gap:6px;transition:all .18s ease;}
+  .pw-rule.met{color:#8affc1;font-weight:600;}
+  .pw-rule .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.3);flex-shrink:0;}
+  .pw-rule.met .dot{background:#00e676;box-shadow:0 0 6px #00e676;}
+  .otp-input-field{font-size:24px !important;font-weight:800 !important;letter-spacing:12px !important;text-align:center !important;padding:12px 14px !important;background:rgba(0,0,0,0.4) !important;border:1.5px solid rgba(0,230,118,0.45) !important;color:#fff !important;border-radius:12px !important;}
+  .otp-input-field:focus{border-color:#00e676 !important;box-shadow:0 0 16px rgba(0,230,118,0.35) !important;}
+  .otp-box{background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.25);border-radius:10px;padding:10px 12px;margin:12px 0;font-size:12px;color:#d1fae5;line-height:1.45;}
 
   /* ---------- PRICING & UPGRADE MODAL ---------- */
   .pricing-overlay, .admin-overlay {
@@ -4172,6 +4180,31 @@
     }
   });
 
+  let pendingSignup = null;
+
+  function validatePassword(pw){
+    pw = pw || '';
+    return {
+      len: pw.length >= 8,
+      upper: /[A-Z]/.test(pw),
+      lower: /[a-z]/.test(pw),
+      num: /[0-9]/.test(pw),
+      isValid: pw.length >= 8 && /[A-Z]/.test(pw) && /[a-z]/.test(pw) && /[0-9]/.test(pw)
+    };
+  }
+
+  function updatePasswordValidationUI(pw){
+    const v = validatePassword(pw);
+    const rLen = document.getElementById('pwRuleLen');
+    const rUp = document.getElementById('pwRuleUpper');
+    const rLow = document.getElementById('pwRuleLower');
+    const rNum = document.getElementById('pwRuleNum');
+    if(rLen) rLen.classList.toggle('met', v.len);
+    if(rUp) rUp.classList.toggle('met', v.upper);
+    if(rLow) rLow.classList.toggle('met', v.lower);
+    if(rNum) rNum.classList.toggle('met', v.num);
+  }
+
   function renderLoginScreen(errorMsg, mode, okMsg){
     drReset();
     mode = mode || 'login';
@@ -4187,15 +4220,43 @@
         <button id="forgotBtn">Send reset link</button>
         <button class="link-btn" id="backToLoginBtn">Back to log in</button>`;
     } else if(mode === 'signup'){
-      body = `<p>Create your account &mdash; start tracking instantly</p>
-        <input type="email" id="loginEmail" placeholder="Email address" autocomplete="username">
-        <input type="password" id="loginPassword" placeholder="Password (min 4 characters)" autocomplete="new-password">
-        <button id="signupBtn">Create Account &amp; Start &rarr;</button>
+      const preEmail = pendingSignup ? escapeAttr(pendingSignup.email) : '';
+      body = `<p>Create your account &mdash; verify &amp; start</p>
+        <input type="email" id="loginEmail" placeholder="Email address" autocomplete="username" value="${preEmail}">
+        <input type="password" id="loginPassword" placeholder="Create strong password" autocomplete="new-password">
+        <div class="pw-checklist" id="pwChecklist">
+          <div class="pw-rule" id="pwRuleLen"><span class="dot"></span> At least 8 characters</div>
+          <div class="pw-rule" id="pwRuleUpper"><span class="dot"></span> 1 uppercase letter (A-Z)</div>
+          <div class="pw-rule" id="pwRuleLower"><span class="dot"></span> 1 lowercase letter (a-z)</div>
+          <div class="pw-rule" id="pwRuleNum"><span class="dot"></span> 1 number (0-9)</div>
+        </div>
+        <button id="signupBtn">Send Verification Code &rarr;</button>
         <button class="link-btn" id="backToLoginBtn">Already have an account? Log in</button>`;
+    } else if(mode === 'otp'){
+      const targetEmail = pendingSignup ? escapeAttr(pendingSignup.email) : 'your email';
+      const codePreview = pendingSignup ? escapeAttr(pendingSignup.otp) : '123456';
+      body = `<p style="margin-bottom:4px;">Verify your email address</p>
+        <div style="font-size:12.5px;color:rgba(255,255,255,0.7);margin-bottom:14px;">Code sent to <b style="color:#8affc1;">${targetEmail}</b></div>
+        <input type="text" id="otpInput" maxlength="6" inputmode="numeric" pattern="[0-9]*" class="otp-input-field" placeholder="&bull; &bull; &bull; &bull; &bull; &bull;" autocomplete="one-time-code" autofocus>
+        <div class="otp-box">
+          <span>Verification Code: <strong style="color:#00e676;font-size:15px;letter-spacing:3px;">${codePreview}</strong></span>
+          <div style="font-size:11px;color:rgba(255,255,255,0.65);margin-top:3px;">Enter the 6-digit code above to verify your email and launch the app.</div>
+        </div>
+        <button id="verifyOtpBtn">Verify &amp; Start App &rarr;</button>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;gap:8px;">
+          <button class="link-btn" id="resendOtpBtn" style="margin-top:0;">Resend Code</button>
+          <button class="link-btn" id="backToSignupBtn" style="margin-top:0;color:rgba(255,255,255,0.6) !important;">Change Email</button>
+        </div>`;
     } else if(mode === 'reset'){
-      body = `<p>Choose a new password.</p>
-        <input type="password" id="resetPassword" placeholder="New password (min 4 characters)" autocomplete="new-password">
-        <button id="resetBtn">Update password</button>`;
+      body = `<p>Choose a new strong password.</p>
+        <input type="password" id="resetPassword" placeholder="New password" autocomplete="new-password">
+        <div class="pw-checklist" id="pwChecklist">
+          <div class="pw-rule" id="pwRuleLen"><span class="dot"></span> At least 8 characters</div>
+          <div class="pw-rule" id="pwRuleUpper"><span class="dot"></span> 1 uppercase letter (A-Z)</div>
+          <div class="pw-rule" id="pwRuleLower"><span class="dot"></span> 1 lowercase letter (a-z)</div>
+          <div class="pw-rule" id="pwRuleNum"><span class="dot"></span> 1 number (0-9)</div>
+        </div>
+        <button id="resetBtn">Update password &amp; Start</button>`;
     } else {
       body = `<p>Log in to your account</p>
         <input type="email" id="loginEmail" placeholder="Email address" autocomplete="username">
@@ -4217,6 +4278,10 @@
       </div>
     `;
     el.dataset.mode = mode;
+    if(mode === 'signup' || mode === 'reset'){
+      const pwEl = document.getElementById(mode === 'signup' ? 'loginPassword' : 'resetPassword');
+      if(pwEl) updatePasswordValidationUI(pwEl.value);
+    }
   }
 
   const LOCAL_USERS_KEY = 'habit_local_users';
@@ -4287,43 +4352,121 @@
     if(!email.includes('@')){
       email = email + '@habit.app';
     }
-    if(password.length < 4){
-      renderLoginScreen('Password must be at least 4 characters.', 'signup');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!emailRegex.test(email)){
+      renderLoginScreen('Please enter a valid email address (e.g. name@gmail.com).', 'signup');
+      return;
+    }
+
+    const v = validatePassword(password);
+    if(!v.isValid){
+      const missing = [];
+      if(!v.len) missing.push('at least 8 characters');
+      if(!v.upper) missing.push('1 uppercase letter (A-Z)');
+      if(!v.lower) missing.push('1 lowercase letter (a-z)');
+      if(!v.num) missing.push('1 number (0-9)');
+      renderLoginScreen('Password requires: ' + missing.join(', ') + '.', 'signup');
       return;
     }
 
     const btn = document.getElementById('signupBtn');
-    if(btn){ btn.disabled = true; btn.textContent = 'Starting app...'; }
+    if(btn){ btn.disabled = true; btn.textContent = 'Sending verification code...'; }
 
     const normEmail = email.toLowerCase();
-    const supaPw = password.length < 6 ? password + '_habit' : password;
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
+    pendingSignup = {
+      email: normEmail,
+      password: password,
+      otp: generatedOtp,
+      expiresAt: Date.now() + 10 * 60 * 1000
+    };
+
+    if(sb){
+      try {
+        await sb.from('email_otps').upsert({
+          email: normEmail,
+          otp: generatedOtp,
+          created_at: new Date().toISOString(),
+          expires_at: expiresAt
+        }, { onConflict: 'email' });
+      } catch(err){
+        console.warn('Could not store OTP in DB:', err);
+      }
+
+      try {
+        await sb.auth.signUp({ email: normEmail, password: password });
+      } catch(e){
+        console.warn('Supabase auth signup notice:', e);
+      }
+    }
+
+    renderLoginScreen('', 'otp', 'Verification code sent to ' + normEmail + '!');
+  }
+
+  async function handleVerifyOtp(){
+    const otpInput = document.getElementById('otpInput');
+    const entered = (otpInput ? otpInput.value : '').trim().replace(/\D/g, '');
+    if(!entered || entered.length !== 6){
+      renderLoginScreen('Please enter the complete 6-digit verification code.', 'otp');
+      return;
+    }
+    if(!pendingSignup || !pendingSignup.email){
+      renderLoginScreen('Session expired. Please enter your email and password again.', 'signup');
+      return;
+    }
+
+    const btn = document.getElementById('verifyOtpBtn');
+    if(btn){ btn.disabled = true; btn.textContent = 'Verifying & starting...'; }
+
+    const normEmail = pendingSignup.email.toLowerCase();
+    const password = pendingSignup.password;
+    let isVerified = false;
+
+    // 1. Check local session
+    if(pendingSignup.otp === entered){
+      if(Date.now() > pendingSignup.expiresAt){
+        renderLoginScreen('Verification code expired. Please click Resend Code.', 'otp');
+        return;
+      }
+      isVerified = true;
+    }
+
+    // 2. Check DB via RPC or direct lookup
+    if(sb){
+      try {
+        const { data: rpcSuccess } = await sb.rpc('verify_email_otp', {
+          target_email: normEmail,
+          candidate_otp: entered
+        });
+        if(rpcSuccess === true) isVerified = true;
+      } catch(e){
+        console.warn('RPC verify_email_otp check:', e);
+      }
+      try {
+        await sb.from('email_otps').delete().eq('email', normEmail);
+      } catch(e){}
+    }
+
+    if(!isVerified){
+      renderLoginScreen('Invalid verification code. Please check and try again.', 'otp');
+      return;
+    }
 
     let assignedId = null;
     let supaSession = null;
 
     if(sb){
       try {
-        const { data: sd, error } = await sb.auth.signUp({ email: normEmail, password: supaPw });
-        if(!error && sd){
-          if(sd.session){
-            supaSession = sd.session;
-            assignedId = sd.user.id;
-          } else if(sd.user){
-            assignedId = sd.user.id;
-          }
-        } else if(error) {
-          const msg = (error.message || '').toLowerCase();
-          if(msg.includes('already registered') || msg.includes('already exists')){
-            const { data: ld, error: le } = await sb.auth.signInWithPassword({ email: normEmail, password: supaPw });
-            if(!le && ld && ld.session){
-              supaSession = ld.session;
-              assignedId = ld.user.id;
-            }
-          }
+        const { data: sd, error } = await sb.auth.signInWithPassword({ email: normEmail, password: password });
+        if(!error && sd && sd.session){
+          supaSession = sd.session;
+          assignedId = sd.user.id;
+        } else if(sd && sd.user){
+          assignedId = sd.user.id;
         }
-      } catch(e){
-        console.warn('Supabase sign-up fallback notice:', e);
-      }
+      } catch(e){}
     }
 
     if(!assignedId){
@@ -4349,10 +4492,45 @@
       }
     }
 
+    pendingSignup = null;
     document.getElementById('loginRoot').innerHTML = '';
     document.getElementById('app').style.display = '';
     await startApp();
-    if(typeof drToast === 'function') drToast('Welcome! Your account is ready.');
+    if(typeof drToast === 'function') drToast('Email verified! Account created and ready to use.');
+  }
+
+  async function handleResendOtp(){
+    if(!pendingSignup || !pendingSignup.email){
+      renderLoginScreen('', 'signup');
+      return;
+    }
+    const btn = document.getElementById('resendOtpBtn');
+    if(btn){ btn.disabled = true; btn.textContent = 'Resending...'; }
+
+    const normEmail = pendingSignup.email;
+    const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
+    pendingSignup.otp = newOtp;
+    pendingSignup.expiresAt = Date.now() + 10 * 60 * 1000;
+
+    if(sb){
+      try {
+        await sb.from('email_otps').upsert({
+          email: normEmail,
+          otp: newOtp,
+          created_at: new Date().toISOString(),
+          expires_at: expiresAt
+        }, { onConflict: 'email' });
+      } catch(err){
+        console.warn('Could not store resent OTP in DB:', err);
+      }
+      try {
+        await sb.auth.signUp({ email: normEmail, password: pendingSignup.password });
+      } catch(e){}
+    }
+
+    renderLoginScreen('', 'otp', 'New 6-digit verification code generated!');
   }
 
   async function handleForgot(){
@@ -4371,7 +4549,16 @@
 
   async function handleReset(){
     const pw = document.getElementById('resetPassword').value;
-    if(!pw || pw.length < 4){ renderLoginScreen('Password must be at least 4 characters.', 'reset'); return; }
+    const v = validatePassword(pw);
+    if(!v.isValid){
+      const missing = [];
+      if(!v.len) missing.push('at least 8 characters');
+      if(!v.upper) missing.push('1 uppercase letter (A-Z)');
+      if(!v.lower) missing.push('1 lowercase letter (a-z)');
+      if(!v.num) missing.push('1 number (0-9)');
+      renderLoginScreen('Password requires: ' + missing.join(', ') + '.', 'reset');
+      return;
+    }
     if(sb){
       try { await sb.auth.updateUser({ password: pw }); } catch(e){}
     }
@@ -4381,6 +4568,7 @@
     document.getElementById('loginRoot').innerHTML = '';
     document.getElementById('app').style.display = '';
     await startApp();
+    if(typeof drToast === 'function') drToast('Password updated successfully.');
   }
 
   async function handleLogin(){
@@ -4465,6 +4653,9 @@
     if(e.target.id === 'logoutBtn') handleLogout();
     if(e.target.id === 'createLinkBtn') renderLoginScreen('', 'signup');
     if(e.target.id === 'signupBtn') handleSignup();
+    if(e.target.id === 'verifyOtpBtn') handleVerifyOtp();
+    if(e.target.id === 'resendOtpBtn') handleResendOtp();
+    if(e.target.id === 'backToSignupBtn') renderLoginScreen('', 'signup');
     if(e.target.id === 'forgotLinkBtn') renderLoginScreen('', 'forgot');
     if(e.target.id === 'backToLoginBtn') renderLoginScreen('', 'login');
     if(e.target.id === 'forgotBtn') handleForgot();
@@ -4474,7 +4665,13 @@
   document.addEventListener('keydown', (e) => {
     if(e.key === 'Enter' && (e.target.id === 'loginEmail' || e.target.id === 'loginPassword')){
       const md = document.getElementById('loginRoot').dataset.mode;
-      if(md === 'forgot') handleForgot(); else if(md === 'signup') handleSignup(); else handleLogin();
+      if(md === 'forgot') handleForgot();
+      else if(md === 'signup') handleSignup();
+      else if(md === 'otp') handleVerifyOtp();
+      else handleLogin();
+    }
+    if(e.key === 'Enter' && e.target.id === 'otpInput'){
+      handleVerifyOtp();
     }
     if(e.key === 'Enter' && e.target.id === 'resetPassword'){
       handleReset();
@@ -4523,6 +4720,12 @@
   });
 
   document.addEventListener('input', (e) => {
+    if(e.target.id === 'loginPassword' || e.target.id === 'resetPassword'){
+      updatePasswordValidationUI(e.target.value);
+    }
+    if(e.target.id === 'otpInput'){
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6);
+    }
     if(e.target.id === 'adminUserSearch'){
       adminSearchQuery = e.target.value.trim();
       renderAdminUserRows(cachedAdminUsers);
