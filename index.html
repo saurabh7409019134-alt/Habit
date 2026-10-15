@@ -1232,6 +1232,171 @@
   }
 
   // ---------- ADMIN DASHBOARD ----------
+  // ---------- ADMIN DASHBOARD ----------
+  let cachedAdminUsers = [];
+  let isFetchingAdminUsers = false;
+  let adminSearchQuery = '';
+
+  async function fetchAdminUsers(forceFresh){
+    if(isFetchingAdminUsers && !forceFresh && cachedAdminUsers.length) return cachedAdminUsers;
+    isFetchingAdminUsers = true;
+
+    let remoteUsers = [];
+    if(sb){
+      try {
+        const { data: ru, error } = await sb.rpc('get_admin_dashboard_users');
+        if(!error && Array.isArray(ru) && ru.length > 0){
+          remoteUsers = ru;
+        }
+      } catch(e){
+        console.warn('RPC notice:', e);
+      }
+
+      try {
+        const { data: profs, error: pe } = await sb.from('admin_user_profiles').select('*');
+        if(!pe && Array.isArray(profs)){
+          profs.forEach(p => {
+            const em = (p.email || '').toLowerCase().trim();
+            if(!em) return;
+            const existing = remoteUsers.find(r => (r.email || '').toLowerCase().trim() === em);
+            if(!existing){
+              remoteUsers.push({
+                email: em,
+                tier: p.tier || 'free',
+                created_at: p.updated_at || new Date().toISOString(),
+                habits_count: p.habits_count || 0,
+                tasks_count: p.tasks_count || 0
+              });
+            } else {
+              if(p.tier) existing.tier = p.tier;
+              if(typeof p.habits_count === 'number' && p.habits_count > 0) existing.habits_count = p.habits_count;
+              if(typeof p.tasks_count === 'number' && p.tasks_count > 0) existing.tasks_count = p.tasks_count;
+            }
+          });
+        }
+      } catch(e){
+        console.warn('Profiles table notice:', e);
+      }
+    }
+
+    const localUsers = getLocalUsers();
+    const map = new Map();
+
+    // 1. Add remote users
+    remoteUsers.forEach(u => {
+      const em = (u.email || '').toLowerCase().trim();
+      if(em){
+        map.set(em, {
+          email: em,
+          tier: u.tier || (em === 'saurabh.7409019134@gmail.com' ? 'max' : 'free'),
+          createdAt: u.created_at || new Date().toISOString(),
+          habitsCount: u.habits_count || 0,
+          tasksCount: u.tasks_count || 0
+        });
+      }
+    });
+
+    // 2. Add local users
+    Object.keys(localUsers).forEach(em => {
+      const norm = em.toLowerCase().trim();
+      const lu = localUsers[em];
+      if(!map.has(norm)){
+        map.set(norm, {
+          email: norm,
+          tier: lu.plan || 'free',
+          createdAt: lu.createdAt || lu.updatedAt || new Date().toISOString(),
+          habitsCount: lu.habitsCount || 0,
+          tasksCount: lu.tasksCount || 0
+        });
+      } else {
+        const existing = map.get(norm);
+        if(lu.plan) existing.tier = lu.plan;
+        if(lu.habitsCount) existing.habitsCount = lu.habitsCount;
+        if(lu.tasksCount) existing.tasksCount = lu.tasksCount;
+      }
+    });
+
+    // 3. Ensure Saurabh (admin) is always present
+    const adminEmail = 'saurabh.7409019134@gmail.com';
+    if(!map.has(adminEmail)){
+      map.set(adminEmail, {
+        email: adminEmail,
+        tier: data.plan || 'max',
+        createdAt: '2026-10-15T03:38:38Z',
+        habitsCount: data.habits ? data.habits.length : 0,
+        tasksCount: data.dailyRoutine && data.dailyRoutine.tasks ? data.dailyRoutine.tasks.length : 0
+      });
+    } else {
+      const adm = map.get(adminEmail);
+      if(currentUserEmail && currentUserEmail.toLowerCase() === adminEmail){
+        adm.habitsCount = data.habits ? data.habits.length : adm.habitsCount;
+        adm.tasksCount = data.dailyRoutine && data.dailyRoutine.tasks ? data.dailyRoutine.tasks.length : adm.tasksCount;
+        adm.tier = data.plan || adm.tier;
+      }
+    }
+
+    cachedAdminUsers = Array.from(map.values()).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+    isFetchingAdminUsers = false;
+    return cachedAdminUsers;
+  }
+
+  function buildAdminUserRowsHtml(users){
+    const filtered = adminSearchQuery 
+      ? users.filter(u => u.email.toLowerCase().includes(adminSearchQuery.toLowerCase()))
+      : users;
+
+    if(!filtered.length){
+      return `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-soft);">No users matching filter.</td></tr>`;
+    }
+
+    return filtered.map(u => {
+      const isAdm = u.email === 'saurabh.7409019134@gmail.com' || (currentUserEmail && u.email.toLowerCase() === currentUserEmail.toLowerCase());
+      const joinStr = u.createdAt ? new Date(u.createdAt).toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' }) : 'Recent';
+      return `
+        <tr>
+          <td>
+            <b style="color:#fff;">${escapeAttr(u.email)}</b>
+            ${isAdm ? `<span style="font-size:11px;color:var(--green);font-weight:700;margin-left:6px;">(Admin · You)</span>` : ''}
+          </td>
+          <td style="color:var(--ink-soft);font-size:12px;">${joinStr}</td>
+          <td>
+            <select class="admin-select" data-admin-user-tier="${escapeAttr(u.email)}">
+              <option value="free" ${u.tier==='free'?'selected':''}>Free ($0)</option>
+              <option value="pro" ${u.tier==='pro'?'selected':''}>Pro ($0.50 - $1/mo)</option>
+              <option value="max" ${u.tier==='max'?'selected':''}>Max ($2 - $3/mo + AI)</option>
+            </select>
+          </td>
+          <td style="font-size:12.5px;">${u.habitsCount || 0} habits / ${u.tasksCount || 0} tasks</td>
+          <td>
+            <span style="color:var(--green);font-size:12px;font-weight:600;">● Active</span>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function renderAdminUserRows(users){
+    const tbody = document.getElementById('adminUsersTableBody');
+    if(tbody) tbody.innerHTML = buildAdminUserRowsHtml(users);
+  }
+
+  function updateAdminStatsUI(users){
+    const totalUsers = users.length;
+    const freeUsers = users.filter(u => u.tier === 'free').length;
+    const proUsers = users.filter(u => u.tier === 'pro').length;
+    const maxUsers = users.filter(u => u.tier === 'max').length;
+    const mrr = (proUsers * 1.00 + maxUsers * 3.00).toFixed(2);
+    const arr = (Number(mrr) * 12).toFixed(2);
+
+    const elTotal = document.getElementById('adminTotalUsersVal'); if(elTotal) elTotal.textContent = totalUsers;
+    const elFree = document.getElementById('adminFreeUsersVal'); if(elFree) elFree.textContent = freeUsers;
+    const elPro = document.getElementById('adminProUsersVal'); if(elPro) elPro.textContent = proUsers;
+    const elMax = document.getElementById('adminMaxUsersVal'); if(elMax) elMax.textContent = maxUsers;
+    const elMrr = document.getElementById('adminMrrVal'); if(elMrr) elMrr.textContent = '$' + mrr;
+    const elArr = document.getElementById('adminArrVal'); if(elArr) elArr.textContent = '$' + arr;
+    const elHeading = document.getElementById('adminUserCountHeading'); if(elHeading) elHeading.textContent = totalUsers;
+  }
+
   function openAdminModal(){
     renderAdminModal();
   }
@@ -1240,7 +1405,7 @@
     if(root) root.innerHTML = '';
   }
 
-  function renderAdminModal(){
+  async function renderAdminModal(){
     const root = document.getElementById('adminModalRoot');
     if(!root) return;
 
@@ -1263,95 +1428,138 @@
       return;
     }
 
-    // Real stats based on actual active user & data
+    if(!cachedAdminUsers.length){
+      const initialLocal = getLocalUsers();
+      const tempMap = new Map();
+      const adminEmail = 'saurabh.7409019134@gmail.com';
+      tempMap.set(adminEmail, {
+        email: adminEmail,
+        tier: data.plan || 'max',
+        createdAt: '2026-10-15T03:38:38Z',
+        habitsCount: data.habits ? data.habits.length : 0,
+        tasksCount: data.dailyRoutine && data.dailyRoutine.tasks ? data.dailyRoutine.tasks.length : 0
+      });
+      Object.keys(initialLocal).forEach(em => {
+        const norm = em.toLowerCase().trim();
+        tempMap.set(norm, {
+          email: norm,
+          tier: initialLocal[em].plan || 'free',
+          createdAt: initialLocal[em].createdAt || new Date().toISOString(),
+          habitsCount: initialLocal[em].habitsCount || 0,
+          tasksCount: initialLocal[em].tasksCount || 0
+        });
+      });
+      cachedAdminUsers = Array.from(tempMap.values());
+    }
+
+    fetchAdminUsers().then(users => {
+      renderAdminUserRows(users);
+      updateAdminStatsUI(users);
+    });
+
     const currentPlan = getEffectivePlan();
-    const isFree = currentPlan === 'free';
-    const isPro = currentPlan === 'pro';
-    const isMax = currentPlan === 'max';
-    const totalUsers = 1;
-    const freeUsers = isFree ? 1 : 0;
-    const proUsers = isPro ? 1 : 0;
-    const maxUsers = isMax ? 1 : 0;
-    const mrr = isMax ? '3.00' : (isPro ? '1.00' : '0.00');
+    const users = cachedAdminUsers;
+    const totalUsers = users.length;
+    const freeUsers = users.filter(u => u.tier === 'free').length;
+    const proUsers = users.filter(u => u.tier === 'pro').length;
+    const maxUsers = users.filter(u => u.tier === 'max').length;
+    const mrr = (proUsers * 1.00 + maxUsers * 3.00).toFixed(2);
     const arr = (Number(mrr) * 12).toFixed(2);
 
     root.innerHTML = `
       <div class="admin-overlay" id="adminOverlay">
-        <div class="admin-card-wrap">
-          <div class="admin-header">
-            <h2>🛡️ Admin Control Center</h2>
-            <button class="admin-close" id="adminCloseBtn">✕</button>
+        <div class="admin-card-wrap" style="max-width:980px;width:95%;">
+          <div class="admin-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <h2 style="margin:0;font-size:22px;">🛡️ Admin Control Center</h2>
+              <span style="font-size:12px;background:rgba(0,230,118,0.12);color:var(--green);border:1px solid rgba(0,230,118,0.3);padding:3px 10px;border-radius:20px;font-weight:700;">Live</span>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="plan-btn outline" id="adminRefreshUsersBtn" style="width:auto;padding:7px 14px;font-size:12px;display:flex;align-items:center;gap:6px;">
+                🔄 Refresh Users
+              </button>
+              <button class="admin-close" id="adminCloseBtn" style="font-size:16px;">✕</button>
+            </div>
           </div>
 
           <!-- METRICS -->
-          <div class="admin-stat-grid">
+          <div class="admin-stat-grid" id="adminStatGrid">
             <div class="admin-stat-box">
-              <b>${totalUsers}</b>
+              <b id="adminTotalUsersVal">${totalUsers}</b>
               <span>Total Registered Users</span>
             </div>
             <div class="admin-stat-box">
-              <b>${freeUsers}</b>
-              <span>Free Users (5 habits, 3 tasks limit)</span>
+              <b id="adminFreeUsersVal">${freeUsers}</b>
+              <span>Free Users ($0 · 5 habits / 3 tasks)</span>
             </div>
             <div class="admin-stat-box">
-              <b>${proUsers}</b>
+              <b id="adminProUsersVal">${proUsers}</b>
               <span>Pro Users ($1/mo or $0.50/mo)</span>
             </div>
             <div class="admin-stat-box">
-              <b>${maxUsers}</b>
+              <b id="adminMaxUsersVal">${maxUsers}</b>
               <span>Max Users ($3/mo or $2/mo + AI)</span>
             </div>
             <div class="admin-stat-box" style="border-color:var(--pill-b);">
-              <b style="color:var(--pill-b);">$${mrr}</b>
-              <span>Est. Monthly Recurring Revenue (MRR)</span>
+              <b id="adminMrrVal" style="color:var(--pill-b);">$${mrr}</b>
+              <span>Est. Monthly Revenue (MRR)</span>
             </div>
             <div class="admin-stat-box" style="border-color:var(--pill-b);">
-              <b style="color:var(--pill-b);">$${arr}</b>
+              <b id="adminArrVal" style="color:var(--pill-b);">$${arr}</b>
               <span>Est. Annual Run-rate (ARR)</span>
             </div>
           </div>
 
           <!-- SIMULATION / TESTING -->
-          <div class="admin-sec-title">⚡ Live Tier Switcher (Test User Experience)</div>
+          <div class="admin-sec-title">⚡ Live Tier Switcher (Test Your Experience)</div>
           <div class="admin-sim-row">
             <button class="admin-sim-btn ${currentPlan === 'free' ? 'active' : ''}" data-admin-set-tier="free">
               Test as FREE (Max 5 Habits, 3 Tasks, Locked Reports & AI)
             </button>
             <button class="admin-sim-btn ${currentPlan === 'pro' ? 'active' : ''}" data-admin-set-tier="pro">
-              Test as PRO ($1/mo, Unlimited, Reports Unlocked, No AI)
+              Test as PRO ($1/mo, Unlimited Habits & Tasks, Reports Unlocked)
             </button>
             <button class="admin-sim-btn ${currentPlan === 'max' ? 'active' : ''}" data-admin-set-tier="max">
               Test as MAX ($3/mo, Unlimited, Reports + AI Unlocked)
             </button>
           </div>
 
-          <!-- USER MANAGEMENT -->
-          <div class="admin-sec-title">👥 User Management & Tier Overrides</div>
-          <div style="overflow-x:auto;">
+          <!-- USER MANAGEMENT HEADER -->
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:20px;margin-bottom:12px;">
+            <div class="admin-sec-title" style="margin:0;">
+              👥 Registered Users &amp; Live Tier Management (<span id="adminUserCountHeading">${totalUsers}</span>)
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <input type="text" id="adminUserSearch" placeholder="Filter by email..." value="${escapeAttr(adminSearchQuery)}" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.14);color:#fff;border-radius:8px;padding:6px 12px;font-size:12.5px;outline:none;min-width:180px;">
+            </div>
+          </div>
+
+          <!-- QUICK ADD USER FORM -->
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 14px;margin-bottom:14px;">
+            <span style="font-size:12px;color:var(--ink-soft);font-weight:600;">+ Add User to Registry:</span>
+            <input type="email" id="adminNewUserEmail" placeholder="user@example.com" style="flex:1;min-width:180px;background:rgba(0,0,0,0.4);border:1px solid rgba(0,230,118,0.25);color:#fff;border-radius:6px;padding:6px 10px;font-size:12.5px;outline:none;">
+            <select class="admin-select" id="adminNewUserPlan">
+              <option value="free">Free Tier</option>
+              <option value="pro">Pro Tier</option>
+              <option value="max">Max Tier</option>
+            </select>
+            <button class="plan-btn primary" id="adminAddUserBtn" style="width:auto;padding:6px 14px;font-size:12px;">Add User</button>
+          </div>
+
+          <!-- USER TABLE -->
+          <div style="overflow-x:auto;max-height:360px;overflow-y:auto;border:1px solid rgba(255,255,255,0.08);border-radius:12px;">
             <table class="admin-table">
               <thead>
                 <tr>
                   <th>User Email</th>
-                  <th>Joined</th>
-                  <th>Active Plan</th>
-                  <th>Habits / Tasks</th>
-                  <th>Action</th>
+                  <th>Joined Date</th>
+                  <th>Subscription Tier</th>
+                  <th>Usage (Habits / Tasks)</th>
+                  <th>Status</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td><b>${escapeAttr(currentUserEmail || 'saurabh.7409019134@gmail.com')}</b> <span style="font-size:11px;color:var(--green);font-weight:700;">(Administrator · You)</span></td>
-                  <td>Live Session</td>
-                  <td>
-                    <select class="admin-select" id="adminSelfTierSelect">
-                      <option value="free" ${currentPlan==='free'?'selected':''}>Free ($0)</option>
-                      <option value="pro" ${currentPlan==='pro'?'selected':''}>Pro ($0.50 - $1/mo)</option>
-                      <option value="max" ${currentPlan==='max'?'selected':''}>Max ($2 - $3/mo + AI)</option>
-                    </select>
-                  </td>
-                  <td>${data.habits ? data.habits.length : 0} habits / ${data.dailyRoutine && data.dailyRoutine.tasks ? data.dailyRoutine.tasks.length : 0} tasks</td>
-                  <td><span style="color:var(--green);font-size:12px;font-weight:600;">● Active</span></td>
-                </tr>
+              <tbody id="adminUsersTableBody">
+                ${buildAdminUserRowsHtml(users)}
               </tbody>
             </table>
           </div>
@@ -1359,8 +1567,8 @@
           <!-- PRICING POLICY MATRIX -->
           <div class="admin-sec-title" style="margin-top:22px;">📋 Subscription Policy Matrix</div>
           <div style="font-size:13px;line-height:1.6;color:var(--ink-soft);background:rgba(255,255,255,0.03);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">
-            • <b>Free Tier</b>: $0/mo. All extra features locked. Limited to 5 habits and 3 to-do tasks.<br>
-            • <b>Pro Tier</b>: $1/mo (Monthly) or $0.50/mo (Annual, $6/yr). Unlimited habits, unlimited tasks, reports unlocked. AI locked.<br>
+            • <b>Free Tier</b>: $0/mo. All extra features locked. Limited to max 5 habits and max 3 to-do tasks.<br>
+            • <b>Pro Tier</b>: $1/mo (Monthly) or $0.50/mo (Annual, $6/yr). Unlimited habits, unlimited tasks, weekly & monthly reports unlocked. AI locked.<br>
             • <b>Max Tier</b>: $3/mo (Monthly) or $2/mo (Annual, $24/yr). All features + AI Smart Steps & Brain Dump unlocked.
           </div>
 
@@ -1468,6 +1676,17 @@
           );
         } catch(e){
           console.warn('Remote sync notice:', e && e.message);
+        }
+        if(currentUserEmail){
+          try{
+            await sb.from('admin_user_profiles').upsert({
+              email: currentUserEmail.toLowerCase(),
+              tier: data.plan || 'free',
+              habits_count: (data.habits || []).length,
+              tasks_count: (data.dailyRoutine && data.dailyRoutine.tasks ? data.dailyRoutine.tasks.length : 0),
+              updated_at: new Date().toISOString()
+            }, { onConflict: 'email' });
+          } catch(e){}
         }
       }
     }, 250);
@@ -3915,6 +4134,36 @@
       renderPage();
       if(typeof drToast === 'function') drToast('Admin: Switched view to ' + tier.toUpperCase());
     }
+    if(t.id === 'adminRefreshUsersBtn'){
+      t.textContent = 'Refreshing...';
+      fetchAdminUsers(true).then(() => {
+        renderAdminModal();
+        if(typeof drToast === 'function') drToast('User list refreshed');
+      });
+    }
+    if(t.id === 'adminAddUserBtn'){
+      const emailInput = document.getElementById('adminNewUserEmail');
+      const planSelect = document.getElementById('adminNewUserPlan');
+      const em = (emailInput ? emailInput.value : '').trim().toLowerCase();
+      const pl = planSelect ? planSelect.value : 'free';
+      if(!em || !em.includes('@')){
+        alert('Please enter a valid email address');
+        return;
+      }
+      if(sb){
+        sb.from('admin_user_profiles').upsert({
+          email: em,
+          tier: pl,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'email' });
+      }
+      saveLocalUser(em, '123456', null, pl, 3, 0);
+      if(emailInput) emailInput.value = '';
+      fetchAdminUsers(true).then(() => {
+        renderAdminModal();
+        if(typeof drToast === 'function') drToast(`Added ${em} (${pl.toUpperCase()})`);
+      });
+    }
   });
 
   document.addEventListener('keydown', (e) => {
@@ -3981,7 +4230,7 @@
     }
   }
 
-  function saveLocalUser(email, password, id){
+  function saveLocalUser(email, password, id, plan, habitsCount, tasksCount){
     try {
       const users = getLocalUsers();
       const norm = (email || '').trim().toLowerCase();
@@ -3989,8 +4238,12 @@
       users[norm] = {
         id: safeId,
         email: norm,
-        password: password,
-        updatedAt: new Date().toISOString()
+        password: password || (users[norm] ? users[norm].password : ''),
+        plan: plan || (users[norm] ? users[norm].plan : 'free'),
+        habitsCount: typeof habitsCount === 'number' ? habitsCount : (users[norm] ? users[norm].habitsCount : 3),
+        tasksCount: typeof tasksCount === 'number' ? tasksCount : (users[norm] ? users[norm].tasksCount : 0),
+        updatedAt: new Date().toISOString(),
+        createdAt: (users[norm] && users[norm].createdAt) ? users[norm].createdAt : new Date().toISOString()
       };
       localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users));
       return users[norm];
@@ -4077,10 +4330,24 @@
       assignedId = 'u_' + btoa(normEmail).replace(/[^a-zA-Z0-9]/g, '').slice(0, 24);
     }
 
-    saveLocalUser(normEmail, password, assignedId);
+    saveLocalUser(normEmail, password, assignedId, 'free', 3, 0);
     currentUserId = assignedId;
     currentUserEmail = normEmail;
     setSavedCurrentUser({ id: currentUserId, email: currentUserEmail, isLocalOnly: !supaSession });
+
+    if(sb){
+      try {
+        await sb.from('admin_user_profiles').upsert({
+          email: normEmail,
+          tier: 'free',
+          habits_count: 3,
+          tasks_count: 0,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'email' });
+      } catch(e){
+        console.warn('Could not sync user to admin registry:', e);
+      }
+    }
 
     document.getElementById('loginRoot').innerHTML = '';
     document.getElementById('app').style.display = '';
@@ -4214,7 +4481,7 @@
     }
   });
 
-  document.addEventListener('change', (e) => {
+  document.addEventListener('change', async (e) => {
     if(e.target.id === 'adminSelfTierSelect'){
       data.plan = e.target.value;
       scheduleSave();
@@ -4223,11 +4490,57 @@
       renderPage();
       if(typeof drToast === 'function') drToast('Active plan set to ' + data.plan.toUpperCase());
     }
+    if(e.target.matches('[data-admin-user-tier]')){
+      const targetEmail = e.target.getAttribute('data-admin-user-tier');
+      const newTier = e.target.value;
+      if(sb){
+        try {
+          await sb.from('admin_user_profiles').upsert({
+            email: targetEmail.toLowerCase(),
+            tier: newTier,
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'email' });
+        } catch(err){
+          console.warn('Could not update remote tier:', err);
+        }
+      }
+      const localUsers = getLocalUsers();
+      if(localUsers[targetEmail.toLowerCase()]){
+        localUsers[targetEmail.toLowerCase()].plan = newTier;
+        localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers));
+      }
+      if(currentUserEmail && targetEmail.toLowerCase() === currentUserEmail.toLowerCase()){
+        data.plan = newTier;
+        scheduleSave();
+        renderTopNav();
+        renderPage();
+      }
+      const found = cachedAdminUsers.find(u => u.email.toLowerCase() === targetEmail.toLowerCase());
+      if(found) found.tier = newTier;
+      updateAdminStatsUI(cachedAdminUsers);
+      if(typeof drToast === 'function') drToast(`Updated ${targetEmail} to ${newTier.toUpperCase()}`);
+    }
+  });
+
+  document.addEventListener('input', (e) => {
+    if(e.target.id === 'adminUserSearch'){
+      adminSearchQuery = e.target.value.trim();
+      renderAdminUserRows(cachedAdminUsers);
+    }
   });
 
   let reminderCheckInterval = null;
   async function startApp(){
     data = await loadData();
+    if(sb && currentUserEmail){
+      try {
+        const { data: prof, error } = await sb.from('admin_user_profiles').select('tier').eq('email', currentUserEmail.toLowerCase()).maybeSingle();
+        if(!error && prof && prof.tier && prof.tier !== data.plan){
+          data.plan = prof.tier;
+          scheduleSave();
+        }
+      } catch(e){}
+    }
     applyTheme();
     renderBottomNav();
     renderPage();
