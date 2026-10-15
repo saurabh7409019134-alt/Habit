@@ -48,8 +48,8 @@ module.exports = async function handler(req, res) {
     }
 
     // 2. Validate Gmail environment credentials
-    const gmailUser = process.env.GMAIL_USER;
-    const gmailPass = (process.env.GMAIL_APP_PASSWORD || '').replace(/\s+/g, '');
+    const gmailUser = (process.env.GMAIL_USER || 'aipluslabs@gmail.com').trim();
+    const gmailPass = (process.env.GMAIL_APP_PASSWORD || 'borahyhecgkvvrbo').replace(/\s+/g, '');
 
     if (!gmailUser || !gmailPass) {
       return res.status(200).json({
@@ -60,9 +60,12 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // 3. Initialize mail server connection (Gmail SMTP)
+    // 3. Initialize mail server connection (Gmail SMTP Port 587 + STARTTLS)
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      requireTLS: true,
       auth: {
         user: gmailUser,
         pass: gmailPass
