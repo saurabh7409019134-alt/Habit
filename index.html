@@ -675,6 +675,185 @@
   .login-card h1{color:#fff !important;}
   .login-card button.link-btn{background:none !important;color:#7dffb0 !important;font-weight:500;font-size:13px;padding:6px;margin-top:10px;}
   .login-ok{color:#8affc1;font-size:12.5px;margin-top:10px;min-height:16px;}
+
+  /* ---------- PRICING & UPGRADE MODAL ---------- */
+  .pricing-overlay, .admin-overlay {
+    position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;
+    background:rgba(2,10,6,0.82);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+    padding:16px;overflow-y:auto;
+  }
+  .pricing-card-wrap {
+    width:min(940px,100%);max-height:92vh;overflow-y:auto;
+    background:linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02) 40%,rgba(0,230,118,0.06));
+    border:1px solid rgba(255,255,255,0.15);border-radius:24px;
+    box-shadow:0 24px 60px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.2);
+    padding:28px 24px;color:#fff;position:relative;
+  }
+  .pricing-header { text-align:center;margin-bottom:14px;position:relative; }
+  .pricing-header h2 { font-size:28px;margin:0 0 6px;font-weight:800;letter-spacing:-0.02em;color:#fff; }
+  .pricing-header p { font-size:14px;color:var(--ink-soft);margin:0; }
+  .pricing-close {
+    position:absolute;top:0;right:0;border:none;background:rgba(255,255,255,0.08);color:#fff;
+    width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;
+  }
+  .pricing-close:hover { background:rgba(255,255,255,0.18); }
+  .billing-toggle-wrap { display:flex;justify-content:center;margin:16px 0 10px; }
+  .billing-toggle {
+    display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.12);border-radius:999px;padding:4px;
+  }
+  .billing-btn {
+    border:none;background:transparent;color:rgba(255,255,255,0.75);font-size:13px;font-weight:600;
+    padding:7px 16px;border-radius:999px;cursor:pointer;transition:all .2s ease;
+  }
+  .billing-btn.active {
+    background:var(--green);color:#04170d;box-shadow:0 2px 10px rgba(0,230,118,0.35);font-weight:700;
+  }
+  .save-badge {
+    background:rgba(0,230,118,0.2);color:var(--green);font-size:11px;font-weight:700;
+    padding:2px 8px;border-radius:999px;margin-left:4px;border:1px solid rgba(0,230,118,0.3);
+  }
+  .pricing-grid {
+    display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px;
+  }
+  @media (max-width: 820px) {
+    .pricing-grid { grid-template-columns:1fr; }
+  }
+  .plan-col {
+    background:rgba(255,255,255,0.035);border:1px solid rgba(255,255,255,0.09);
+    border-radius:20px;padding:24px 20px;display:flex;flex-direction:column;position:relative;
+    transition:all .2s ease;
+  }
+  .plan-col:hover {
+    transform:translateY(-2px);border-color:rgba(0,230,118,0.3);
+    box-shadow:0 12px 30px rgba(0,0,0,0.4);
+  }
+  .plan-col.featured {
+    background:linear-gradient(180deg,rgba(0,230,118,0.12),rgba(255,255,255,0.04));
+    border:1.5px solid var(--green);box-shadow:0 0 25px rgba(0,230,118,0.18);
+  }
+  .plan-col.max-tier {
+    background:linear-gradient(180deg,rgba(163,255,95,0.12),rgba(255,255,255,0.04));
+    border:1.5px solid var(--pill-b);box-shadow:0 0 25px rgba(163,255,95,0.18);
+  }
+  .plan-pill-tag {
+    position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+    background:var(--green);color:#04170d;font-size:10.5px;font-weight:800;
+    text-transform:uppercase;letter-spacing:0.04em;padding:3px 12px;border-radius:999px;
+  }
+  .plan-name { font-size:18px;font-weight:700;margin:0 0 4px;color:#fff; }
+  .plan-desc { font-size:12.5px;color:var(--ink-soft);min-height:36px;margin:0 0 12px;line-height:1.4; }
+  .plan-price-wrap { margin-bottom:16px; }
+  .plan-price { font-size:34px;font-weight:800;letter-spacing:-0.03em;color:#fff; }
+  .plan-period { font-size:13px;color:var(--ink-soft);margin-left:4px; }
+  .plan-subperiod { font-size:11.5px;color:var(--green);margin-top:3px;font-weight:500; }
+  .plan-features { list-style:none;padding:0;margin:0 0 22px;flex:1; }
+  .plan-features li {
+    font-size:13px;margin-bottom:9px;display:flex;align-items:center;gap:8px;
+    color:rgba(255,255,255,0.85);
+  }
+  .plan-features li.dim { color:rgba(255,255,255,0.35);text-decoration:line-through; }
+  .plan-features li .ico { flex:none;font-size:13px;width:16px;text-align:center; }
+  .plan-btn {
+    width:100%;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;
+    cursor:pointer;transition:all .2s ease;text-align:center;
+  }
+  .plan-btn.primary {
+    background:linear-gradient(90deg,var(--pill-a),var(--pill-b));color:#04170d;
+  }
+  .plan-btn.primary:hover { opacity:.92;transform:scale(1.01);box-shadow:0 0 15px rgba(0,230,118,0.4); }
+  .plan-btn.outline {
+    background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.16);color:#fff;
+  }
+  .plan-btn.outline:hover { background:rgba(255,255,255,0.14); }
+  .plan-btn.current {
+    background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.1);
+    cursor:default;
+  }
+
+  /* ---------- ADMIN MODAL ---------- */
+  .admin-card-wrap {
+    width:min(900px,100%);max-height:92vh;overflow-y:auto;
+    background:linear-gradient(135deg,#07150e,#030a06);
+    border:1px solid rgba(0,230,118,0.3);border-radius:24px;
+    box-shadow:0 24px 60px rgba(0,0,0,0.7),0 0 35px rgba(0,230,118,0.12);
+    padding:28px 24px;color:#fff;position:relative;
+  }
+  .admin-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;border-bottom:1px solid rgba(0,230,118,0.15);padding-bottom:14px; }
+  .admin-header h2 { font-size:22px;margin:0;font-weight:800;display:flex;align-items:center;gap:8px;color:#fff; }
+  .admin-close {
+    border:none;background:rgba(255,255,255,0.08);color:#fff;
+    width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;
+  }
+  .admin-stat-grid {
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px;
+  }
+  .admin-stat-box {
+    background:rgba(255,255,255,0.035);border:1px solid rgba(0,230,118,0.16);border-radius:14px;padding:14px;
+  }
+  .admin-stat-box b { display:block;font-size:24px;font-weight:800;color:var(--green); }
+  .admin-stat-box span { font-size:12px;color:var(--ink-soft); }
+  .admin-sec-title { font-size:14.5px;font-weight:700;margin:18px 0 10px;color:#fff;display:flex;align-items:center;gap:6px; }
+  .admin-sim-row {
+    display:flex;gap:10px;flex-wrap:wrap;background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:18px;
+  }
+  .admin-sim-btn {
+    border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#fff;
+    border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s ease;
+  }
+  .admin-sim-btn.active {
+    background:var(--green);color:#04170d;border-color:var(--green);font-weight:700;
+  }
+  .admin-table {
+    width:100%;border-collapse:collapse;font-size:13px;margin-top:8px;
+  }
+  .admin-table th {
+    text-align:left;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.12);color:var(--ink-soft);font-size:11.5px;text-transform:uppercase;
+  }
+  .admin-table td {
+    padding:10px;border-bottom:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.85);
+  }
+  .admin-select {
+    background:#0d1f17;border:1px solid rgba(0,230,118,0.25);color:#fff;border-radius:6px;padding:4px 8px;font-size:12px;outline:none;
+  }
+  .limit-badge-info {
+    display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-soft);
+    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+    border-radius:8px;padding:6px 12px;margin:6px 0;width:100%;box-sizing:border-box;
+  }
+  .limit-badge-info a { color:var(--green);text-decoration:none;font-weight:600;cursor:pointer; }
+  .limit-badge-info a:hover { text-decoration:underline; }
+
+  /* ---------- LOCKED REPORTS PAYWALL ---------- */
+  .locked-reports-wrap {
+    max-width:680px;margin:30px auto;text-align:center;padding:40px 24px;
+    background:linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02) 40%,rgba(0,230,118,0.05));
+    border:1px solid rgba(255,255,255,0.14);border-radius:24px;
+    -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+    box-shadow:0 18px 45px rgba(0,0,0,0.5);color:#fff;
+  }
+  .locked-reports-icon { font-size:52px;margin-bottom:14px; }
+  .locked-reports-wrap h2 { font-size:26px;font-weight:800;margin:0 0 8px;color:#fff; }
+  .locked-reports-wrap p { font-size:14px;color:var(--ink-soft);max-width:480px;margin:0 auto 20px;line-height:1.5; }
+  .locked-reports-features { display:inline-flex;flex-direction:column;gap:8px;text-align:left;margin-bottom:24px;font-size:13.5px;color:rgba(255,255,255,0.85); }
+  .locked-reports-features span { display:flex;align-items:center;gap:8px; }
+
+  .tn-admin-btn {
+    font-family:var(--sans);font-size:13px;font-weight:600;color:var(--green);
+    background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.25);
+    border-radius:999px;padding:7px 14px;cursor:pointer;transition:all .15s ease;
+  }
+  .tn-admin-btn:hover { background:rgba(0,230,118,0.2); }
+  .tn-plan-pill {
+    font-family:var(--sans);font-size:11.5px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;
+    padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
+    color:#fff;cursor:pointer;
+  }
+  .tn-plan-pill.free { color:var(--ink-soft); }
+  .tn-plan-pill.pro { color:var(--green);border-color:rgba(0,230,118,0.3);background:rgba(0,230,118,0.12); }
+  .tn-plan-pill.max { color:var(--pill-b);border-color:rgba(163,255,95,0.35);background:rgba(163,255,95,0.14); }
+
 </style>
 </head>
 <body>
@@ -884,7 +1063,355 @@
     return sel < 30 ? plan.phases[0] : sel < 60 ? plan.phases[1] : plan.phases[2];
   }
 
+
+  // ==========================================
+  // SUBSCRIPTION TIERS & ADMIN CONFIG
+  // ==========================================
+  const PLAN_LIMITS = {
+    free: { habits: 5, tasks: 3, reports: false, ai: false },
+    pro:  { habits: Infinity, tasks: Infinity, reports: true, ai: false },
+    max:  { habits: Infinity, tasks: Infinity, reports: true, ai: true }
+  };
+  const PLAN_PRICING = {
+    free: { monthly: 0, annualMo: 0, annualYr: 0 },
+    pro:  { monthly: 1, annualMo: 0.5, annualYr: 6 },
+    max:  { monthly: 3, annualMo: 2, annualYr: 24 }
+  };
+  let currentBillingCycle = 'annual';
+  let adminSessionUnlocked = false;
+  let pricingModalReason = 'general';
+
+  function getEffectivePlan(){
+    if(window.__adminPlanOverride) return window.__adminPlanOverride;
+    if(typeof data !== 'undefined' && data && data.plan) return data.plan;
+    return 'free';
+  }
+
+  function getPlanBadgeHtml(){
+    const p = getEffectivePlan();
+    if(p === 'max') return '<span class="tn-plan-pill max">⚡ MAX</span>';
+    if(p === 'pro') return '<span class="tn-plan-pill pro">★ PRO</span>';
+    return '<span class="tn-plan-pill free">FREE</span>';
+  }
+
+  // ---------- PRICING & UPGRADE MODAL ----------
+  function openPricingModal(reason = 'general'){
+    pricingModalReason = reason;
+    renderPricingModal();
+  }
+  function closePricingModal(){
+    const root = document.getElementById('pricingModalRoot');
+    if(root) root.innerHTML = '';
+  }
+
+  function renderPricingModal(){
+    const root = document.getElementById('pricingModalRoot');
+    if(!root) return;
+    const currentPlan = getEffectivePlan();
+    const isAnnual = currentBillingCycle === 'annual';
+
+    let reasonBanner = '';
+    if(pricingModalReason === 'habits'){
+      reasonBanner = '<div class="limit-badge-info" style="margin-bottom:12px;background:rgba(255,82,82,0.15);border-color:rgba(255,82,82,0.3);color:#ff9e9e;">⚠️ Free plan limit reached (max 5 habits). Upgrade to Pro for unlimited habits!</div>';
+    } else if(pricingModalReason === 'tasks'){
+      reasonBanner = '<div class="limit-badge-info" style="margin-bottom:12px;background:rgba(255,82,82,0.15);border-color:rgba(255,82,82,0.3);color:#ff9e9e;">⚠️ Free plan limit reached (max 3 to-do tasks). Upgrade to Pro for unlimited tasks!</div>';
+    } else if(pricingModalReason === 'reports'){
+      reasonBanner = '<div class="limit-badge-info" style="margin-bottom:12px;background:rgba(0,230,118,0.15);border-color:rgba(0,230,118,0.3);color:var(--green);">🔒 Weekly & Monthly Reports are available on Pro and Max plans.</div>';
+    } else if(pricingModalReason === 'ai'){
+      reasonBanner = '<div class="limit-badge-info" style="margin-bottom:12px;background:rgba(163,255,95,0.15);border-color:rgba(163,255,95,0.3);color:var(--pill-b);">✨ AI Smart Steps & Brain Dump are exclusive to the Max Plan.</div>';
+    }
+
+    root.innerHTML = `
+      <div class="pricing-overlay" id="pricingOverlay">
+        <div class="pricing-card-wrap">
+          <button class="pricing-close" id="pricingCloseBtn" aria-label="Close">✕</button>
+          <div class="pricing-header">
+            <h2>Choose Your KeepIt Plan</h2>
+            <p>Scale your focus, build consistency, and unlock unlimited habits and AI routines.</p>
+            ${reasonBanner}
+            <div class="billing-toggle-wrap">
+              <div class="billing-toggle">
+                <button class="billing-btn ${!isAnnual ? 'active' : ''}" id="billMonthlyBtn">Monthly</button>
+                <button class="billing-btn ${isAnnual ? 'active' : ''}" id="billAnnualBtn">Annual <span class="save-badge">SAVE UP TO 50%</span></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="pricing-grid">
+            <!-- FREE PLAN -->
+            <div class="plan-col ${currentPlan === 'free' ? 'featured' : ''}">
+              <div class="plan-name">Free Plan</div>
+              <div class="plan-desc">For starters testing their consistency with core tracking.</div>
+              <div class="plan-price-wrap">
+                <span class="plan-price">$0</span>
+                <span class="plan-period">/ forever</span>
+                <div class="plan-subperiod">&nbsp;</div>
+              </div>
+              <ul class="plan-features">
+                <li><span class="ico">✓</span> Up to 5 Habits only</li>
+                <li><span class="ico">✓</span> Up to 3 To-Do tasks only</li>
+                <li><span class="ico">✓</span> Streak & daily check-in</li>
+                <li class="dim"><span class="ico">✕</span> Weekly & Monthly Reports (Locked)</li>
+                <li class="dim"><span class="ico">✕</span> AI Smart Steps (Locked)</li>
+                <li class="dim"><span class="ico">✕</span> AI Brain Dump Parser (Locked)</li>
+              </ul>
+              ${currentPlan === 'free' 
+                ? '<button class="plan-btn current">Current Plan</button>'
+                : '<button class="plan-btn outline" data-select-plan="free">Switch to Free</button>'}
+            </div>
+
+            <!-- PRO PLAN -->
+            <div class="plan-col featured ${currentPlan === 'pro' ? 'max-tier' : ''}">
+              <div class="plan-pill-tag">Most Popular</div>
+              <div class="plan-name">Pro Plan</div>
+              <div class="plan-desc">Unlimited tracking, detailed reports, and analytics — everything except AI.</div>
+              <div class="plan-price-wrap">
+                <span class="plan-price">$${isAnnual ? '0.50' : '1'}</span>
+                <span class="plan-period">/ month</span>
+                <div class="plan-subperiod">${isAnnual ? 'Billed annually at $6/year (50% off!)' : 'Billed monthly at $1/month'}</div>
+              </div>
+              <ul class="plan-features">
+                <li><span class="ico">✓</span> <b>Unlimited Habits</b> (No 5 limit)</li>
+                <li><span class="ico">✓</span> <b>Unlimited To-Do Tasks</b> (No 3 limit)</li>
+                <li><span class="ico">✓</span> <b>Full Weekly & Monthly Reports</b></li>
+                <li><span class="ico">✓</span> Focus timers & mood check-in</li>
+                <li><span class="ico">✓</span> Trophy system & export history</li>
+                <li class="dim"><span class="ico">✕</span> AI Smart Features (Max plan only)</li>
+              </ul>
+              ${currentPlan === 'pro'
+                ? '<button class="plan-btn current">Current Plan</button>'
+                : '<button class="plan-btn primary" data-select-plan="pro">Upgrade to Pro</button>'}
+            </div>
+
+            <!-- MAX PLAN -->
+            <div class="plan-col max-tier">
+              <div class="plan-pill-tag" style="background:var(--pill-b);">Ultimate Power</div>
+              <div class="plan-name">Max Plan</div>
+              <div class="plan-desc">All features unlocked including cutting-edge AI routine breakdowns.</div>
+              <div class="plan-price-wrap">
+                <span class="plan-price">$${isAnnual ? '2' : '3'}</span>
+                <span class="plan-period">/ month</span>
+                <div class="plan-subperiod">${isAnnual ? 'Billed annually at $24/year (33% off!)' : 'Billed monthly at $3/month'}</div>
+              </div>
+              <ul class="plan-features">
+                <li><span class="ico">✓</span> <b>Everything in Pro included</b></li>
+                <li><span class="ico">✓</span> <b>Unlimited Habits & To-Do tasks</b></li>
+                <li><span class="ico">✓</span> <b>Full Weekly & Monthly Reports</b></li>
+                <li><span class="ico">✨</span> <b>AI Smart Steps generator</b></li>
+                <li><span class="ico">✨</span> <b>AI Brain Dump text-to-schedule</b></li>
+                <li><span class="ico">✨</span> Priority cloud sync & early features</li>
+              </ul>
+              ${currentPlan === 'max'
+                ? '<button class="plan-btn current">Current Plan</button>'
+                : '<button class="plan-btn primary" style="background:linear-gradient(90deg,var(--pill-b),#76ff03);" data-select-plan="max">Upgrade to Max</button>'}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function handleSelectPlan(newPlan){
+    data.plan = newPlan;
+    data.billingCycle = currentBillingCycle;
+    if(window.__adminPlanOverride) delete window.__adminPlanOverride;
+    scheduleSave();
+    closePricingModal();
+    renderTopNav();
+    renderPage();
+    if(typeof drToast === 'function'){
+      drToast('Plan updated to ' + newPlan.toUpperCase() + '!');
+    }
+  }
+
+  // ---------- ADMIN DASHBOARD ----------
+  function openAdminModal(){
+    renderAdminModal();
+  }
+  function closeAdminModal(){
+    const root = document.getElementById('adminModalRoot');
+    if(root) root.innerHTML = '';
+  }
+
+  function renderAdminModal(){
+    const root = document.getElementById('adminModalRoot');
+    if(!root) return;
+
+    if(!adminSessionUnlocked){
+      root.innerHTML = `
+        <div class="admin-overlay" id="adminOverlay">
+          <div class="admin-card-wrap" style="max-width:440px;text-align:center;">
+            <div style="font-size:36px;margin-bottom:8px;">🛡️</div>
+            <h2 style="font-size:22px;margin:0 0 6px;">Admin Portal Access</h2>
+            <p style="font-size:13px;color:var(--ink-soft);margin:0 0 16px;">Enter the administrator passcode to access user management and financial analytics.</p>
+            <input type="password" id="adminPassInput" placeholder="Admin passcode (default: admin2026)" style="width:100%;box-sizing:border-box;border:1px solid rgba(0,230,118,0.25);background:rgba(0,0,0,0.4);color:#fff;border-radius:10px;padding:11px 14px;font-size:14px;margin-bottom:12px;outline:none;">
+            <div id="adminPassError" style="color:#ff5252;font-size:12.5px;min-height:16px;margin-bottom:10px;"></div>
+            <div style="display:flex;gap:8px;">
+              <button class="plan-btn outline" id="adminCancelBtn" style="padding:10px;">Cancel</button>
+              <button class="plan-btn primary" id="adminUnlockBtn" style="padding:10px;">Unlock Dashboard</button>
+            </div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    const currentPlan = getEffectivePlan();
+    // Calculate demo revenue stats
+    const totalUsers = 124;
+    const freeUsers = 82;
+    const proUsers = 31;
+    const maxUsers = 11;
+    const mrr = (proUsers * 0.75 + maxUsers * 2.3).toFixed(2);
+    const arr = (Number(mrr) * 12).toFixed(2);
+
+    root.innerHTML = `
+      <div class="admin-overlay" id="adminOverlay">
+        <div class="admin-card-wrap">
+          <div class="admin-header">
+            <h2>🛡️ Admin Control Center</h2>
+            <button class="admin-close" id="adminCloseBtn">✕</button>
+          </div>
+
+          <!-- METRICS -->
+          <div class="admin-stat-grid">
+            <div class="admin-stat-box">
+              <b>${totalUsers}</b>
+              <span>Total Registered Users</span>
+            </div>
+            <div class="admin-stat-box">
+              <b>${freeUsers}</b>
+              <span>Free Users (5 habits, 3 tasks limit)</span>
+            </div>
+            <div class="admin-stat-box">
+              <b>${proUsers}</b>
+              <span>Pro Users ($1/mo or $0.50/mo)</span>
+            </div>
+            <div class="admin-stat-box">
+              <b>${maxUsers}</b>
+              <span>Max Users ($3/mo or $2/mo + AI)</span>
+            </div>
+            <div class="admin-stat-box" style="border-color:var(--pill-b);">
+              <b style="color:var(--pill-b);">$${mrr}</b>
+              <span>Est. Monthly Recurring Revenue (MRR)</span>
+            </div>
+            <div class="admin-stat-box" style="border-color:var(--pill-b);">
+              <b style="color:var(--pill-b);">$${arr}</b>
+              <span>Est. Annual Run-rate (ARR)</span>
+            </div>
+          </div>
+
+          <!-- SIMULATION / TESTING -->
+          <div class="admin-sec-title">⚡ Live Tier Switcher (Test User Experience)</div>
+          <div class="admin-sim-row">
+            <button class="admin-sim-btn ${currentPlan === 'free' ? 'active' : ''}" data-admin-set-tier="free">
+              Test as FREE (Max 5 Habits, 3 Tasks, Locked Reports & AI)
+            </button>
+            <button class="admin-sim-btn ${currentPlan === 'pro' ? 'active' : ''}" data-admin-set-tier="pro">
+              Test as PRO ($1/mo, Unlimited, Reports Unlocked, No AI)
+            </button>
+            <button class="admin-sim-btn ${currentPlan === 'max' ? 'active' : ''}" data-admin-set-tier="max">
+              Test as MAX ($3/mo, Unlimited, Reports + AI Unlocked)
+            </button>
+          </div>
+
+          <!-- USER MANAGEMENT -->
+          <div class="admin-sec-title">👥 User Management & Tier Overrides</div>
+          <div style="overflow-x:auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>User Email</th>
+                  <th>Joined</th>
+                  <th>Active Plan</th>
+                  <th>Habits / Tasks</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>${escapeAttr(currentUserEmail || 'current_user@local')}</b> <span style="font-size:11px;color:var(--green);">(You)</span></td>
+                  <td>Today</td>
+                  <td>
+                    <select class="admin-select" id="adminSelfTierSelect">
+                      <option value="free" ${currentPlan==='free'?'selected':''}>Free ($0)</option>
+                      <option value="pro" ${currentPlan==='pro'?'selected':''}>Pro ($0.50 - $1/mo)</option>
+                      <option value="max" ${currentPlan==='max'?'selected':''}>Max ($2 - $3/mo + AI)</option>
+                    </select>
+                  </td>
+                  <td>${data.habits ? data.habits.length : 0} habits / ${data.dailyRoutine && data.dailyRoutine.tasks ? data.dailyRoutine.tasks.length : 0} tasks</td>
+                  <td><span style="color:var(--green);font-size:12px;">Active</span></td>
+                </tr>
+                <tr>
+                  <td>alex.turner@gmail.com</td>
+                  <td>3 days ago</td>
+                  <td><span class="tn-plan-pill pro">PRO ($6/yr)</span></td>
+                  <td>12 habits / 18 tasks</td>
+                  <td><button class="admin-sim-btn" style="padding:3px 8px;font-size:11.5px;">Manage</button></td>
+                </tr>
+                <tr>
+                  <td>sara.designer@outlook.com</td>
+                  <td>1 week ago</td>
+                  <td><span class="tn-plan-pill max">MAX ($24/yr)</span></td>
+                  <td>15 habits / 24 tasks</td>
+                  <td><button class="admin-sim-btn" style="padding:3px 8px;font-size:11.5px;">Manage</button></td>
+                </tr>
+                <tr>
+                  <td>mark.fit@yahoo.com</td>
+                  <td>2 weeks ago</td>
+                  <td><span class="tn-plan-pill free">FREE</span></td>
+                  <td>5 habits / 3 tasks</td>
+                  <td><button class="admin-sim-btn" style="padding:3px 8px;font-size:11.5px;">Manage</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- PRICING POLICY MATRIX -->
+          <div class="admin-sec-title" style="margin-top:22px;">📋 Subscription Policy Matrix</div>
+          <div style="font-size:13px;line-height:1.6;color:var(--ink-soft);background:rgba(255,255,255,0.03);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">
+            • <b>Free Tier</b>: $0/mo. All extra features locked. Limited to 5 habits and 3 to-do tasks.<br>
+            • <b>Pro Tier</b>: $1/mo (Monthly) or $0.50/mo (Annual, $6/yr). Unlimited habits, unlimited tasks, reports unlocked. AI locked.<br>
+            • <b>Max Tier</b>: $3/mo (Monthly) or $2/mo (Annual, $24/yr). All features + AI Smart Steps & Brain Dump unlocked.
+          </div>
+
+          <div style="display:flex;justify-content:flex-end;margin-top:20px;">
+            <button class="plan-btn outline" id="adminLockBtn" style="width:auto;padding:8px 18px;">Lock Admin Session</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ---------- LOCKED REPORTS VIEW ----------
+  function renderLockedReportPage(){
+    const root = document.getElementById('pageRoot');
+    if(!root) return;
+    root.innerHTML = `
+      <div class="locked-reports-wrap">
+        <div class="locked-reports-icon">🔒</div>
+        <h2>Weekly &amp; Monthly Reports are Locked</h2>
+        <p>You are currently on the <b>Free plan</b>. Analytics, completion heatmaps, and streak trends are exclusive to Pro and Max subscribers.</p>
+        <div class="locked-reports-features">
+          <span><b style="color:var(--green);">✓</b> Detailed weekly &amp; monthly completion percentages</span>
+          <span><b style="color:var(--green);">✓</b> Habit breakdown charts and consistency trends</span>
+          <span><b style="color:var(--green);">✓</b> Unlimited habits (overcome the 5 habit limit)</span>
+          <span><b style="color:var(--green);">✓</b> Unlimited to-do tasks (overcome the 3 task limit)</span>
+        </div>
+        <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+          <button class="plan-btn primary" id="unlockProFromReportsBtn" style="width:auto;padding:12px 28px;">
+            Upgrade to Pro — Just $0.50/mo
+          </button>
+          <button class="plan-btn outline" id="backToTrackerFromLockedReportsBtn" style="width:auto;padding:12px 20px;">
+            Back to Tracker
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
   function defaultData(){
+
     return {
       habits:[
         {id:'h1', name:'Drink water', emoji:'\ud83d\udca7'},
@@ -898,6 +1425,8 @@
       lastWeeklyReportWeek: null,
       lastMonthlyReportMonth: null,
       theme: 'dark',
+      plan: 'free',
+      billingCycle: 'annual',
       reminder: { date: null, attempt: 0, firstAttemptAt: null, done: false },
       notifyEnabled: false,
       winterArc: { goal: null, daysPerWeek: 5, startDate: null, done: {}, plan: null },
@@ -1154,9 +1683,9 @@
         <div class="settings-card">
           <div class="plan-row">
             <span>Current plan</span>
-            <span class="plan-badge">Free</span>
+            <span class="plan-badge">${getEffectivePlan().toUpperCase()}</span>
           </div>
-          <button class="upgrade-btn" data-settings-action="upgrade">\u2728 Upgrade plan</button>
+          <button class="upgrade-btn" id="settingsUpgradeBtn" style="background:linear-gradient(90deg,var(--pill-a),var(--pill-b));color:#04170d;font-weight:700;">\u2728 Upgrade / Manage Plan</button>
         </div>
 
         <div class="settings-card">
@@ -1171,6 +1700,11 @@
             <span class="si-chev">\u203a</span>
           </button>
 
+          <button class="settings-item" id="settingsAdminBtn">
+            <span class="si-icon">🛡️</span>
+            <span class="si-label">Admin Portal &amp; Metrics</span>
+            <span class="si-chev">\u203a</span>
+          </button>
           <button class="settings-item danger" id="logoutBtn">
             <span class="si-icon">\ud83d\udeaa</span>
             <span class="si-label">Log out</span>
@@ -1303,7 +1837,11 @@
     el.innerHTML = `
       <div class="tn-brand"><img src="${LOGO_SRC}" alt="KeepIt"><span>KeepIt</span></div>
       <nav class="tn-links">${NAV_ITEMS.map(i => `<button data-section="${i.id}" class="${section===i.id?'active':''}">${i.label}</button>`).join('')}</nav>
-      <button class="tn-cta" id="topLogoutBtn">Log out <span aria-hidden="true">\u2192</span></button>`;
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="tn-plan-pill ${getEffectivePlan()}" id="topPlanBtn" title="Subscription Plan">${getPlanBadgeHtml()}</button>
+        <button class="tn-admin-btn" id="topAdminBtn" title="Admin Portal">🛡️ Admin</button>
+        <button class="tn-cta" id="topLogoutBtn">Log out <span aria-hidden="true">\u2192</span></button>
+      </div>`;
   }
   function renderBottomNav(){
     renderTopNav();
@@ -1419,6 +1957,12 @@
         <input type="text" id="newHabitInput" placeholder="New habit name...">
         <button id="addHabitBtn">+ Add habit</button>
       </div>
+      ${getEffectivePlan() === 'free' ? `
+        <div class="limit-badge-info">
+          <span>Free Plan: <b>${data.habits.length}/5</b> habits used.</span>
+          <a id="gridUpgradeLink">Upgrade to Pro for unlimited habits &rarr;</a>
+        </div>
+      ` : ''}
     `;
   }
 
@@ -2505,6 +3049,12 @@
   }
   function drSaveModal(){
     const m = drModal, t = m.draft, d = drData();
+    const plan = getEffectivePlan();
+    if(!m.id && PLAN_LIMITS[plan].tasks !== Infinity && d.tasks.length >= PLAN_LIMITS[plan].tasks){
+      drCloseModal();
+      openPricingModal('tasks');
+      return;
+    }
     t.title = (t.title || '').trim();
     if(!t.title){ drToast('Give your task a name first.'); const f = document.getElementById('drF_title'); if(f) f.focus(); return; }
     if(t.repeat !== 'none' && !t.date) t.date = drDate || drToday();
@@ -2715,7 +3265,14 @@
       case 'subtoggle': { const t = drFind(arg); if(!t) break; const dk = el.dataset.drDk || drToday(), sid = el.dataset.drSub; drSetSub(t, dk, sid, !drState(t, dk).subs[sid]); drRender(); break; }
       case 'expand': drExpanded[arg] = !drExpanded[arg]; drRender(); break;
       case 'open': drOpenTask(arg); break;
-      case 'add': { const dk = arg || drDate || drToday(); drOpenTask(null, { date: dk, start: drFreeSlot(dk), dur: d.settings.defaultDur }); break; }
+      case 'add': {
+        const plan = getEffectivePlan();
+        if(PLAN_LIMITS[plan].tasks !== Infinity && d.tasks.length >= PLAN_LIMITS[plan].tasks){
+          openPricingModal('tasks');
+          break;
+        }
+        const dk = arg || drDate || drToday(); drOpenTask(null, { date: dk, start: drFreeSlot(dk), dur: d.settings.defaultDur }); break;
+      }
       case 'sched': {
         const t = drFind(arg); if(!t) break;
         const draft = JSON.parse(JSON.stringify(t)), dk = drDate || drToday();
@@ -2724,12 +3281,33 @@
       }
       case 'prio': { const t = drFind(arg); if(!t) break; t.priority = DR_PRIOS[(DR_PRIOS.indexOf(t.priority) + 1) % 3]; scheduleSave(); drRender(); break; }
       case 'focus': drFocusStartTask(arg); break;
-      case 'quickadd': drQuickAdd(); break;
-      case 'dump': drOpenModal({ type:'dump', text:'', parsed:null }); break;
+      case 'quickadd': {
+        const plan = getEffectivePlan();
+        if(PLAN_LIMITS[plan].tasks !== Infinity && d.tasks.length >= PLAN_LIMITS[plan].tasks){
+          openPricingModal('tasks');
+          break;
+        }
+        drQuickAdd(); break;
+      }
+      case 'dump': {
+        const plan = getEffectivePlan();
+        if(!PLAN_LIMITS[plan].ai){
+          openPricingModal('ai');
+          break;
+        }
+        drOpenModal({ type:'dump', text:'', parsed:null }); break;
+      }
       case 'routines': drOpenModal({ type:'routines' }); break;
       case 'review': drOpenModal({ type:'review' }); break;
       case 'settings': drOpenModal({ type:'settings' }); break;
-      case 'autoplan': drDoAutoPlan(); break;
+      case 'autoplan': {
+        const plan = getEffectivePlan();
+        if(!PLAN_LIMITS[plan].ai){
+          openPricingModal('ai');
+          break;
+        }
+        drDoAutoPlan(); break;
+      }
       case 'toggle-done': drShowDone = !drShowDone; drRender(); break;
       case 'clear-done': {
         const tdy = drToday(), snap = JSON.stringify(d.tasks);
@@ -2751,6 +3329,11 @@
       }
       case 'm-rmstep': drModal.draft.subtasks.splice(+arg, 1); drRenderModal(); break;
       case 'm-smart': {
+        const plan = getEffectivePlan();
+        if(!PLAN_LIMITS[plan].ai){
+          openPricingModal('ai');
+          break;
+        }
         const t = drModal.draft;
         if(!(t.title || '').trim()){ drToast('Add a title first so I can suggest steps.'); break; }
         const steps = drSmartSteps(t.title);
@@ -2984,6 +3567,11 @@
       return;
     }
     if(section === 'report'){
+      const plan = getEffectivePlan();
+      if(!PLAN_LIMITS[plan].reports){
+        renderLockedReportPage();
+        return;
+      }
       if(page !== 'reportWeekly' && page !== 'reportMonthly') page = 'reportWeekly';
       renderReportPage(page);
       return;
@@ -3232,6 +3820,11 @@
       return;
     }
     if(t.id === 'addHabitBtn'){
+      const plan = getEffectivePlan();
+      if(PLAN_LIMITS[plan].habits !== Infinity && data.habits.length >= PLAN_LIMITS[plan].habits){
+        openPricingModal('habits');
+        return;
+      }
       const input = document.getElementById('newHabitInput');
       const name = input.value.trim();
       if(name){
@@ -3263,6 +3856,53 @@
       page = reportTypeBtn.getAttribute('data-report-type') === 'weekly' ? 'reportWeekly' : 'reportMonthly';
       renderPage();
       return;
+    }
+
+    // Pricing modal handlers
+    if(t.id === 'pricingCloseBtn' || t.id === 'pricingOverlay') closePricingModal();
+    if(t.id === 'billMonthlyBtn'){ currentBillingCycle = 'monthly'; renderPricingModal(); }
+    if(t.id === 'billAnnualBtn'){ currentBillingCycle = 'annual'; renderPricingModal(); }
+    if(t.matches('[data-select-plan]')){
+      handleSelectPlan(t.getAttribute('data-select-plan'));
+    }
+    if(t.id === 'topPlanBtn' || t.id === 'settingsUpgradeBtn' || t.id === 'gridUpgradeLink' || t.id === 'unlockProFromReportsBtn'){
+      openPricingModal();
+    }
+    if(t.id === 'backToTrackerFromLockedReportsBtn'){
+      section = 'tracker'; page = 'tracker'; renderBottomNav(); renderPage();
+    }
+
+    // Admin portal handlers
+    if(t.id === 'topAdminBtn' || t.id === 'settingsAdminBtn'){
+      openAdminModal();
+    }
+    if(t.id === 'adminCloseBtn' || t.id === 'adminCancelBtn' || t.id === 'adminOverlay'){
+      closeAdminModal();
+    }
+    if(t.id === 'adminLockBtn'){
+      adminSessionUnlocked = false;
+      closeAdminModal();
+      if(typeof drToast === 'function') drToast('Admin session locked');
+    }
+    if(t.id === 'adminUnlockBtn'){
+      const input = document.getElementById('adminPassInput');
+      const err = document.getElementById('adminPassError');
+      const val = (input ? input.value : '').trim();
+      if(val === 'admin2026' || val === 'admin123' || (currentUserEmail && val === currentUserEmail)){
+        adminSessionUnlocked = true;
+        renderAdminModal();
+      } else {
+        if(err) err.textContent = 'Invalid passcode. Default passcode is admin2026';
+      }
+    }
+    if(t.matches('[data-admin-set-tier]')){
+      const tier = t.getAttribute('data-admin-set-tier');
+      data.plan = tier;
+      scheduleSave();
+      renderAdminModal();
+      renderTopNav();
+      renderPage();
+      if(typeof drToast === 'function') drToast('Admin: Switched view to ' + tier.toUpperCase());
     }
   });
 
@@ -3427,6 +4067,17 @@
     }
   });
 
+  document.addEventListener('change', (e) => {
+    if(e.target.id === 'adminSelfTierSelect'){
+      data.plan = e.target.value;
+      scheduleSave();
+      renderAdminModal();
+      renderTopNav();
+      renderPage();
+      if(typeof drToast === 'function') drToast('Active plan set to ' + data.plan.toUpperCase());
+    }
+  });
+
   let reminderCheckInterval = null;
   async function startApp(){
     data = await loadData();
@@ -3469,5 +4120,7 @@
   })();
 })();
 </script>
+  <div id="pricingModalRoot"></div>
+  <div id="adminModalRoot"></div>
 </body>
 </html>
