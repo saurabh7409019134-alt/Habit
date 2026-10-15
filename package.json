@@ -1,0 +1,13 @@
+{
+  "name": "habit",
+  "version": "1.0.0",
+  "description": "KeepIt Habit Tracker with OTP Verification and Gmail SMTP",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve ."
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "nodemailer": "^6.9.16"
+  }
+}

@@ -4402,6 +4402,14 @@
       }
     }
 
+    try {
+      fetch('/api/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: normEmail, otp: generatedOtp })
+      }).catch(() => {});
+    } catch(e){}
+
     renderLoginScreen('', 'otp', 'Verification code sent to ' + normEmail + '!');
   }
 
@@ -4529,6 +4537,14 @@
         await sb.auth.signUp({ email: normEmail, password: pendingSignup.password });
       } catch(e){}
     }
+
+    try {
+      fetch('/api/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: normEmail, otp: newOtp })
+      }).catch(() => {});
+    } catch(e){}
 
     renderLoginScreen('', 'otp', 'New 6-digit verification code generated!');
   }
