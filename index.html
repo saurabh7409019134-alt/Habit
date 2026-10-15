@@ -1079,6 +1079,13 @@
   };
   let currentBillingCycle = 'annual';
   let adminSessionUnlocked = false;
+  const ADMIN_EMAILS = ['saurabh.7409019134@gmail.com'];
+  function isCurrentUserAdmin(){
+    if(adminSessionUnlocked) return true;
+    if(currentUserEmail && ADMIN_EMAILS.includes(currentUserEmail.trim().toLowerCase())) return true;
+    return false;
+  }
+
   let pricingModalReason = 'general';
 
   function getEffectivePlan(){
@@ -1256,13 +1263,16 @@
       return;
     }
 
+    // Real stats based on actual active user & data
     const currentPlan = getEffectivePlan();
-    // Calculate demo revenue stats
-    const totalUsers = 124;
-    const freeUsers = 82;
-    const proUsers = 31;
-    const maxUsers = 11;
-    const mrr = (proUsers * 0.75 + maxUsers * 2.3).toFixed(2);
+    const isFree = currentPlan === 'free';
+    const isPro = currentPlan === 'pro';
+    const isMax = currentPlan === 'max';
+    const totalUsers = 1;
+    const freeUsers = isFree ? 1 : 0;
+    const proUsers = isPro ? 1 : 0;
+    const maxUsers = isMax ? 1 : 0;
+    const mrr = isMax ? '3.00' : (isPro ? '1.00' : '0.00');
     const arr = (Number(mrr) * 12).toFixed(2);
 
     root.innerHTML = `
@@ -1330,8 +1340,8 @@
               </thead>
               <tbody>
                 <tr>
-                  <td><b>${escapeAttr(currentUserEmail || 'current_user@local')}</b> <span style="font-size:11px;color:var(--green);">(You)</span></td>
-                  <td>Today</td>
+                  <td><b>${escapeAttr(currentUserEmail || 'saurabh.7409019134@gmail.com')}</b> <span style="font-size:11px;color:var(--green);font-weight:700;">(Administrator · You)</span></td>
+                  <td>Live Session</td>
                   <td>
                     <select class="admin-select" id="adminSelfTierSelect">
                       <option value="free" ${currentPlan==='free'?'selected':''}>Free ($0)</option>
@@ -1340,28 +1350,7 @@
                     </select>
                   </td>
                   <td>${data.habits ? data.habits.length : 0} habits / ${data.dailyRoutine && data.dailyRoutine.tasks ? data.dailyRoutine.tasks.length : 0} tasks</td>
-                  <td><span style="color:var(--green);font-size:12px;">Active</span></td>
-                </tr>
-                <tr>
-                  <td>alex.turner@gmail.com</td>
-                  <td>3 days ago</td>
-                  <td><span class="tn-plan-pill pro">PRO ($6/yr)</span></td>
-                  <td>12 habits / 18 tasks</td>
-                  <td><button class="admin-sim-btn" style="padding:3px 8px;font-size:11.5px;">Manage</button></td>
-                </tr>
-                <tr>
-                  <td>sara.designer@outlook.com</td>
-                  <td>1 week ago</td>
-                  <td><span class="tn-plan-pill max">MAX ($24/yr)</span></td>
-                  <td>15 habits / 24 tasks</td>
-                  <td><button class="admin-sim-btn" style="padding:3px 8px;font-size:11.5px;">Manage</button></td>
-                </tr>
-                <tr>
-                  <td>mark.fit@yahoo.com</td>
-                  <td>2 weeks ago</td>
-                  <td><span class="tn-plan-pill free">FREE</span></td>
-                  <td>5 habits / 3 tasks</td>
-                  <td><button class="admin-sim-btn" style="padding:3px 8px;font-size:11.5px;">Manage</button></td>
+                  <td><span style="color:var(--green);font-size:12px;font-weight:600;">● Active</span></td>
                 </tr>
               </tbody>
             </table>
@@ -1700,11 +1689,12 @@
             <span class="si-chev">\u203a</span>
           </button>
 
+          ${isCurrentUserAdmin() ? `
           <button class="settings-item" id="settingsAdminBtn">
             <span class="si-icon">🛡️</span>
             <span class="si-label">Admin Portal &amp; Metrics</span>
             <span class="si-chev">\u203a</span>
-          </button>
+          </button>` : ''}
           <button class="settings-item danger" id="logoutBtn">
             <span class="si-icon">\ud83d\udeaa</span>
             <span class="si-label">Log out</span>
@@ -1839,7 +1829,7 @@
       <nav class="tn-links">${NAV_ITEMS.map(i => `<button data-section="${i.id}" class="${section===i.id?'active':''}">${i.label}</button>`).join('')}</nav>
       <div style="display:flex;align-items:center;gap:8px;">
         <button class="tn-plan-pill ${getEffectivePlan()}" id="topPlanBtn" title="Subscription Plan">${getPlanBadgeHtml()}</button>
-        <button class="tn-admin-btn" id="topAdminBtn" title="Admin Portal">🛡️ Admin</button>
+        ${isCurrentUserAdmin() ? '<button class="tn-admin-btn" id="topAdminBtn" title="Admin Portal">🛡️ Admin</button>' : ''}
         <button class="tn-cta" id="topLogoutBtn">Log out <span aria-hidden="true">\u2192</span></button>
       </div>`;
   }
