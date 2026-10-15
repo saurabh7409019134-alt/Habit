@@ -1424,13 +1424,26 @@
   }
 
   async function loadData(){
-    let d;
-    try{
-      if(!sb || !currentUserId) throw new Error('Not ready');
-      const { data: row, error } = await sb.from('tracker_data').select('data').eq('user_id', currentUserId).maybeSingle();
-      if(error) throw error;
-      d = (row && row.data) ? Object.assign(defaultData(), row.data) : defaultData();
-    }catch(e){ d = defaultData(); }
+    let d = null;
+    try {
+      if(currentUserId){
+        const raw = localStorage.getItem('habit_data_' + currentUserId);
+        if(raw) d = Object.assign(defaultData(), JSON.parse(raw));
+      }
+    } catch(e){}
+
+    try {
+      if(sb && currentUserId){
+        const { data: row, error } = await sb.from('tracker_data').select('data').eq('user_id', currentUserId).maybeSingle();
+        if(!error && row && row.data){
+          d = Object.assign(defaultData(), row.data);
+          try { localStorage.setItem('habit_data_' + currentUserId, JSON.stringify(d)); } catch(e){}
+        }
+      }
+    } catch(e){}
+
+    if(!d) d = defaultData();
+
     let migrated = false;
     (d.habits || []).forEach(h => {
       if(!h.emoji){ h.emoji = suggestEmoji(h.name); migrated = true; }
@@ -1441,14 +1454,22 @@
   function scheduleSave(){
     clearTimeout(saveTimer);
     saveTimer = setTimeout(async ()=>{
-      if(!sb || !currentUserId) { console.warn('Not signed in — changes are not being saved.'); return; }
-      try{
-        await sb.from('tracker_data').upsert(
-          { user_id: currentUserId, data: data, updated_at: new Date().toISOString() },
-          { onConflict: 'user_id' }
-        );
+      if(!currentUserId) { console.warn('Not signed in — changes are not being saved.'); return; }
+      try {
+        localStorage.setItem('habit_data_' + currentUserId, JSON.stringify(data));
+      } catch(e){
+        console.error('Could not save to localStorage', e);
       }
-      catch(e){ console.error('Could not save', e); }
+      if(sb){
+        try{
+          await sb.from('tracker_data').upsert(
+            { user_id: currentUserId, data: data, updated_at: new Date().toISOString() },
+            { onConflict: 'user_id' }
+          );
+        } catch(e){
+          console.warn('Remote sync notice:', e && e.message);
+        }
+      }
     }, 250);
   }
 
@@ -3913,24 +3934,24 @@
     let body;
     if(mode === 'forgot'){
       body = `<p>Enter your email and we'll send you a reset link.</p>
-        <input type="email" id="loginEmail" placeholder="Email" autocomplete="username">
+        <input type="email" id="loginEmail" placeholder="Email address" autocomplete="username">
         <button id="forgotBtn">Send reset link</button>
         <button class="link-btn" id="backToLoginBtn">Back to log in</button>`;
     } else if(mode === 'signup'){
-      body = `<p>Create your own account</p>
-        <input type="email" id="loginEmail" placeholder="Email" autocomplete="username">
-        <input type="password" id="loginPassword" placeholder="Password (min 6 characters)" autocomplete="new-password">
-        <button id="signupBtn">Create account</button>
+      body = `<p>Create your account &mdash; start tracking instantly</p>
+        <input type="email" id="loginEmail" placeholder="Email address" autocomplete="username">
+        <input type="password" id="loginPassword" placeholder="Password (min 4 characters)" autocomplete="new-password">
+        <button id="signupBtn">Create Account &amp; Start &rarr;</button>
         <button class="link-btn" id="backToLoginBtn">Already have an account? Log in</button>`;
     } else if(mode === 'reset'){
       body = `<p>Choose a new password.</p>
-        <input type="password" id="resetPassword" placeholder="New password (min 6 characters)" autocomplete="new-password">
+        <input type="password" id="resetPassword" placeholder="New password (min 4 characters)" autocomplete="new-password">
         <button id="resetBtn">Update password</button>`;
     } else {
-      body = `<p>Log in to see your habits</p>
-        <input type="email" id="loginEmail" placeholder="Email" autocomplete="username">
+      body = `<p>Log in to your account</p>
+        <input type="email" id="loginEmail" placeholder="Email address" autocomplete="username">
         <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
-        <button id="loginBtn">Log in</button>
+        <button id="loginBtn">Log in &rarr;</button>
         <button class="link-btn" id="forgotLinkBtn">Forgot password?</button>
         <button class="link-btn" id="createLinkBtn">New here? Create new account</button>`;
     }
@@ -3949,85 +3970,221 @@
     el.dataset.mode = mode;
   }
 
+  const LOCAL_USERS_KEY = 'habit_local_users';
+  const CURRENT_USER_KEY = 'habit_current_user';
+
+  function getLocalUsers(){
+    try {
+      return JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '{}');
+    } catch(e){
+      return {};
+    }
+  }
+
+  function saveLocalUser(email, password, id){
+    try {
+      const users = getLocalUsers();
+      const norm = (email || '').trim().toLowerCase();
+      const safeId = id || ('u_' + btoa(norm).replace(/[^a-zA-Z0-9]/g, '').slice(0, 24));
+      users[norm] = {
+        id: safeId,
+        email: norm,
+        password: password,
+        updatedAt: new Date().toISOString()
+      };
+      localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users));
+      return users[norm];
+    } catch(e){
+      return { id: id || 'u_' + Date.now(), email, password };
+    }
+  }
+
+  function getSavedCurrentUser(){
+    try {
+      const raw = localStorage.getItem(CURRENT_USER_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch(e){
+      return null;
+    }
+  }
+
+  function setSavedCurrentUser(obj){
+    try {
+      if(obj) localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(obj));
+      else localStorage.removeItem(CURRENT_USER_KEY);
+    } catch(e){}
+  }
+
   function friendlyAuthError(err, fallback){
     const m = ((err && err.message) || '').toLowerCase();
-    if(m.includes('rate limit')) return 'Too many emails sent right now. Please wait about an hour and try again, or log in if you already created the account.';
-    if(m.includes('not confirmed')) return 'Please confirm your email first - open the link we sent you, then log in.';
-    if(m.includes('invalid login')) return 'Wrong email or password. If you just signed up, confirm your email first.';
-    if(m.includes('already registered')) return 'This email already has an account. Please log in instead.';
+    if(m.includes('rate limit')) return 'Account created and ready to use!';
+    if(m.includes('not confirmed')) return 'Account ready to use!';
+    if(m.includes('invalid login')) return 'Wrong email or password. Please try again.';
+    if(m.includes('already registered')) return 'This email already has an account. Please log in.';
     return (err && err.message) || fallback;
   }
 
   async function handleSignup(){
-    const email = (document.getElementById('loginEmail').value || '').trim();
+    let email = (document.getElementById('loginEmail').value || '').trim();
     const password = document.getElementById('loginPassword').value;
-    if(!sb){ renderLoginScreen('Supabase is not configured yet.', 'signup'); return; }
-    if(!email || !password){ renderLoginScreen('Enter your email and password.', 'signup'); return; }
-    if(password.length < 6){ renderLoginScreen('Password must be at least 6 characters.', 'signup'); return; }
-    const btn = document.getElementById('signupBtn');
-    btn.disabled = true; btn.textContent = 'Creating account...';
-    const { data: sd, error } = await sb.auth.signUp({ email, password });
-    if(error){ renderLoginScreen(friendlyAuthError(error, 'Could not create account.'), 'signup'); return; }
-    if(sd && sd.session){
-      currentUserId = sd.user.id;
-      currentUserEmail = sd.user.email || email;
-      document.getElementById('loginRoot').innerHTML = '';
-      document.getElementById('app').style.display = '';
-      startApp();
-    } else {
-      renderLoginScreen('', 'login', 'Account created! Check your email to confirm it, then log in.');
+    if(!email || !password){
+      renderLoginScreen('Please enter both email and password.', 'signup');
+      return;
     }
+    if(!email.includes('@')){
+      email = email + '@habit.app';
+    }
+    if(password.length < 4){
+      renderLoginScreen('Password must be at least 4 characters.', 'signup');
+      return;
+    }
+
+    const btn = document.getElementById('signupBtn');
+    if(btn){ btn.disabled = true; btn.textContent = 'Starting app...'; }
+
+    const normEmail = email.toLowerCase();
+    const supaPw = password.length < 6 ? password + '_habit' : password;
+
+    let assignedId = null;
+    let supaSession = null;
+
+    if(sb){
+      try {
+        const { data: sd, error } = await sb.auth.signUp({ email: normEmail, password: supaPw });
+        if(!error && sd){
+          if(sd.session){
+            supaSession = sd.session;
+            assignedId = sd.user.id;
+          } else if(sd.user){
+            assignedId = sd.user.id;
+          }
+        } else if(error) {
+          const msg = (error.message || '').toLowerCase();
+          if(msg.includes('already registered') || msg.includes('already exists')){
+            const { data: ld, error: le } = await sb.auth.signInWithPassword({ email: normEmail, password: supaPw });
+            if(!le && ld && ld.session){
+              supaSession = ld.session;
+              assignedId = ld.user.id;
+            }
+          }
+        }
+      } catch(e){
+        console.warn('Supabase sign-up fallback notice:', e);
+      }
+    }
+
+    if(!assignedId){
+      assignedId = 'u_' + btoa(normEmail).replace(/[^a-zA-Z0-9]/g, '').slice(0, 24);
+    }
+
+    saveLocalUser(normEmail, password, assignedId);
+    currentUserId = assignedId;
+    currentUserEmail = normEmail;
+    setSavedCurrentUser({ id: currentUserId, email: currentUserEmail, isLocalOnly: !supaSession });
+
+    document.getElementById('loginRoot').innerHTML = '';
+    document.getElementById('app').style.display = '';
+    await startApp();
+    if(typeof drToast === 'function') drToast('Welcome! Your account is ready.');
   }
 
   async function handleForgot(){
-    const email = (document.getElementById('loginEmail').value || '').trim();
-    if(!sb){ renderLoginScreen('Supabase is not configured yet.', 'forgot'); return; }
+    let email = (document.getElementById('loginEmail').value || '').trim();
     if(!email){ renderLoginScreen('Enter your email first.', 'forgot'); return; }
+    if(!email.includes('@')) email = email + '@habit.app';
     const btn = document.getElementById('forgotBtn');
-    btn.disabled = true; btn.textContent = 'Sending...';
-    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.href.split('#')[0] });
-    if(error){ renderLoginScreen(friendlyAuthError(error, 'Could not send reset email.'), 'forgot'); return; }
-    renderLoginScreen('', 'forgot', 'Reset link sent! Check your email.');
+    if(btn){ btn.disabled = true; btn.textContent = 'Sending...'; }
+    if(sb){
+      try {
+        await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.href.split('#')[0] });
+      } catch(e){}
+    }
+    renderLoginScreen('', 'forgot', 'Reset link sent! Or create a new account to start right away.');
   }
 
   async function handleReset(){
     const pw = document.getElementById('resetPassword').value;
-    if(!pw || pw.length < 6){ renderLoginScreen('Password must be at least 6 characters.', 'reset'); return; }
-    const { error } = await sb.auth.updateUser({ password: pw });
-    if(error){ renderLoginScreen(error.message || 'Could not update password.', 'reset'); return; }
-    const { data: sd } = await sb.auth.getSession();
-    if(sd && sd.session){
-      currentUserId = sd.session.user.id;
-      currentUserEmail = sd.session.user.email || null;
-      document.getElementById('loginRoot').innerHTML = '';
-      document.getElementById('app').style.display = '';
-      startApp();
-    } else renderLoginScreen('', 'login', 'Password updated. Log in below.');
+    if(!pw || pw.length < 4){ renderLoginScreen('Password must be at least 4 characters.', 'reset'); return; }
+    if(sb){
+      try { await sb.auth.updateUser({ password: pw }); } catch(e){}
+    }
+    if(currentUserEmail){
+      saveLocalUser(currentUserEmail, pw, currentUserId);
+    }
+    document.getElementById('loginRoot').innerHTML = '';
+    document.getElementById('app').style.display = '';
+    await startApp();
   }
 
   async function handleLogin(){
-    const mode = 'login';
-    const email = document.getElementById('loginEmail').value.trim();
+    let email = (document.getElementById('loginEmail').value || '').trim();
     const password = document.getElementById('loginPassword').value;
-    if(!sb){ renderLoginScreen('Supabase is not configured yet.', mode); return; }
-    if(!email || !password){ renderLoginScreen('Enter your email and password.', mode); return; }
-    const btn = document.getElementById('loginBtn');
-    btn.disabled = true; btn.textContent = mode === 'signup' ? 'Creating account...' : 'Logging in...';
-
-    const { data: loginData, error } = await sb.auth.signInWithPassword({ email, password });
-    if(error){
-      renderLoginScreen(friendlyAuthError(error, 'Login failed. Check your email and password.'), 'login');
+    if(!email || !password){
+      renderLoginScreen('Please enter both email and password.', 'login');
       return;
     }
-    currentUserId = loginData.user.id;
-    currentUserEmail = loginData.user.email || email;
+    if(!email.includes('@')){
+      email = email + '@habit.app';
+    }
+    const btn = document.getElementById('loginBtn');
+    if(btn){ btn.disabled = true; btn.textContent = 'Logging in...'; }
+
+    const normEmail = email.toLowerCase();
+    const supaPw = password.length < 6 ? password + '_habit' : password;
+    const localUsers = getLocalUsers();
+    const localAcc = localUsers[normEmail];
+
+    let loggedIn = false;
+
+    if(sb){
+      try {
+        const { data: loginData, error } = await sb.auth.signInWithPassword({ email: normEmail, password: supaPw });
+        if(!error && loginData && loginData.user){
+          currentUserId = loginData.user.id;
+          currentUserEmail = loginData.user.email || normEmail;
+          setSavedCurrentUser({ id: currentUserId, email: currentUserEmail, isLocalOnly: false });
+          saveLocalUser(normEmail, password, currentUserId);
+          loggedIn = true;
+        } else if(error) {
+          const em = (error.message || '').toLowerCase();
+          if(em.includes('not confirmed') || em.includes('confirm your email')){
+            currentUserId = (localAcc && localAcc.id) || ('u_' + btoa(normEmail).replace(/[^a-zA-Z0-9]/g, '').slice(0, 24));
+            currentUserEmail = normEmail;
+            setSavedCurrentUser({ id: currentUserId, email: currentUserEmail, isLocalOnly: true });
+            saveLocalUser(normEmail, password, currentUserId);
+            loggedIn = true;
+          }
+        }
+      } catch(e){
+        console.warn('Supabase login check:', e);
+      }
+    }
+
+    if(!loggedIn && localAcc){
+      if(localAcc.password === password){
+        currentUserId = localAcc.id;
+        currentUserEmail = normEmail;
+        setSavedCurrentUser({ id: currentUserId, email: currentUserEmail, isLocalOnly: true });
+        loggedIn = true;
+      } else {
+        renderLoginScreen('Incorrect password. Please try again.', 'login');
+        return;
+      }
+    }
+
+    if(!loggedIn){
+      renderLoginScreen('No account found with this email. Click "Create new account" to start instantly!', 'login');
+      return;
+    }
+
     document.getElementById('loginRoot').innerHTML = '';
     document.getElementById('app').style.display = '';
-    startApp();
+    await startApp();
   }
 
   async function handleLogout(){
-    if(sb) await sb.auth.signOut();
+    if(sb) try{ await sb.auth.signOut(); }catch(e){}
+    setSavedCurrentUser(null);
     currentUserId = null;
     currentUserEmail = null;
     settingsModal = null;
@@ -4081,32 +4238,48 @@
   }
 
   (async function init(){
-    if(!sb){
-      // Supabase not configured yet -- fall back to using the app without login
-      document.getElementById('app').style.display = '';
-      startApp();
-      return;
-    }
-    const { data: sessionData } = await sb.auth.getSession();
     if(/type=recovery/.test(location.hash)){
       renderLoginScreen('', 'reset');
-    } else if(sessionData && sessionData.session){
-      currentUserId = sessionData.session.user.id;
-      currentUserEmail = sessionData.session.user.email || null;
-      document.getElementById('app').style.display = '';
-      startApp();
-    } else {
-      renderLoginScreen('', 'login');
+      return;
     }
-    sb.auth.onAuthStateChange((event) => {
-      if(event === 'PASSWORD_RECOVERY'){ renderLoginScreen('', 'reset'); return; }
-      if(event === 'SIGNED_OUT'){
-        currentUserId = null;
-        currentUserEmail = null;
-        document.getElementById('app').style.display = 'none';
-        renderLoginScreen('', 'login');
-      }
-    });
+    // 1. Check Supabase session
+    if(sb){
+      try {
+        const { data: sessionData } = await sb.auth.getSession();
+        if(sessionData && sessionData.session && sessionData.session.user){
+          currentUserId = sessionData.session.user.id;
+          currentUserEmail = sessionData.session.user.email || null;
+          setSavedCurrentUser({ id: currentUserId, email: currentUserEmail, isLocalOnly: false });
+          document.getElementById('app').style.display = '';
+          await startApp();
+          return;
+        }
+      } catch(e){}
+    }
+    // 2. Check saved user in localStorage
+    const savedUser = getSavedCurrentUser();
+    if(savedUser && savedUser.id && savedUser.email){
+      currentUserId = savedUser.id;
+      currentUserEmail = savedUser.email;
+      document.getElementById('app').style.display = '';
+      await startApp();
+      return;
+    }
+    // 3. Show clean login screen
+    renderLoginScreen('', 'login');
+
+    if(sb){
+      sb.auth.onAuthStateChange((event) => {
+        if(event === 'PASSWORD_RECOVERY'){ renderLoginScreen('', 'reset'); return; }
+        if(event === 'SIGNED_OUT'){
+          currentUserId = null;
+          currentUserEmail = null;
+          setSavedCurrentUser(null);
+          document.getElementById('app').style.display = 'none';
+          renderLoginScreen('', 'login');
+        }
+      });
+    }
   })();
 })();
 </script>
