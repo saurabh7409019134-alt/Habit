@@ -642,30 +642,130 @@
     align-items: center;
   }
 
-  /* Overflow Menu Dropdown */
+  /* Overflow Menu Dropdown (3-dots menu, Sort by, Try these out) */
   .rm-menu-dropdown {
     position: absolute;
-    top: 42px;
+    top: 44px;
     right: 0;
     background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-    border: 1px solid #f1f5f9;
-    padding: 6px 0;
-    min-width: 140px;
-    z-index: 70;
+    border-radius: 24px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    padding: 10px 0;
+    min-width: 225px;
+    z-index: 95;
+    animation: rmMenuFade 0.16s ease-out;
+  }
+  @keyframes rmMenuFade {
+    from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
   }
   .rm-menu-item {
-    padding: 9px 16px;
-    font-size: 13.5px;
-    color: #1f2937;
+    padding: 12px 22px;
+    font-size: 15.5px;
+    font-weight: 500;
+    color: #111827;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: space-between;
+    gap: 12px;
+    transition: background 0.12s ease;
+    user-select: none;
   }
   .rm-menu-item:hover {
     background: #f8fafc;
+  }
+  .rm-menu-item.active-blue {
+    color: #2563eb;
+    font-weight: 600;
+  }
+  .rm-menu-divider {
+    border-top: 1.5px dotted #cbd5e1;
+    margin: 4px 20px;
+  }
+  .rm-try-popup {
+    position: absolute;
+    top: 44px;
+    right: 0;
+    width: 340px;
+    max-width: calc(100vw - 28px);
+    max-height: 76vh;
+    overflow-y: auto;
+    background: #f4f5f8;
+    border-radius: 28px;
+    padding: 20px 14px 16px;
+    box-shadow: 0 16px 44px rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    z-index: 96;
+    animation: rmMenuFade 0.18s ease-out;
+    box-sizing: border-box;
+  }
+  .rm-try-header {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    padding: 2px 10px 14px;
+  }
+  .rm-try-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .rm-try-card:last-child {
+    margin-bottom: 0;
+  }
+  .rm-try-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+  .rm-try-bulb {
+    color: #6b7280;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .rm-try-body {
+    flex: 1;
+    min-width: 0;
+  }
+  .rm-try-title {
+    font-size: 15.5px;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.3;
+  }
+  .rm-try-sub {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 3px;
+    line-height: 1.35;
+  }
+  .rm-try-checklist {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .rm-try-check-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    color: #1f2937;
+  }
+  .rm-try-check-circle {
+    width: 15px;
+    height: 15px;
+    min-width: 15px;
+    border-radius: 50%;
+    border: 1.5px solid #9ca3af;
   }
 
   /* Add Reminder Bottom Sheet Modal */
@@ -3341,10 +3441,21 @@
   let reminderShowSubpoints = false; // Toggled by the 1st circular tick icon
   let reminderEditingId = null;      // Non-null when editing an existing reminder
   let reminderDraftTitle = '';
-  let reminderDraftChecklist = [''];
+  let reminderDraftChecklist = [];
   let reminderSearchOpen = false;
   let reminderSearchQuery = '';
   let reminderMenuOpen = false;
+  let reminderMenuPage = 'main';     // 'main' | 'sort' | 'tryTheseOut'
+  let reminderSortBy = 'alertTime';  // 'alertTime' | 'dateModified' | 'title' | 'category'
+  let reminderSortOrder = 'asc';     // 'asc' | 'desc'
+  let reminderVisibleCategories = {
+    today: true,
+    scheduled: true,
+    important: true,
+    place: true,
+    noAlert: true,
+    completed: true
+  };
 
   // Date / Time / All-day / Repeat / Early Alert / Sound State
   let reminderAllDay = false;
@@ -3358,7 +3469,7 @@
 
   // Dropdown & Sub-modal State inside Add Sheet
   let reminderDropdown = null; // null | 'alert' | 'repeat' | 'sound'
-  let reminderSubModal = null; // null | 'presetSettings' | 'customRepeat' | 'customAlert' | 'datePicker' | 'timePicker'
+  let reminderSubModal = null; // null | 'presetSettings' | 'customRepeat' | 'customAlert' | 'datePicker' | 'timePicker' | 'manageCategories' | 'recycleBin'
 
   // Preset Times & Dates State
   let reminderShowPresets = true;
@@ -3407,163 +3518,46 @@
   let reminderLongPressTimer = null;
   let reminderLongPressTriggered = false;
 
-  let reminderItems = [
-    {
-      id: 'rm-1',
-      title: 'Self investment before 20 year old .',
-      important: true,
-      category: 'important',
-      section: 'main',
-      completed: false,
-      date: null,
-      checklist: [
-        { text: 'Drone', done: false },
-        { text: 'Buy a good adjustable table', done: false },
-        { text: 'Ps6', done: false },
-        { text: 'Good room setup', done: false },
-        { text: 'Macbook m5', done: false }
-      ]
-    },
-    {
-      id: 'rm-2',
-      title: 'Lean some ai tools',
-      important: true,
-      category: 'important',
-      section: 'main',
-      completed: false,
-      date: null,
-      checklist: []
-    },
-    {
-      id: 'rm-3',
-      title: 'Personal branding',
-      important: false,
-      category: 'scheduled',
-      section: 'Past',
-      completed: false,
-      date: 'Wed, 5 Aug, 10:00 pm',
-      checklist: []
-    },
-    {
-      id: 'rm-4',
-      title: 'Learning sound design and storytelling in video editing',
-      important: false,
-      category: 'scheduled',
-      section: 'Past',
-      completed: false,
-      date: 'Wed, 5 Aug',
-      checklist: []
-    },
-    {
-      id: 'rm-5',
-      title: 'NextRide post',
-      important: false,
-      category: 'scheduled',
-      section: 'Past',
-      completed: false,
-      date: 'Sat, 12 Sept, 9:00 am',
-      checklist: []
-    },
-    {
-      id: 'rm-6',
-      title: 'Grocery list',
-      important: false,
-      category: 'noAlert',
-      section: 'No alert',
-      completed: false,
-      date: null,
-      checklist: [
-        { text: 'Buy drone by my own money.', done: false },
-        { text: 'As soon as I get rich buy a car for motivation', done: false },
-        { text: 'Make my dream setup my own money', done: false },
-        { text: 'Iphone 16/17', done: false },
-        { text: 'Mac book ghar balo ne dila deya tha', done: true }
-      ]
-    },
-    {
-      id: 'rm-7',
-      title: 'Under top 10 in fobes cover',
-      important: false,
-      category: 'noAlert',
-      section: 'No alert',
-      completed: false,
-      date: null,
-      checklist: []
-    },
-    {
-      id: 'rm-8',
-      title: 'Notes app for android SaaS product',
-      important: false,
-      category: 'noAlert',
-      section: 'No alert',
-      completed: false,
-      date: null,
-      checklist: []
-    }
-  ];
+  // Start clean with 0 pre-reminders; persist user-created reminders in localStorage
+  let reminderItems = [];
+  let completedReminderItems = [];
+  let recycleBinReminderItems = [];
+  try {
+    const savedRm = localStorage.getItem('keepit_user_reminders_v1');
+    if(savedRm) reminderItems = JSON.parse(savedRm) || [];
+    const savedComp = localStorage.getItem('keepit_user_completed_reminders_v1');
+    if(savedComp) completedReminderItems = JSON.parse(savedComp) || [];
+    const savedTrash = localStorage.getItem('keepit_user_trash_reminders_v1');
+    if(savedTrash) recycleBinReminderItems = JSON.parse(savedTrash) || [];
+  } catch(e){}
 
-  let completedReminderItems = [
-    {
-      id: 'c-1',
-      month: 'Sept',
-      title: 'Call from Dhruv Balak',
-      declined: 'You declined at 30 Sept 2026 8:44 pm.',
-      date: 'Wed, 30 Sept, 9:44 pm',
-      completedAt: 'Completed: Wed, 30 Sept, 9:44 pm',
-      contact: 'Dhruv Balak',
-      important: false
-    },
-    {
-      id: 'c-2',
-      month: 'Sept',
-      title: 'Call from Vishal Verma',
-      declined: 'You declined at 20 Sept 2026 7:27 pm.',
-      date: 'Sun, 20 Sept, 8:27 pm',
-      completedAt: 'Completed: Sun, 20 Sept, 8:27 pm',
-      contact: 'Vishal Verma',
-      important: false
-    },
-    {
-      id: 'c-3',
-      month: 'Aug',
-      title: 'Limit social media',
-      declined: null,
-      date: 'Thu, 27 Aug, 9:00 pm',
-      completedAt: 'Completed: Thu, 27 Aug, 9:00 pm',
-      contact: null,
-      important: true
-    },
-    {
-      id: 'c-4',
-      month: 'Aug',
-      title: 'Read book',
-      declined: null,
-      date: 'Tue, 25 Aug',
-      completedAt: 'Completed: Tue, 25 Aug, 9:37 am',
-      contact: null,
-      important: true
-    },
-    {
-      id: 'c-5',
-      month: 'Aug',
-      title: 'Read book',
-      declined: null,
-      date: 'Mon, 17 Aug',
-      completedAt: 'Completed: Mon, 17 Aug, 9:00 am',
-      contact: null,
-      important: true
-    },
-    {
-      id: 'c-6',
-      month: 'Aug',
-      title: 'Limit social media',
-      declined: null,
-      date: 'Sat, 15 Aug, 9:00 pm',
-      completedAt: 'Completed: Sun, 16 Aug, 8:05 pm',
-      contact: null,
-      important: true
-    }
-  ];
+  function saveReminderState(){
+    try {
+      localStorage.setItem('keepit_user_reminders_v1', JSON.stringify(reminderItems));
+      localStorage.setItem('keepit_user_completed_reminders_v1', JSON.stringify(completedReminderItems));
+      localStorage.setItem('keepit_user_trash_reminders_v1', JSON.stringify(recycleBinReminderItems));
+    } catch(e){}
+  }
+
+  function applyReminderSort(){
+    const dir = reminderSortOrder === 'asc' ? 1 : -1;
+    reminderItems.sort((a, b) => {
+      if(reminderSortBy === 'title'){
+        return (a.title || '').localeCompare(b.title || '') * dir;
+      }
+      if(reminderSortBy === 'category'){
+        return (a.category || '').localeCompare(b.category || '') * dir;
+      }
+      if(reminderSortBy === 'dateModified'){
+        return ((a.modifiedAt || 0) - (b.modifiedAt || 0)) * dir;
+      }
+      // Default: 'alertTime'
+      const da = a.date || 'zzzz';
+      const db = b.date || 'zzzz';
+      return da.localeCompare(db) * dir;
+    });
+    saveReminderState();
+  }
 
   function getComputedReminderChip(){
     if(!reminderDateEnabled) return '';
@@ -3574,29 +3568,32 @@
   function syncDraftInputsFromDOM(){
     const titleEl = document.getElementById('rmNewTitle');
     if(titleEl) reminderDraftTitle = titleEl.value;
-    const subEls = document.querySelectorAll('.rm-subpoint-input');
-    if(subEls && subEls.length){
-      reminderDraftChecklist = Array.from(subEls).map(el => el.value);
+    if(reminderShowSubpoints){
+      const subEls = document.querySelectorAll('.rm-subpoint-input');
+      if(subEls && subEls.length){
+        reminderDraftChecklist = Array.from(subEls).map(el => el.value);
+      }
     }
   }
 
   function openNewReminderSheet(prefillItem){
     reminderDropdown = null;
     reminderSubModal = null;
+    reminderMenuOpen = false;
     if(prefillItem){
-      reminderEditingId = prefillItem.id;
+      reminderEditingId = prefillItem.id || null;
       reminderDraftTitle = prefillItem.title || '';
       if(prefillItem.checklist && prefillItem.checklist.length){
         reminderShowSubpoints = true;
-        reminderDraftChecklist = prefillItem.checklist.map(c => c.text);
+        reminderDraftChecklist = prefillItem.checklist.map(c => typeof c === 'string' ? c : c.text);
       } else {
         reminderShowSubpoints = false;
-        reminderDraftChecklist = [''];
+        reminderDraftChecklist = [];
       }
       if(prefillItem.date){
         reminderDateEnabled = true;
         const parts = prefillItem.date.split(',');
-        if(parts.length >= 2 && (prefillItem.date.includes('am') || prefillItem.date.includes('pm'))){
+        if(parts.length >= 2 && (prefillItem.date.toLowerCase().includes('am') || prefillItem.date.toLowerCase().includes('pm'))){
           reminderSelectedTimeLabel = parts[parts.length - 1].trim();
           reminderSelectedDateLabel = parts.slice(0, parts.length - 1).join(',').trim();
           reminderAllDay = false;
@@ -3605,16 +3602,17 @@
           reminderAllDay = true;
         }
       } else {
-        reminderDateEnabled = true;
+        reminderDateEnabled = Boolean(prefillItem.dateEnabled);
         reminderSelectedDateLabel = 'Today';
         reminderSelectedTimeLabel = '12:00 pm';
         reminderAllDay = false;
       }
+      reminderRepeatValue = prefillItem.repeat || "Don't repeat";
       reminderSheetExpanded = false;
     } else {
       reminderEditingId = null;
       reminderDraftTitle = '';
-      reminderDraftChecklist = [''];
+      reminderDraftChecklist = [];
       reminderShowSubpoints = false;
       reminderSheetExpanded = false; // Opens up to the 5 circular option icons by default
       reminderAllDay = false;
@@ -3641,7 +3639,7 @@
       important: impCount,
       place: placeCount,
       noAlert: noAlertCount,
-      completed: 91 + completedReminderItems.length
+      completed: completedReminderItems.length
     };
   }
 
@@ -3667,6 +3665,119 @@
       return list.filter(i => i.category === 'noAlert');
     }
     return list;
+  }
+
+  // --- Helper: Three-Dots (⋮) Overflow Menu, Sort By Menu & Try These Out Popup ---
+  function renderReminderThreeDotsMenuHtml(){
+    if(!reminderMenuOpen) return '';
+    const checkSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+    const bulbSvg = `<svg class="rm-try-bulb" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>`;
+
+    if(reminderMenuPage === 'sort'){
+      return `
+        <div class="rm-menu-dropdown" id="rmMenuDropdown">
+          <div class="rm-menu-item ${reminderSortBy === 'alertTime' ? 'active-blue' : ''}" data-sort-by="alertTime">
+            <span>Alert time</span>
+            ${reminderSortBy === 'alertTime' ? checkSvg : ''}
+          </div>
+          <div class="rm-menu-item ${reminderSortBy === 'dateModified' ? 'active-blue' : ''}" data-sort-by="dateModified">
+            <span>Date modified</span>
+            ${reminderSortBy === 'dateModified' ? checkSvg : ''}
+          </div>
+          <div class="rm-menu-item ${reminderSortBy === 'title' ? 'active-blue' : ''}" data-sort-by="title">
+            <span>Title</span>
+            ${reminderSortBy === 'title' ? checkSvg : ''}
+          </div>
+          <div class="rm-menu-item ${reminderSortBy === 'category' ? 'active-blue' : ''}" data-sort-by="category">
+            <span>Category (custom)</span>
+            ${reminderSortBy === 'category' ? checkSvg : ''}
+          </div>
+          <div class="rm-menu-divider"></div>
+          <div class="rm-menu-item ${reminderSortOrder === 'asc' ? 'active-blue' : ''}" data-sort-order="asc">
+            <span>Ascending</span>
+            ${reminderSortOrder === 'asc' ? checkSvg : ''}
+          </div>
+          <div class="rm-menu-item ${reminderSortOrder === 'desc' ? 'active-blue' : ''}" data-sort-order="desc">
+            <span>Descending</span>
+            ${reminderSortOrder === 'desc' ? checkSvg : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    if(reminderMenuPage === 'tryTheseOut'){
+      return `
+        <div class="rm-try-popup" id="rmTryPopup">
+          <div class="rm-try-header">Try these out</div>
+
+          <div class="rm-try-card" data-try-template="workout">
+            ${bulbSvg}
+            <div class="rm-try-body">
+              <div class="rm-try-title">Workout schedule</div>
+              <div class="rm-try-sub">Every Tue and Thu at 7 PM</div>
+            </div>
+          </div>
+
+          <div class="rm-try-card" data-try-template="payment">
+            ${bulbSvg}
+            <div class="rm-try-body">
+              <div class="rm-try-title">Monthly payment reminder</div>
+              <div class="rm-try-sub">Every month on the 25th</div>
+            </div>
+          </div>
+
+          <div class="rm-try-card" data-try-template="pickup">
+            ${bulbSvg}
+            <div class="rm-try-body">
+              <div class="rm-try-title">Pickup reminder</div>
+              <div class="rm-try-sub">When leaving home</div>
+            </div>
+          </div>
+
+          <div class="rm-try-card" data-try-template="gethome">
+            ${bulbSvg}
+            <div class="rm-try-body">
+              <div class="rm-try-title">Reminder for when you get home</div>
+              <div class="rm-try-sub">Every day at 8 PM or when you arrive at home</div>
+            </div>
+          </div>
+
+          <div class="rm-try-card" data-try-template="selfcare">
+            ${bulbSvg}
+            <div class="rm-try-body">
+              <div class="rm-try-title">Self-care checklist</div>
+              <div class="rm-try-checklist">
+                <div class="rm-try-check-row"><span class="rm-try-check-circle"></span><span>Drink water</span></div>
+                <div class="rm-try-check-row"><span class="rm-try-check-circle"></span><span>Meditate for 10 minutes</span></div>
+                <div class="rm-try-check-row"><span class="rm-try-check-circle"></span><span>Get 7-9 hours of sleep</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rm-try-card" data-try-template="library">
+            ${bulbSvg}
+            <div class="rm-try-body">
+              <div class="rm-try-title">Return library books</div>
+              <div class="rm-try-sub">23 Oct</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="rm-menu-dropdown" id="rmMenuDropdown">
+        <div class="rm-menu-item" data-act="menu-sync"><span>Sync now</span></div>
+        <div class="rm-menu-divider"></div>
+        <div class="rm-menu-item" data-act="menu-select"><span>Select</span></div>
+        <div class="rm-menu-item" data-act="menu-open-sort"><span>Sort by</span></div>
+        <div class="rm-menu-item" data-act="menu-manage-categories"><span>Manage categories</span></div>
+        <div class="rm-menu-item" data-act="menu-open-try"><span>Try these out</span></div>
+        <div class="rm-menu-divider"></div>
+        <div class="rm-menu-item" data-act="menu-recycle-bin"><span>Recycle bin</span></div>
+        <div class="rm-menu-item" data-act="menu-settings"><span>Settings</span></div>
+      </div>
+    `;
   }
 
   function renderSelectionTopBarHtml(){
@@ -3720,7 +3831,7 @@
     const noAlertCards = filtered.filter(i => i.section === 'No alert');
 
     if(!filtered.length){
-      return `<div class="rm-empty-state" style="min-height:24vh;">No matching reminders</div>`;
+      return `<div class="rm-empty-state" style="min-height:28vh;">${reminderSearchQuery ? 'No matching reminders' : 'No reminders'}</div>`;
     }
 
     return `
@@ -3789,13 +3900,7 @@
               <button class="rm-icon-btn" id="rmMenuToggle" title="More options">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
               </button>
-              ${reminderMenuOpen ? `
-                <div class="rm-menu-dropdown">
-                  <div class="rm-menu-item" data-act="menu-edit">✏️ Select reminders</div>
-                  <div class="rm-menu-item" data-act="menu-sort">↕️ Sort by date</div>
-                  <div class="rm-menu-item" data-act="menu-settings">⚙️ Preset settings</div>
-                </div>
-              ` : ''}
+              ${renderReminderThreeDotsMenuHtml()}
             </div>
           </div>
         `}
@@ -3811,53 +3916,65 @@
 
         <!-- 6 Summary Category Cards Grid -->
         <div class="rm-summary-grid">
-          <div class="rm-summary-card" data-view="today">
-            <div class="rm-sum-top">
-              <span class="rm-sum-icon rm-ico-today">📅</span>
-              <span class="rm-sum-count">${counts.today}</span>
+          ${reminderVisibleCategories.today ? `
+            <div class="rm-summary-card" data-view="today">
+              <div class="rm-sum-top">
+                <span class="rm-sum-icon rm-ico-today">📅</span>
+                <span class="rm-sum-count">${counts.today}</span>
+              </div>
+              <div class="rm-sum-label">Today</div>
             </div>
-            <div class="rm-sum-label">Today</div>
-          </div>
+          ` : ''}
 
-          <div class="rm-summary-card" data-view="scheduled">
-            <div class="rm-sum-top">
-              <span class="rm-sum-icon rm-ico-sched">🕒</span>
-              <span class="rm-sum-count">${counts.scheduled}</span>
+          ${reminderVisibleCategories.scheduled ? `
+            <div class="rm-summary-card" data-view="scheduled">
+              <div class="rm-sum-top">
+                <span class="rm-sum-icon rm-ico-sched">🕒</span>
+                <span class="rm-sum-count">${counts.scheduled}</span>
+              </div>
+              <div class="rm-sum-label">Scheduled</div>
             </div>
-            <div class="rm-sum-label">Scheduled</div>
-          </div>
+          ` : ''}
 
-          <div class="rm-summary-card" data-view="important">
-            <div class="rm-sum-top">
-              <span class="rm-sum-icon rm-ico-imp">⭐</span>
-              <span class="rm-sum-count">${counts.important}</span>
+          ${reminderVisibleCategories.important ? `
+            <div class="rm-summary-card" data-view="important">
+              <div class="rm-sum-top">
+                <span class="rm-sum-icon rm-ico-imp">⭐</span>
+                <span class="rm-sum-count">${counts.important}</span>
+              </div>
+              <div class="rm-sum-label">Important</div>
             </div>
-            <div class="rm-sum-label">Important</div>
-          </div>
+          ` : ''}
 
-          <div class="rm-summary-card" data-view="place">
-            <div class="rm-sum-top">
-              <span class="rm-sum-icon rm-ico-place">📍</span>
-              <span class="rm-sum-count">${counts.place}</span>
+          ${reminderVisibleCategories.place ? `
+            <div class="rm-summary-card" data-view="place">
+              <div class="rm-sum-top">
+                <span class="rm-sum-icon rm-ico-place">📍</span>
+                <span class="rm-sum-count">${counts.place}</span>
+              </div>
+              <div class="rm-sum-label">Place</div>
             </div>
-            <div class="rm-sum-label">Place</div>
-          </div>
+          ` : ''}
 
-          <div class="rm-summary-card" data-view="noAlert">
-            <div class="rm-sum-top">
-              <span class="rm-sum-icon rm-ico-noalert">🟰</span>
-              <span class="rm-sum-count">${counts.noAlert}</span>
+          ${reminderVisibleCategories.noAlert ? `
+            <div class="rm-summary-card" data-view="noAlert">
+              <div class="rm-sum-top">
+                <span class="rm-sum-icon rm-ico-noalert">🟰</span>
+                <span class="rm-sum-count">${counts.noAlert}</span>
+              </div>
+              <div class="rm-sum-label">No alert</div>
             </div>
-            <div class="rm-sum-label">No alert</div>
-          </div>
+          ` : ''}
 
-          <div class="rm-summary-card" data-view="completed">
-            <div class="rm-sum-top">
-              <span class="rm-sum-icon rm-ico-done">✔️</span>
-              <span class="rm-sum-count">${counts.completed}</span>
+          ${reminderVisibleCategories.completed ? `
+            <div class="rm-summary-card" data-view="completed">
+              <div class="rm-sum-top">
+                <span class="rm-sum-icon rm-ico-done">✔️</span>
+                <span class="rm-sum-count">${counts.completed}</span>
+              </div>
+              <div class="rm-sum-label">Completed</div>
             </div>
-            <div class="rm-sum-label">Completed</div>
-          </div>
+          ` : ''}
         </div>
 
         <!-- Reminders List -->
@@ -3900,6 +4017,7 @@
               <button class="rm-icon-btn" id="rmMenuToggle" title="More options">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
               </button>
+              ${renderReminderThreeDotsMenuHtml()}
             </div>
           </div>
         `}
@@ -3950,6 +4068,7 @@
               <button class="rm-icon-btn" id="rmMenuToggle" title="More options">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
               </button>
+              ${renderReminderThreeDotsMenuHtml()}
             </div>
           </div>
         `}
@@ -3960,7 +4079,7 @@
 
         ${reminderSelectionMode ? renderSelectionBottomBarHtml() : `
           <div class="rm-floating-pill" id="rmFloatingPill">
-            <span class="rm-pill-text">Drink water at 7 AM</span>
+            <span class="rm-pill-text">Add reminder</span>
             <button class="rm-mic-btn" title="Voice input">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
             </button>
@@ -3975,9 +4094,6 @@
 
   // --- Screen E: Completed Screen ---
   function renderReminderCompletedView(root){
-    const septItems = completedReminderItems.filter(i => i.month === 'Sept');
-    const augItems = completedReminderItems.filter(i => i.month === 'Aug');
-
     root.innerHTML = `
       <div class="reminder-container">
         <div class="rm-topbar">
@@ -3994,54 +4110,31 @@
             <button class="rm-icon-btn" id="rmMenuToggle" title="More options">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
             </button>
+            ${renderReminderThreeDotsMenuHtml()}
           </div>
         </div>
 
-        <!-- Month Group: Sept -->
-        <div class="rm-section-title">Sept</div>
-        <div class="rm-card" style="padding: 10px 16px;">
-          ${septItems.map((item, idx) => `
-            <div style="padding: 10px 0; ${idx < septItems.length - 1 ? 'border-bottom: 1px solid #f1f5f9;' : ''}">
-              <div class="rm-card-row">
-                <button class="rm-circle-check checked" title="Completed">✓</button>
-                <div class="rm-card-body">
-                  <div class="rm-card-title-row">
-                    <h3 class="rm-card-title done">${escapeAttr(item.title)}</h3>
-                  </div>
-                  ${item.declined ? `<div style="font-size: 13px; color: #4b5563; margin-top: 3px;">${escapeAttr(item.declined)}</div>` : ''}
-                  <div class="rm-card-date muted">${escapeAttr(item.date)}</div>
-                  <div style="font-size: 12px; color: #6b7280; margin-top: 2px;">${escapeAttr(item.completedAt)}</div>
-                  ${item.contact ? `
-                    <div class="rm-contact-pill">
-                      <span style="color:#10b981;font-size:14px;">📞</span>
-                      <span>${escapeAttr(item.contact)}</span>
+        ${completedReminderItems.length ? `
+          <div class="rm-card" style="padding: 10px 16px;">
+            ${completedReminderItems.map((item, idx) => `
+              <div style="padding: 10px 0; ${idx < completedReminderItems.length - 1 ? 'border-bottom: 1px solid #f1f5f9;' : ''}">
+                <div class="rm-card-row">
+                  <button class="rm-circle-check checked" data-act="uncomplete-item" data-id="${item.id}" title="Restore reminder">✓</button>
+                  <div class="rm-card-body">
+                    <div class="rm-card-title-row">
+                      <h3 class="rm-card-title done">${escapeAttr(item.title)}</h3>
+                      <button class="rm-subpoint-del" data-act="delete-completed-item" data-id="${item.id}" title="Delete permanently">×</button>
                     </div>
-                  ` : ''}
-                </div>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-
-        <!-- Month Group: Aug -->
-        <div class="rm-section-title">Aug</div>
-        <div class="rm-card" style="padding: 10px 16px;">
-          ${augItems.map((item, idx) => `
-            <div style="padding: 10px 0; ${idx < augItems.length - 1 ? 'border-bottom: 1px solid #f1f5f9;' : ''}">
-              <div class="rm-card-row">
-                <button class="rm-circle-check checked" title="Completed">✓</button>
-                <div class="rm-card-body">
-                  <div class="rm-card-title-row">
-                    <h3 class="rm-card-title done">${escapeAttr(item.title)}</h3>
-                    ${item.important ? '<span style="color:var(--rm-star);">⭐</span>' : ''}
+                    ${item.date ? `<div class="rm-card-date muted">${escapeAttr(item.date)}</div>` : ''}
+                    ${item.completedAt ? `<div style="font-size: 12px; color: #6b7280; margin-top: 2px;">${escapeAttr(item.completedAt)}</div>` : ''}
                   </div>
-                  <div class="rm-card-date muted">${escapeAttr(item.date)}</div>
-                  <div style="font-size: 12px; color: #6b7280; margin-top: 2px;">${escapeAttr(item.completedAt)}</div>
                 </div>
               </div>
-            </div>
-          `).join('')}
-        </div>
+            `).join('')}
+          </div>
+        ` : `
+          <div class="rm-empty-state">No completed reminders</div>
+        `}
 
         ${reminderAddSheetOpen ? renderAddReminderSheetHtml() : ''}
         ${reminderSubModal ? renderReminderSubModalHtml() : ''}
@@ -4066,6 +4159,7 @@
               <button class="rm-icon-btn" id="rmMenuToggle" title="More options">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
               </button>
+              ${renderReminderThreeDotsMenuHtml()}
             </div>
           </div>
         `}
@@ -4114,11 +4208,14 @@
             ${item.checklist && item.checklist.length ? `
               <ul class="rm-checklist">
                 ${item.checklist.map((sub, idx) => `
-                  <li class="rm-checklist-item ${sub.done ? 'done' : ''}">
-                    <button class="rm-sub-check ${sub.done ? 'checked' : ''}" data-act="toggle-subcheck" data-id="${item.id}" data-idx="${idx}">
-                      ${sub.done ? '✓' : ''}
-                    </button>
-                    <span>${escapeAttr(sub.text)}</span>
+                  <li class="rm-checklist-item ${sub.done ? 'done' : ''}" style="justify-content:space-between;">
+                    <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
+                      <button class="rm-sub-check ${sub.done ? 'checked' : ''}" data-act="toggle-subcheck" data-id="${item.id}" data-idx="${idx}">
+                        ${sub.done ? '✓' : ''}
+                      </button>
+                      <span style="word-break:break-word;">${escapeAttr(sub.text)}</span>
+                    </div>
+                    <button type="button" class="rm-subpoint-del" data-act="delete-card-subitem" data-id="${item.id}" data-idx="${idx}" title="Remove item">×</button>
                   </li>
                 `).join('')}
               </ul>
@@ -4144,14 +4241,14 @@
             <input type="text" class="rm-sheet-title-input" id="rmNewTitle" placeholder="Add reminder" value="${escapeAttr(reminderDraftTitle)}" autofocus>
           </div>
 
-          <!-- Subpoints / Checklist (toggled by the 1st circular tick button) -->
+          <!-- Subpoints / Checklist (toggled by the 1st circular tick button; every row has a × remove button) -->
           ${reminderShowSubpoints ? `
             <div class="rm-subpoints-wrap" id="rmSubpointsWrap">
               ${reminderDraftChecklist.map((val, idx) => `
                 <div class="rm-subpoint-row">
                   <div class="rm-subpoint-circle"></div>
                   <input type="text" class="rm-sheet-input rm-subpoint-input" data-sub-idx="${idx}" placeholder="Item" value="${escapeAttr(val)}">
-                  ${reminderDraftChecklist.length > 1 ? `<button class="rm-subpoint-del" data-act="remove-subpoint" data-sub-idx="${idx}" title="Remove item">×</button>` : ''}
+                  <button type="button" class="rm-subpoint-del" data-act="remove-subpoint" data-sub-idx="${idx}" title="Remove item">×</button>
                 </div>
               `).join('')}
             </div>
@@ -4172,8 +4269,8 @@
 
           <!-- 5 Circular Option Icons Row -->
           <div class="rm-icon-options-row ${reminderSheetExpanded ? 'expanded' : ''}">
-            <!-- 1. Circle with right tick: toggles subpoints ("Item") -->
-            <button type="button" class="rm-opt-circle ${reminderShowSubpoints ? 'active' : ''}" data-opt="check" title="Add subpoints / checklist">
+            <!-- 1. Circle with right tick: toggles subpoints ("Item") on/off -->
+            <button type="button" class="rm-opt-circle ${reminderShowSubpoints ? 'active' : ''}" data-opt="check" title="Add or remove subpoints / checklist">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11.2 14.2 15.5 9.8"/></svg>
             </button>
             <!-- 2. Calendar icon: expands the full date/time/repeat/alert options -->
@@ -4286,8 +4383,84 @@
     `;
   }
 
-  // --- Sub-Modals: Show preset times, Repeat (Custom), Early alert (Custom), Date Picker, Time Picker ---
+  // --- Sub-Modals: Show preset times, Repeat (Custom), Early alert (Custom), Date Picker, Time Picker, Manage Categories, Recycle Bin ---
   function renderReminderSubModalHtml(){
+    if(reminderSubModal === 'manageCategories'){
+      const cats = [
+        { key: 'today', label: 'Today', icon: '📅' },
+        { key: 'scheduled', label: 'Scheduled', icon: '🕒' },
+        { key: 'important', label: 'Important', icon: '⭐' },
+        { key: 'place', label: 'Place', icon: '📍' },
+        { key: 'noAlert', label: 'No alert', icon: '🟰' },
+        { key: 'completed', label: 'Completed', icon: '✔️' }
+      ];
+      return `
+        <div class="rm-submodal-overlay" id="rmSubModalOverlay">
+          <div class="rm-submodal-page">
+            <div class="rm-submodal-header">
+              <div class="rm-submodal-header-left">
+                <button type="button" class="rm-back-btn" data-act="close-submodal" title="Back">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <h2 class="rm-submodal-title">Manage categories</h2>
+              </div>
+              <button type="button" class="rm-dt-pill" data-act="close-submodal" style="background:#2563eb;color:#ffffff;">Done</button>
+            </div>
+            <div class="rm-submodal-card">
+              ${cats.map(c => `
+                <div class="rm-submodal-row" data-act="toggle-cat-vis" data-cat-key="${c.key}">
+                  <span style="display:flex;align-items:center;gap:10px;font-weight:500;">
+                    <span>${c.icon}</span>
+                    <span>${c.label}</span>
+                  </span>
+                  <label class="rm-toggle" onclick="event.stopPropagation()">
+                    <input type="checkbox" data-cat-toggle="${c.key}" ${reminderVisibleCategories[c.key] ? 'checked' : ''}>
+                    <span class="rm-toggle-slider"></span>
+                  </label>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    if(reminderSubModal === 'recycleBin'){
+      return `
+        <div class="rm-submodal-overlay" id="rmSubModalOverlay">
+          <div class="rm-submodal-page">
+            <div class="rm-submodal-header">
+              <div class="rm-submodal-header-left">
+                <button type="button" class="rm-back-btn" data-act="close-submodal" title="Back">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <h2 class="rm-submodal-title">Recycle bin</h2>
+              </div>
+              ${recycleBinReminderItems.length ? `
+                <button type="button" class="rm-dt-pill" data-act="empty-recycle-bin" style="background:#fee2e2;color:#dc2626;">Empty</button>
+              ` : ''}
+            </div>
+            <div class="rm-submodal-card" style="padding:12px 16px;">
+              ${recycleBinReminderItems.length ? recycleBinReminderItems.map((item, idx) => `
+                <div class="rm-submodal-row" style="cursor:default;">
+                  <div style="display:flex;flex-direction:column;gap:2px;">
+                    <span style="font-weight:600;color:#111827;">${escapeAttr(item.title)}</span>
+                    ${item.date ? `<span style="font-size:12px;color:#6b7280;">${escapeAttr(item.date)}</span>` : ''}
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <button type="button" class="rm-dt-pill" data-act="restore-trash-item" data-idx="${idx}" style="font-size:12px;padding:4px 10px;">Restore</button>
+                    <button type="button" class="rm-subpoint-del" data-act="delete-trash-item" data-idx="${idx}" title="Delete forever">×</button>
+                  </div>
+                </div>
+              `).join('') : `
+                <div style="padding:28px 0;text-align:center;color:#6b7280;font-size:14.5px;">No reminders in Recycle bin</div>
+              `}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     if(reminderSubModal === 'presetSettings'){
       const list = reminderPresetTab === 'time' ? reminderTimePresets : reminderDatePresets;
       return `
@@ -4650,19 +4823,21 @@
               item.completed = true;
               completedReminderItems.unshift({
                 id: 'c-' + Date.now() + '-' + item.id,
-                month: 'Sept',
+                month: 'Oct',
                 title: item.title,
                 declined: null,
                 date: item.date || 'Today',
                 completedAt: 'Completed: Just now',
                 contact: null,
-                important: item.important
+                important: item.important,
+                checklist: item.checklist || []
               });
             }
           });
           reminderItems = reminderItems.filter(item => !reminderSelectedIds.has(item.id));
           reminderSelectionMode = false;
           reminderSelectedIds.clear();
+          saveReminderState();
           showToast(ids.length > 1 ? `${ids.length} reminders completed` : 'Reminder completed');
           renderReminderSection();
           return;
@@ -4687,16 +4862,23 @@
           });
           reminderSelectionMode = false;
           reminderSelectedIds.clear();
+          saveReminderState();
           showToast(anyUnstarred ? 'Marked as important' : 'Removed from important');
           renderReminderSection();
           return;
         }
 
         if(act === 'delete'){
+          reminderItems.forEach(item => {
+            if(reminderSelectedIds.has(item.id)){
+              recycleBinReminderItems.unshift(item);
+            }
+          });
           reminderItems = reminderItems.filter(item => !reminderSelectedIds.has(item.id));
           reminderSelectionMode = false;
           reminderSelectedIds.clear();
-          showToast(ids.length > 1 ? `${ids.length} reminders deleted` : 'Reminder deleted');
+          saveReminderState();
+          showToast(ids.length > 1 ? `${ids.length} reminders moved to Recycle bin` : 'Reminder moved to Recycle bin');
           renderReminderSection();
           return;
         }
@@ -4724,6 +4906,7 @@
           reminderCurrentView = v;
           reminderSelectionMode = false;
           reminderSelectedIds.clear();
+          reminderMenuOpen = false;
           renderReminderSection();
           return;
         }
@@ -4734,6 +4917,7 @@
         reminderCurrentView = 'main';
         reminderSelectionMode = false;
         reminderSelectedIds.clear();
+        reminderMenuOpen = false;
         renderReminderSection();
         return;
       }
@@ -4761,14 +4945,170 @@
         return;
       }
 
-      // 4. Menu toggle
+      // 4. Three-Dots Menu toggle & submenu interactions
       if(e.target.closest('#rmMenuToggle')){
         reminderMenuOpen = !reminderMenuOpen;
+        reminderMenuPage = 'main';
         renderReminderSection();
         return;
-      } else if(reminderMenuOpen && !e.target.closest('.rm-menu-dropdown')){
+      }
+
+      // Sort by items inside Sort submenu
+      const sortByItem = e.target.closest('[data-sort-by]');
+      if(sortByItem){
+        reminderSortBy = sortByItem.getAttribute('data-sort-by');
+        applyReminderSort();
         reminderMenuOpen = false;
+        reminderMenuPage = 'main';
         renderReminderSection();
+        return;
+      }
+      const sortOrdItem = e.target.closest('[data-sort-order]');
+      if(sortOrdItem){
+        reminderSortOrder = sortOrdItem.getAttribute('data-sort-order');
+        applyReminderSort();
+        reminderMenuOpen = false;
+        reminderMenuPage = 'main';
+        renderReminderSection();
+        return;
+      }
+
+      // "Try these out" template card click -> opens Add Reminder sheet pre-filled with that template
+      const tryCard = e.target.closest('[data-try-template]');
+      if(tryCard){
+        const tpl = tryCard.getAttribute('data-try-template');
+        reminderMenuOpen = false;
+        reminderMenuPage = 'main';
+        if(tpl === 'workout'){
+          openNewReminderSheet({ title: 'Workout schedule', date: 'Tue, 7:00 pm', repeat: 'Every week', checklist: [] });
+        } else if(tpl === 'payment'){
+          openNewReminderSheet({ title: 'Monthly payment reminder', date: '25 Oct, 9:00 am', repeat: 'Every month', checklist: [] });
+        } else if(tpl === 'pickup'){
+          openNewReminderSheet({ title: 'Pickup reminder', date: null, dateEnabled: false, checklist: [] });
+        } else if(tpl === 'gethome'){
+          openNewReminderSheet({ title: 'Reminder for when you get home', date: 'Today, 8:00 pm', repeat: 'Every day', checklist: [] });
+        } else if(tpl === 'selfcare'){
+          openNewReminderSheet({
+            title: 'Self-care checklist',
+            date: 'Today, 9:00 am',
+            checklist: ['Drink water', 'Meditate for 10 minutes', 'Get 7-9 hours of sleep']
+          });
+        } else if(tpl === 'library'){
+          openNewReminderSheet({ title: 'Return library books', date: '23 Oct', checklist: [] });
+        }
+        return;
+      }
+
+      // Main 3-dots menu items
+      const mi = e.target.closest('[data-act^="menu-"]');
+      if(mi){
+        const act = mi.getAttribute('data-act');
+        if(act === 'menu-open-sort'){
+          reminderMenuPage = 'sort';
+          renderReminderSection();
+          return;
+        }
+        if(act === 'menu-open-try'){
+          reminderMenuPage = 'tryTheseOut';
+          renderReminderSection();
+          return;
+        }
+        reminderMenuOpen = false;
+        reminderMenuPage = 'main';
+        if(act === 'menu-sync'){
+          saveReminderState();
+          showToast('Synced reminders');
+        } else if(act === 'menu-select'){
+          reminderSelectionMode = true;
+          reminderSelectedIds.clear();
+        } else if(act === 'menu-manage-categories'){
+          reminderSubModal = 'manageCategories';
+        } else if(act === 'menu-recycle-bin'){
+          reminderSubModal = 'recycleBin';
+        } else if(act === 'menu-settings'){
+          reminderSubModal = 'presetSettings';
+        }
+        renderReminderSection();
+        return;
+      }
+
+      if(reminderMenuOpen && !e.target.closest('.rm-menu-dropdown') && !e.target.closest('.rm-try-popup')){
+        reminderMenuOpen = false;
+        reminderMenuPage = 'main';
+        renderReminderSection();
+        return;
+      }
+
+      // Manage Categories & Recycle Bin sub-modal actions
+      const catVisRow = e.target.closest('[data-act="toggle-cat-vis"]');
+      if(catVisRow){
+        const k = catVisRow.getAttribute('data-cat-key');
+        if(k){
+          reminderVisibleCategories[k] = !reminderVisibleCategories[k];
+          renderReminderSection();
+        }
+        return;
+      }
+      if(e.target.closest('[data-act="empty-recycle-bin"]')){
+        recycleBinReminderItems = [];
+        saveReminderState();
+        showToast('Recycle bin emptied');
+        renderReminderSection();
+        return;
+      }
+      const restBtn = e.target.closest('[data-act="restore-trash-item"]');
+      if(restBtn){
+        const idx = Number(restBtn.getAttribute('data-idx'));
+        const [restored] = recycleBinReminderItems.splice(idx, 1);
+        if(restored){
+          reminderItems.unshift(restored);
+          saveReminderState();
+          showToast('Reminder restored');
+        }
+        renderReminderSection();
+        return;
+      }
+      const delTrashBtn = e.target.closest('[data-act="delete-trash-item"]');
+      if(delTrashBtn){
+        const idx = Number(delTrashBtn.getAttribute('data-idx'));
+        recycleBinReminderItems.splice(idx, 1);
+        saveReminderState();
+        renderReminderSection();
+        return;
+      }
+
+      // Completed view actions: restore or delete permanently
+      const uncompBtn = e.target.closest('[data-act="uncomplete-item"]');
+      if(uncompBtn){
+        const id = uncompBtn.getAttribute('data-id');
+        const idx = completedReminderItems.findIndex(c => c.id === id);
+        if(idx !== -1){
+          const [comp] = completedReminderItems.splice(idx, 1);
+          reminderItems.unshift({
+            id: 'rm-' + Date.now(),
+            title: comp.title,
+            important: Boolean(comp.important),
+            category: comp.date && comp.date.startsWith('Today') ? 'today' : (comp.date ? 'scheduled' : 'noAlert'),
+            section: comp.date ? 'main' : 'No alert',
+            completed: false,
+            date: comp.date || null,
+            checklist: comp.checklist || [],
+            modifiedAt: Date.now()
+          });
+          saveReminderState();
+          showToast('Reminder restored');
+          renderReminderSection();
+        }
+        return;
+      }
+      const delCompBtn = e.target.closest('[data-act="delete-completed-item"]');
+      if(delCompBtn){
+        const id = delCompBtn.getAttribute('data-id');
+        completedReminderItems = completedReminderItems.filter(c => c.id !== id);
+        saveReminderState();
+        showToast('Completed reminder deleted');
+        renderReminderSection();
+        return;
       }
 
       // 5. Floating pill -> open add sheet (compact up to 5 options)
@@ -4799,12 +5139,21 @@
         const opt = optBtn.getAttribute('data-opt');
         if(opt === 'check'){
           reminderShowSubpoints = !reminderShowSubpoints;
-          if(reminderShowSubpoints && (!reminderDraftChecklist || !reminderDraftChecklist.length)){
-            reminderDraftChecklist = [''];
+          if(reminderShowSubpoints){
+            if(!reminderDraftChecklist || !reminderDraftChecklist.length){
+              reminderDraftChecklist = [''];
+            }
+          } else {
+            reminderDraftChecklist = [];
           }
           renderReminderSection();
-          const subInputs = document.querySelectorAll('.rm-subpoint-input');
-          if(subInputs.length) subInputs[subInputs.length - 1].focus();
+          if(reminderShowSubpoints){
+            const subInputs = document.querySelectorAll('.rm-subpoint-input');
+            if(subInputs.length) subInputs[subInputs.length - 1].focus();
+          } else {
+            const titleEl = document.getElementById('rmNewTitle');
+            if(titleEl) titleEl.focus();
+          }
           return;
         }
         if(opt === 'calendar'){
@@ -4828,14 +5177,31 @@
         }
       }
 
-      // Remove subpoint item
+      // Remove subpoint item (if last item is removed, hides the entire subpoint list cleanly!)
       const remSub = e.target.closest('[data-act="remove-subpoint"]');
       if(remSub){
         syncDraftInputsFromDOM();
         const idx = Number(remSub.getAttribute('data-sub-idx'));
         reminderDraftChecklist.splice(idx, 1);
-        if(!reminderDraftChecklist.length) reminderDraftChecklist = [''];
+        if(reminderDraftChecklist.length === 0){
+          reminderShowSubpoints = false;
+          reminderDraftChecklist = [];
+        }
         renderReminderSection();
+        return;
+      }
+
+      // Remove sub-item directly from a saved Reminder card
+      const delCardSub = e.target.closest('[data-act="delete-card-subitem"]');
+      if(delCardSub){
+        const id = delCardSub.getAttribute('data-id');
+        const idx = Number(delCardSub.getAttribute('data-idx'));
+        const item = reminderItems.find(i => i.id === id);
+        if(item && item.checklist){
+          item.checklist.splice(idx, 1);
+          saveReminderState();
+          renderReminderSection();
+        }
         return;
       }
 
@@ -5111,13 +5477,25 @@
         return;
       }
 
-      // 16. Toggle checkmark on card
+      // 16. Toggle checkmark on card (moves to Completed)
       const checkBtn = e.target.closest('[data-act="toggle-check"]');
       if(checkBtn){
         const id = checkBtn.getAttribute('data-id');
-        const item = reminderItems.find(i => i.id === id);
-        if(item){
-          item.completed = !item.completed;
+        const idx = reminderItems.findIndex(i => i.id === id);
+        if(idx !== -1){
+          const [item] = reminderItems.splice(idx, 1);
+          completedReminderItems.unshift({
+            id: 'c-' + Date.now() + '-' + item.id,
+            month: 'Oct',
+            title: item.title,
+            declined: null,
+            date: item.date || 'Today',
+            completedAt: 'Completed: Just now',
+            contact: null,
+            important: item.important,
+            checklist: item.checklist || []
+          });
+          saveReminderState();
           renderReminderSection();
         }
         return;
@@ -5130,6 +5508,7 @@
         const item = reminderItems.find(i => i.id === id);
         if(item){
           item.important = !item.important;
+          saveReminderState();
           renderReminderSection();
         }
         return;
@@ -5143,6 +5522,7 @@
         const item = reminderItems.find(i => i.id === id);
         if(item && item.checklist && item.checklist[idx]){
           item.checklist[idx].done = !item.checklist[idx].done;
+          saveReminderState();
           renderReminderSection();
         }
         return;
@@ -5167,6 +5547,8 @@
               existing.checklist = validSubpoints;
               existing.category = finalDate ? (finalDate.startsWith('Today') ? 'today' : 'scheduled') : 'noAlert';
               existing.section = finalDate ? 'main' : 'No alert';
+              existing.modifiedAt = Date.now();
+              saveReminderState();
               showToast('Reminder updated');
             }
           } else {
@@ -5174,12 +5556,14 @@
               id: 'rm-' + Date.now(),
               title: finalTitle,
               important: reminderCurrentView === 'important',
-              category: reminderCurrentView === 'today' ? 'today' : (finalDate ? 'scheduled' : 'noAlert'),
+              category: reminderCurrentView === 'today' ? 'today' : (finalDate ? (finalDate.startsWith('Today') ? 'today' : 'scheduled') : 'noAlert'),
               section: finalDate ? 'main' : 'No alert',
               completed: false,
               date: finalDate,
-              checklist: validSubpoints
+              checklist: validSubpoints,
+              modifiedAt: Date.now()
             });
+            saveReminderState();
             showToast('Reminder added: ' + finalTitle);
           }
         }
@@ -5194,23 +5578,6 @@
       if(e.target.closest('[data-act="clear-chip"]')){
         syncDraftInputsFromDOM();
         reminderDateEnabled = false;
-        renderReminderSection();
-        return;
-      }
-
-      // 21. Menu items
-      const mi = e.target.closest('[data-act^="menu-"]');
-      if(mi){
-        const act = mi.getAttribute('data-act');
-        reminderMenuOpen = false;
-        if(act === 'menu-edit'){
-          reminderSelectionMode = true;
-        } else if(act === 'menu-settings'){
-          reminderSubModal = 'presetSettings';
-        } else if(act === 'menu-sort'){
-          reminderItems.reverse();
-          showToast('Sorted reminders');
-        }
         renderReminderSection();
         return;
       }
@@ -5253,6 +5620,12 @@
     });
 
     document.addEventListener('change', (e) => {
+      const catToggleKey = e.target.getAttribute('data-cat-toggle');
+      if(catToggleKey){
+        reminderVisibleCategories[catToggleKey] = e.target.checked;
+        renderReminderSection();
+        return;
+      }
       if(e.target.id === 'rmAllDayToggle'){
         syncDraftInputsFromDOM();
         reminderAllDay = e.target.checked;
@@ -5277,7 +5650,7 @@
       }
     });
 
-    // Handle Enter & Escape keys inside Add Reminder & Subpoints
+    // Handle Enter, Backspace & Escape keys inside Add Reminder & Subpoints
     document.addEventListener('keydown', (e) => {
       if(e.key === 'Enter' && e.target.id === 'rmNewTitle'){
         if(reminderShowSubpoints){
@@ -5300,6 +5673,25 @@
         if(subInputs[idx + 1]) subInputs[idx + 1].focus();
         return;
       }
+      if(e.key === 'Backspace' && e.target.classList.contains('rm-subpoint-input') && e.target.value === ''){
+        e.preventDefault();
+        syncDraftInputsFromDOM();
+        const idx = Number(e.target.getAttribute('data-sub-idx'));
+        reminderDraftChecklist.splice(idx, 1);
+        if(reminderDraftChecklist.length === 0){
+          reminderShowSubpoints = false;
+          reminderDraftChecklist = [];
+          renderReminderSection();
+          const titleEl = document.getElementById('rmNewTitle');
+          if(titleEl) titleEl.focus();
+        } else {
+          renderReminderSection();
+          const subInputs = document.querySelectorAll('.rm-subpoint-input');
+          const focusIdx = Math.max(0, idx - 1);
+          if(subInputs[focusIdx]) subInputs[focusIdx].focus();
+        }
+        return;
+      }
       if(e.key === 'Enter' && e.target.id === 'rmCustomPresetInput'){
         e.preventDefault();
         const saveBtn = document.querySelector('[data-act="save-custom-preset"]');
@@ -5307,7 +5699,11 @@
         return;
       }
       if(e.key === 'Escape'){
-        if(reminderSubModal){
+        if(reminderMenuOpen){
+          reminderMenuOpen = false;
+          reminderMenuPage = 'main';
+          renderReminderSection();
+        } else if(reminderSubModal){
           reminderSubModal = null;
           renderReminderSection();
         } else if(reminderAddSheetOpen){
