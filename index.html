@@ -1283,6 +1283,26 @@
 
 <script>
 (function(){
+  // Safe toast & helper functions available globally
+  function showToast(msg){
+    let t = document.getElementById('globalToast');
+    if(!t){
+      t = document.createElement('div');
+      t.id = 'globalToast';
+      t.className = 'app-toast';
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 3000);
+  }
+  function drToast(msg){ return showToast(msg); }
+  function drReset(){}
+  window.showToast = showToast;
+  window.drToast = showToast;
+  window.drReset = drReset;
+
   // ======================================================
   // Connected to your Supabase project: habit-tracker
   const SUPABASE_URL = 'https://zfpcfibranwzzbpydgxp.supabase.co';
@@ -3689,6 +3709,80 @@
     });
   }
 
+  function renderPage(){
+    const root = document.getElementById('pageRoot');
+    if(!root) return;
+    document.body.classList.toggle('reminder-mode', section === 'reminder');
+    if(section === 'reminder'){
+      renderReminderSection();
+      return;
+    }
+    if(section === 'settings'){
+      renderSettingsPage();
+      return;
+    }
+    if(section === 'report'){
+      const plan = getEffectivePlan();
+      if(!PLAN_LIMITS[plan].reports){
+        renderLockedReportPage();
+        return;
+      }
+      if(page !== 'reportWeekly' && page !== 'reportMonthly') page = 'reportWeekly';
+      renderReportPage(page);
+      return;
+    }
+    root.innerHTML = `
+      <div class="hero">
+        <div class="side-card" id="rulesBox"></div>
+        <div class="title-block" id="titleBlock"></div>
+        <div class="side-card" id="motivationBox"></div>
+      </div>
+      <div class="controls-bar" id="controlsBar"></div>
+      <div class="grid-wrapper" id="gridWrapper"></div>
+      <p class="footnote">Your habits, rules and progress are saved automatically to this app.</p>
+    `;
+    renderSideCard('rulesBox', 'rules', 'my rules');
+    renderSideCard('motivationBox', 'motivations', 'Daily motivation');
+    renderTitleBlock();
+    renderControlsBar();
+    renderGrid();
+  }
+
+  function goBackFromReport(){
+    if(pendingReportQueue.length){
+      const next = pendingReportQueue.shift();
+      page = next === 'weekly' ? 'reportWeekly' : 'reportMonthly';
+    } else {
+      section = 'tracker';
+      page = 'tracker';
+      renderBottomNav();
+    }
+    renderPage();
+  }
+
+  function checkAutoReports(){
+    const today = startOfDay(new Date());
+    const mondayKey = dateKey(getMonday(today));
+    const monthKey = `${today.getFullYear()}-${pad(today.getMonth()+1)}`;
+    const queue = [];
+    if(today.getDay() === 0 && data.lastWeeklyReportWeek !== mondayKey){
+      data.lastWeeklyReportWeek = mondayKey;
+      queue.push('weekly');
+    }
+    if(today.getDate() === 1 && data.lastMonthlyReportMonth !== monthKey){
+      data.lastMonthlyReportMonth = monthKey;
+      queue.push('monthly');
+    }
+    if(queue.length){
+      scheduleSave();
+      pendingReportQueue = queue.slice(1);
+      page = queue[0] === 'weekly' ? 'reportWeekly' : 'reportMonthly';
+      section = 'report';
+      renderBottomNav();
+      renderPage();
+    }
+  }
+
   // ---------- events ----------
   document.addEventListener('input', (e) => {
     if(e.target.matches('[data-list]')){
@@ -4029,7 +4123,6 @@
   }
 
   function renderLoginScreen(errorMsg, mode, okMsg){
-    drReset();
     mode = mode || 'login';
     document.body.classList.add('dark');
     const el = document.getElementById('loginRoot');
@@ -4085,6 +4178,12 @@
         <input type="email" id="loginEmail" placeholder="Email address" autocomplete="username">
         <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
         <button id="loginBtn">Log in &rarr;</button>
+        <div style="margin:12px 0 8px;display:flex;align-items:center;gap:8px;">
+          <div style="flex:1;height:1px;background:rgba(255,255,255,0.12);"></div>
+          <span style="font-size:11px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1px;">or</span>
+          <div style="flex:1;height:1px;background:rgba(255,255,255,0.12);"></div>
+        </div>
+        <button type="button" class="guest-btn" id="guestBtn" style="background:rgba(0,230,118,0.12);border:1px solid rgba(0,230,118,0.35);color:#00e676;font-weight:700;padding:12px;border-radius:10px;cursor:pointer;width:100%;font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px;">✨ Explore App as Guest / Preview &rarr;</button>
         <button class="link-btn" id="forgotLinkBtn">Forgot password?</button>
         <button class="link-btn" id="createLinkBtn">New here? Create new account</button>`;
     }
@@ -4487,8 +4586,18 @@
     renderLoginScreen('', 'login');
   }
 
+  async function handleGuestLogin(){
+    currentUserId = 'guest_demo';
+    currentUserEmail = 'demo@keepit.app';
+    setSavedCurrentUser({ id: currentUserId, email: currentUserEmail, isLocalOnly: true });
+    document.getElementById('loginRoot').innerHTML = '';
+    document.getElementById('app').style.display = '';
+    await startApp();
+  }
+
   document.addEventListener('click', (e) => {
     if(e.target.id === 'loginBtn') handleLogin();
+    if(e.target.id === 'guestBtn' || (e.target.closest && e.target.closest('#guestBtn'))) handleGuestLogin();
     if(e.target.id === 'logoutBtn') handleLogout();
     if(e.target.id === 'createLinkBtn') renderLoginScreen('', 'signup');
     if(e.target.id === 'signupBtn') handleSignup();
@@ -4597,14 +4706,27 @@
       renderLoginScreen('', 'reset');
       return;
     }
-    // 1. Check Supabase session
+    const isGuestRequest = location.search.includes('guest') || location.search.includes('preview') || location.search.includes('demo') || location.hash === '#guest' || location.hash === '#reminder' || location.hash === '#preview';
+    if(isGuestRequest){
+      currentUserId = 'guest_demo';
+      currentUserEmail = 'demo@keepit.app';
+      setSavedCurrentUser({ id: currentUserId, email: currentUserEmail, isLocalOnly: true });
+      if(location.hash === '#reminder' || location.search.includes('reminder')) section = 'reminder';
+      document.getElementById('app').style.display = '';
+      await startApp();
+      return;
+    }
+    // 1. Check Supabase session with safe timeout
     if(sb){
       try {
-        const { data: sessionData } = await sb.auth.getSession();
+        const sessionPromise = sb.auth.getSession();
+        const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 1500));
+        const { data: sessionData } = await Promise.race([sessionPromise, timeoutPromise]);
         if(sessionData && sessionData.session && sessionData.session.user){
           currentUserId = sessionData.session.user.id;
           currentUserEmail = sessionData.session.user.email || null;
           setSavedCurrentUser({ id: currentUserId, email: currentUserEmail, isLocalOnly: false });
+          if(location.hash === '#reminder') section = 'reminder';
           document.getElementById('app').style.display = '';
           await startApp();
           return;
@@ -4616,6 +4738,7 @@
     if(savedUser && savedUser.id && savedUser.email){
       currentUserId = savedUser.id;
       currentUserEmail = savedUser.email;
+      if(location.hash === '#reminder') section = 'reminder';
       document.getElementById('app').style.display = '';
       await startApp();
       return;
