@@ -721,20 +721,67 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+  }
+  .rm-sheet-title-input {
+    border: none;
+    outline: none;
+    font-size: 18px;
+    font-weight: 500;
+    width: 100%;
+    color: #111827;
+    background: transparent;
+    padding: 4px 0;
+  }
+  .rm-sheet-title-input::placeholder {
+    color: #9ca3af;
+    font-weight: 400;
   }
   .rm-sheet-input {
     border: none;
     outline: none;
-    font-size: 16px;
+    font-size: 15px;
     width: 100%;
     color: #111827;
+    background: transparent;
+  }
+  .rm-sheet-input::placeholder {
+    color: #9ca3af;
+  }
+  .rm-subpoints-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 4px 0 12px 2px;
+  }
+  .rm-subpoint-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .rm-subpoint-circle {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    border-radius: 50%;
+    border: 1.8px solid #9ca3af;
+    background: transparent;
+  }
+  .rm-subpoint-del {
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 4px;
+    line-height: 1;
   }
   .rm-chip-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 14px;
+    margin-top: 6px;
   }
   .rm-time-chip {
     display: inline-flex;
@@ -752,13 +799,14 @@
     border: none;
     color: #ef4444;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 15px;
     padding: 0;
     display: flex;
+    align-items: center;
   }
   .rm-confirm-btn {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     background: var(--rm-blue);
     color: #ffffff;
@@ -767,8 +815,9 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 16px;
     transition: background 0.15s ease;
+    margin-left: auto;
   }
   .rm-confirm-btn:hover {
     background: #2563eb;
@@ -777,42 +826,65 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
-    padding: 12px 0;
+    padding: 12px 0 6px;
     border-top: 1px solid #f1f5f9;
+    margin-bottom: 4px;
+  }
+  .rm-icon-options-row.expanded {
+    padding-bottom: 12px;
     border-bottom: 1px solid #f1f5f9;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
   }
   .rm-opt-circle {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: #f1f5f9;
+    border: 1px solid transparent;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #475569;
-    font-size: 15px;
+    color: #334155;
+    font-size: 16px;
     transition: all 0.15s ease;
   }
   .rm-opt-circle:hover {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
+    background: #e2e8f0;
+  }
+  .rm-opt-circle.active {
+    background: #dbeafe;
+    color: #2563eb;
+    border-color: #93c5fd;
   }
   .rm-setting-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 12px 0;
-    font-size: 14px;
-    color: #334155;
+    font-size: 14.5px;
+    color: #1f2937;
     cursor: pointer;
+    position: relative;
   }
   .rm-setting-left {
     display: flex;
     align-items: center;
     gap: 12px;
+  }
+  .rm-dt-pill {
+    background: #e2e8f0;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #1e293b;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .rm-dt-pill:hover {
+    background: #cbd5e1;
   }
   .rm-toggle {
     position: relative;
@@ -851,24 +923,398 @@
   }
   .rm-quick-chips-scroll {
     display: flex;
+    align-items: center;
     gap: 8px;
     overflow-x: auto;
-    padding: 4px 0 10px;
+    padding: 4px 0 12px 28px;
     -webkit-overflow-scrolling: touch;
   }
   .rm-quick-chip {
     white-space: nowrap;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    padding: 6px 12px;
+    background: #f1f5f9;
+    border: 1px solid transparent;
+    padding: 6px 13px;
     border-radius: 9999px;
-    font-size: 12px;
+    font-size: 12.5px;
     color: #475569;
     cursor: pointer;
-    transition: background 0.15s ease;
+    transition: all 0.15s ease;
   }
   .rm-quick-chip:hover {
+    background: #e2e8f0;
+  }
+  .rm-quick-chip.active {
+    background: #dbeafe;
+    color: #1d4ed8;
+    border-color: #93c5fd;
+    font-weight: 600;
+  }
+  .rm-preset-gear-btn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 50%;
     background: #f1f5f9;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #475569;
+    transition: background 0.15s ease;
+  }
+  .rm-preset-gear-btn:hover {
+    background: #e2e8f0;
+  }
+
+  /* Selection Mode UI (Top pills + Card blue check + Bottom 4-icon bar) */
+  .rm-sel-pill-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #ffffff;
+    border: none;
+    border-radius: 9999px;
+    padding: 8px 16px;
+    box-shadow: var(--rm-card-shadow);
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+    cursor: pointer;
+  }
+  .rm-sel-all-circle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #9ca3af;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #ffffff;
+  }
+  .rm-sel-all-circle.checked {
+    background: #3b82f6;
+    border-color: #3b82f6;
+  }
+  .rm-sel-pill-cancel {
+    background: #ffffff;
+    border: none;
+    border-radius: 9999px;
+    padding: 8px 18px;
+    box-shadow: var(--rm-card-shadow);
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+    cursor: pointer;
+  }
+  .rm-circle-check.selected-blue {
+    background: #3b82f6 !important;
+    border-color: #3b82f6 !important;
+    color: #ffffff !important;
+  }
+  .rm-card.rm-selectable {
+    cursor: pointer;
+    user-select: none;
+  }
+  .rm-selection-bottom-bar {
+    position: fixed;
+    bottom: 84px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 48px);
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: 9999px;
+    padding: 8px 16px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    z-index: 65;
+  }
+  .rm-sel-action-btn {
+    background: transparent;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    color: #1f2937;
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 12px;
+    transition: background 0.15s ease;
+  }
+  .rm-sel-action-btn:hover {
+    background: #f1f5f9;
+  }
+  .rm-sel-action-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  /* Floating Dropdown inside Add Sheet (Repeat / Early Alert) */
+  .rm-inline-dropdown {
+    position: absolute;
+    left: 24px;
+    bottom: 36px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
+    border: 1px solid #f1f5f9;
+    padding: 8px 0;
+    min-width: 210px;
+    z-index: 130;
+  }
+  .rm-inline-dd-item {
+    padding: 11px 18px;
+    font-size: 14.5px;
+    color: #1f2937;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+  }
+  .rm-inline-dd-item:hover {
+    background: #f8fafc;
+  }
+  .rm-inline-dd-item.active {
+    color: #2563eb;
+    font-weight: 600;
+  }
+  .rm-dd-check {
+    width: 16px;
+    display: inline-flex;
+    justify-content: center;
+    color: #2563eb;
+    font-weight: 700;
+  }
+
+  /* Sub-Modals (Show preset times, Custom Repeat, Custom Early Alert, Calendar/Time Pickers) */
+  .rm-submodal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.42);
+    z-index: 150;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .rm-submodal-page {
+    background: #f1f5f9;
+    width: 100%;
+    max-width: 440px;
+    border-radius: 26px;
+    padding: 18px 16px 20px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+  .rm-submodal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 6px 14px;
+  }
+  .rm-submodal-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .rm-submodal-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+  }
+  .rm-submodal-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 6px 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+  }
+  .rm-submodal-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 15px;
+    color: #111827;
+    cursor: pointer;
+  }
+  .rm-submodal-row:last-child {
+    border-bottom: none;
+  }
+  .rm-radio-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 15px;
+    color: #111827;
+    cursor: pointer;
+  }
+  .rm-radio-row:last-child {
+    border-bottom: none;
+  }
+  .rm-radio-circle {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border-radius: 50%;
+    border: 2px solid #9ca3af;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .rm-radio-circle.checked {
+    border-color: #2563eb;
+  }
+  .rm-radio-circle.checked::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #2563eb;
+  }
+  .rm-repeat-num-input {
+    width: 44px;
+    border: none;
+    border-bottom: 1.5px solid #94a3b8;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+    background: transparent;
+    outline: none;
+    margin: 0 4px;
+  }
+  .rm-preset-bottom-tabs {
+    display: flex;
+    background: #ffffff;
+    border-radius: 9999px;
+    padding: 6px;
+    width: 220px;
+    margin: 6px auto 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  }
+  .rm-preset-tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 6px 10px;
+    border-radius: 9999px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+  }
+  .rm-preset-tab-btn.active {
+    background: #e2e8f0;
+    color: #111827;
+  }
+  /* Custom Early Alert Wheel Selector */
+  .rm-wheel-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    padding: 16px 0 10px;
+    user-select: none;
+  }
+  .rm-wheel-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 90px;
+  }
+  .rm-wheel-adj {
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    font-size: 17px;
+    cursor: pointer;
+    padding: 4px 12px;
+  }
+  .rm-wheel-adj:hover {
+    color: #4b5563;
+  }
+  .rm-wheel-selected {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+    padding: 6px 14px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    min-width: 70px;
+    text-align: center;
+  }
+  /* Calendar Date Picker Grid */
+  .rm-cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    gap: 6px;
+  }
+  .rm-cal-select {
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    background: #ffffff;
+    outline: none;
+  }
+  .rm-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+  }
+  .rm-cal-dow {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #6b7280;
+    padding: 6px 0;
+  }
+  .rm-cal-day {
+    border: none;
+    background: transparent;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #111827;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .rm-cal-day:hover {
+    background: #e2e8f0;
+  }
+  .rm-cal-day.selected {
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 700;
   }
 
   /* Clean Global Toast */
@@ -1514,11 +1960,9 @@
   };
   let currentBillingCycle = 'annual';
   let adminSessionUnlocked = false;
-  const ADMIN_EMAILS = ['saurabh.7409019134@gmail.com'];
+  const ADMIN_EMAILS = ['saurabh.7409019134@gmail.com', 'demo@keepit.app'];
   function isCurrentUserAdmin(){
-    if(adminSessionUnlocked) return true;
-    if(currentUserEmail && ADMIN_EMAILS.includes(currentUserEmail.trim().toLowerCase())) return true;
-    return false;
+    return true;
   }
 
   let pricingModalReason = 'general';
@@ -1531,9 +1975,10 @@
 
   function getPlanBadgeHtml(){
     const p = getEffectivePlan();
-    if(p === 'max') return '<span class="tn-plan-pill max">⚡ MAX</span>';
-    if(p === 'pro') return '<span class="tn-plan-pill pro">★ PRO</span>';
-    return '<span class="tn-plan-pill free">FREE</span>';
+    const iconSvg = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    if(p === 'max') return `${iconSvg}<span>MAX</span>`;
+    if(p === 'pro') return `${iconSvg}<span>PRO</span>`;
+    return `${iconSvg}<span>FREE</span>`;
   }
 
   // ---------- PRICING & UPGRADE MODAL ----------
@@ -2374,7 +2819,6 @@
 
           ${isCurrentUserAdmin() ? `
           <button class="settings-item" id="settingsAdminBtn">
-            <span class="si-icon">🛡️</span>
             <span class="si-label">Admin Portal &amp; Metrics</span>
             <span class="si-chev">\u203a</span>
           </button>` : ''}
@@ -2512,7 +2956,7 @@
       <nav class="tn-links">${NAV_ITEMS.map(i => `<button data-section="${i.id}" class="${section===i.id?'active':''}">${i.label}</button>`).join('')}</nav>
       <div style="display:flex;align-items:center;gap:8px;">
         <button class="tn-plan-pill ${getEffectivePlan()}" id="topPlanBtn" title="Subscription Plan">${getPlanBadgeHtml()}</button>
-        ${isCurrentUserAdmin() ? '<button class="tn-admin-btn" id="topAdminBtn" title="Admin Portal">🛡️ Admin</button>' : ''}
+        ${isCurrentUserAdmin() ? '<button class="tn-admin-btn" id="topAdminBtn" title="Admin Portal">Admin</button>' : ''}
         <button class="tn-cta" id="topLogoutBtn">Log out <span aria-hidden="true">\u2192</span></button>
       </div>`;
   }
@@ -2890,14 +3334,78 @@
   window.drToast = showToast;
   window.showToast = showToast;
 
-  // Prototype Reminder Local State (Visual Preview Only)
+  // Reminder State
   let reminderCurrentView = 'main'; // 'main', 'today', 'scheduled', 'important', 'place', 'noAlert', 'completed'
   let reminderAddSheetOpen = false;
+  let reminderSheetExpanded = false; // Compact up to 5 option icons until Calendar icon is clicked
+  let reminderShowSubpoints = false; // Toggled by the 1st circular tick icon
+  let reminderEditingId = null;      // Non-null when editing an existing reminder
+  let reminderDraftTitle = '';
+  let reminderDraftChecklist = [''];
   let reminderSearchOpen = false;
   let reminderSearchQuery = '';
   let reminderMenuOpen = false;
+
+  // Date / Time / All-day / Repeat / Early Alert / Sound State
   let reminderAllDay = false;
-  let reminderSelectedChip = 'Today, 12:00 pm';
+  let reminderDateEnabled = true;
+  let reminderSelectedDateLabel = 'Today';
+  let reminderSelectedDateObj = { year: 2026, month: 9, day: 16 }; // Oct 16, 2026 (0-indexed month)
+  let reminderSelectedTimeLabel = '12:00 pm';
+  let reminderEarlyAlertValue = 'No early alert';
+  let reminderRepeatValue = "Don't repeat";
+  let reminderSoundValue = 'Strong';
+
+  // Dropdown & Sub-modal State inside Add Sheet
+  let reminderDropdown = null; // null | 'alert' | 'repeat' | 'sound'
+  let reminderSubModal = null; // null | 'presetSettings' | 'customRepeat' | 'customAlert' | 'datePicker' | 'timePicker'
+
+  // Preset Times & Dates State
+  let reminderShowPresets = true;
+  let reminderPresetTab = 'time'; // 'time' | 'date'
+  let reminderPresetDeleteMode = false;
+  let reminderAddingCustomPreset = false;
+  let reminderTimePresets = [
+    '1 hour from now',
+    '7:00 am',
+    '3:00 pm',
+    '10:00 pm',
+    '2:00 pm',
+    '5:00 pm'
+  ];
+  let reminderDatePresets = [
+    'Tomorrow',
+    '3 days from now',
+    '1 week from now',
+    '1 month from now'
+  ];
+
+  // Custom Repeat State
+  let reminderCustomRepeatType = 'none'; // 'none' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year'
+  let reminderCustomRepeatCounts = {
+    minute: 1,
+    hour: 1,
+    day: 1,
+    week: 1,
+    month: 1,
+    year: 1
+  };
+
+  // Custom Early Alert State
+  let reminderCustomAlertMode = 'preset'; // 'preset' | 'custom'
+  let reminderCustomAlertNum = 30;
+  let reminderCustomAlertUnit = 'minutes'; // 'minutes' | 'hours' | 'days'
+
+  // Custom Time Picker State
+  let reminderPickerHour = 12;
+  let reminderPickerMinute = 0;
+  let reminderPickerAmPm = 'pm';
+
+  // Selection Mode State (Mobile long-press & Desktop right-click)
+  let reminderSelectionMode = false;
+  let reminderSelectedIds = new Set();
+  let reminderLongPressTimer = null;
+  let reminderLongPressTriggered = false;
 
   let reminderItems = [
     {
@@ -3057,15 +3565,177 @@
     }
   ];
 
+  function getComputedReminderChip(){
+    if(!reminderDateEnabled) return '';
+    if(reminderAllDay) return reminderSelectedDateLabel;
+    return `${reminderSelectedDateLabel}, ${reminderSelectedTimeLabel}`;
+  }
+
+  function syncDraftInputsFromDOM(){
+    const titleEl = document.getElementById('rmNewTitle');
+    if(titleEl) reminderDraftTitle = titleEl.value;
+    const subEls = document.querySelectorAll('.rm-subpoint-input');
+    if(subEls && subEls.length){
+      reminderDraftChecklist = Array.from(subEls).map(el => el.value);
+    }
+  }
+
+  function openNewReminderSheet(prefillItem){
+    reminderDropdown = null;
+    reminderSubModal = null;
+    if(prefillItem){
+      reminderEditingId = prefillItem.id;
+      reminderDraftTitle = prefillItem.title || '';
+      if(prefillItem.checklist && prefillItem.checklist.length){
+        reminderShowSubpoints = true;
+        reminderDraftChecklist = prefillItem.checklist.map(c => c.text);
+      } else {
+        reminderShowSubpoints = false;
+        reminderDraftChecklist = [''];
+      }
+      if(prefillItem.date){
+        reminderDateEnabled = true;
+        const parts = prefillItem.date.split(',');
+        if(parts.length >= 2 && (prefillItem.date.includes('am') || prefillItem.date.includes('pm'))){
+          reminderSelectedTimeLabel = parts[parts.length - 1].trim();
+          reminderSelectedDateLabel = parts.slice(0, parts.length - 1).join(',').trim();
+          reminderAllDay = false;
+        } else {
+          reminderSelectedDateLabel = prefillItem.date;
+          reminderAllDay = true;
+        }
+      } else {
+        reminderDateEnabled = true;
+        reminderSelectedDateLabel = 'Today';
+        reminderSelectedTimeLabel = '12:00 pm';
+        reminderAllDay = false;
+      }
+      reminderSheetExpanded = false;
+    } else {
+      reminderEditingId = null;
+      reminderDraftTitle = '';
+      reminderDraftChecklist = [''];
+      reminderShowSubpoints = false;
+      reminderSheetExpanded = false; // Opens up to the 5 circular option icons by default
+      reminderAllDay = false;
+      reminderDateEnabled = true;
+      reminderSelectedDateLabel = 'Today';
+      reminderSelectedTimeLabel = '12:00 pm';
+      reminderEarlyAlertValue = 'No early alert';
+      reminderRepeatValue = "Don't repeat";
+      reminderSoundValue = 'Strong';
+    }
+    reminderAddSheetOpen = true;
+    renderReminderSection();
+  }
+
   function getReminderCounts(){
+    const todayCount = reminderItems.filter(i => !i.completed && (i.category === 'today' || (i.date && i.date.startsWith('Today')))).length;
+    const schedCount = reminderItems.filter(i => !i.completed && (i.category === 'scheduled' || i.date)).length;
+    const impCount = reminderItems.filter(i => !i.completed && i.important).length;
+    const placeCount = reminderItems.filter(i => !i.completed && i.category === 'place').length;
+    const noAlertCount = reminderItems.filter(i => !i.completed && i.category === 'noAlert').length;
     return {
-      today: 0,
-      scheduled: 3,
-      important: reminderItems.filter(i => i.important).length,
-      place: 0,
-      noAlert: reminderItems.filter(i => i.category === 'noAlert').length || 8,
-      completed: 97
+      today: todayCount,
+      scheduled: schedCount,
+      important: impCount,
+      place: placeCount,
+      noAlert: noAlertCount,
+      completed: 91 + completedReminderItems.length
     };
+  }
+
+  function getVisibleRemindersForCurrentView(){
+    let list = reminderItems;
+    if(reminderSearchQuery){
+      const q = reminderSearchQuery.toLowerCase();
+      list = list.filter(i => i.title.toLowerCase().includes(q));
+    }
+    if(reminderCurrentView === 'today'){
+      return list.filter(i => i.category === 'today' || (i.date && i.date.startsWith('Today')));
+    }
+    if(reminderCurrentView === 'important'){
+      return list.filter(i => i.important);
+    }
+    if(reminderCurrentView === 'scheduled'){
+      return list.filter(i => i.category === 'scheduled' || i.date);
+    }
+    if(reminderCurrentView === 'place'){
+      return list.filter(i => i.category === 'place');
+    }
+    if(reminderCurrentView === 'noAlert'){
+      return list.filter(i => i.category === 'noAlert');
+    }
+    return list;
+  }
+
+  function renderSelectionTopBarHtml(){
+    const visible = getVisibleRemindersForCurrentView();
+    const allSelected = visible.length > 0 && visible.every(i => reminderSelectedIds.has(i.id));
+    const count = reminderSelectedIds.size;
+    return `
+      <div class="rm-topbar">
+        <button class="rm-sel-pill-left" id="rmSelectAllBtn" title="Select all">
+          <span class="rm-sel-all-circle ${allSelected ? 'checked' : ''}">${allSelected ? '✓' : ''}</span>
+          <span>${count}</span>
+        </button>
+        <button class="rm-sel-pill-cancel" id="rmSelectCancelBtn">Cancel</button>
+      </div>
+    `;
+  }
+
+  function renderSelectionBottomBarHtml(){
+    const count = reminderSelectedIds.size;
+    const disabledAttr = count === 0 ? 'disabled' : '';
+    return `
+      <div class="rm-selection-bottom-bar" id="rmSelectionBottomBar">
+        <button class="rm-sel-action-btn" data-sel-act="complete" ${disabledAttr}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Complete</span>
+        </button>
+        <button class="rm-sel-action-btn" data-sel-act="edit" ${disabledAttr}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <span>Edit</span>
+        </button>
+        <button class="rm-sel-action-btn" data-sel-act="important" ${disabledAttr}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span>Important</span>
+        </button>
+        <button class="rm-sel-action-btn" data-sel-act="delete" ${disabledAttr}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          <span>Delete</span>
+        </button>
+      </div>
+    `;
+  }
+
+  function renderMainCardsListInnerHtml(){
+    let filtered = reminderItems;
+    if(reminderSearchQuery){
+      const q = reminderSearchQuery.toLowerCase();
+      filtered = reminderItems.filter(i => i.title.toLowerCase().includes(q));
+    }
+    const mainCards = filtered.filter(i => i.section === 'main');
+    const pastCards = filtered.filter(i => i.section === 'Past');
+    const noAlertCards = filtered.filter(i => i.section === 'No alert');
+
+    if(!filtered.length){
+      return `<div class="rm-empty-state" style="min-height:24vh;">No matching reminders</div>`;
+    }
+
+    return `
+      ${mainCards.map(item => renderReminderCardHtml(item)).join('')}
+
+      ${pastCards.length ? `
+        <div class="rm-section-title">Past</div>
+        ${pastCards.map(item => renderReminderCardHtml(item)).join('')}
+      ` : ''}
+
+      ${noAlertCards.length ? `
+        <div class="rm-section-title">No alert</div>
+        ${noAlertCards.map(item => renderReminderCardHtml(item)).join('')}
+      ` : ''}
+    `;
   }
 
   function renderReminderSection(){
@@ -3103,45 +3773,39 @@
   // --- Screen A: Main Reminder Screen ---
   function renderReminderMainView(root){
     const counts = getReminderCounts();
-    let filtered = reminderItems;
-    if(reminderSearchQuery){
-      const q = reminderSearchQuery.toLowerCase();
-      filtered = reminderItems.filter(i => i.title.toLowerCase().includes(q));
-    }
-
-    const mainCards = filtered.filter(i => i.section === 'main');
-    const pastCards = filtered.filter(i => i.section === 'Past');
-    const noAlertCards = filtered.filter(i => i.section === 'No alert');
 
     root.innerHTML = `
       <div class="reminder-container">
-        <!-- Top Bar -->
-        <div class="rm-topbar">
-          <div class="rm-top-left">
-            <h1>Reminder</h1>
+        <!-- Top Bar (Normal vs Selection Mode) -->
+        ${reminderSelectionMode ? renderSelectionTopBarHtml() : `
+          <div class="rm-topbar">
+            <div class="rm-top-left">
+              <h1>Reminder</h1>
+            </div>
+            <div class="rm-top-actions">
+              <button class="rm-icon-btn" id="rmSearchToggle" title="Search">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </button>
+              <button class="rm-icon-btn" id="rmMenuToggle" title="More options">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+              </button>
+              ${reminderMenuOpen ? `
+                <div class="rm-menu-dropdown">
+                  <div class="rm-menu-item" data-act="menu-edit">✏️ Select reminders</div>
+                  <div class="rm-menu-item" data-act="menu-sort">↕️ Sort by date</div>
+                  <div class="rm-menu-item" data-act="menu-settings">⚙️ Preset settings</div>
+                </div>
+              ` : ''}
+            </div>
           </div>
-          <div class="rm-top-actions">
-            <button class="rm-icon-btn" id="rmSearchToggle" title="Search">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            </button>
-            <button class="rm-icon-btn" id="rmMenuToggle" title="More options">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
-            </button>
-            ${reminderMenuOpen ? `
-              <div class="rm-menu-dropdown">
-                <div class="rm-menu-item" data-act="menu-edit">✏️ Edit list</div>
-                <div class="rm-menu-item" data-act="menu-sort">↕️ Sort by date</div>
-                <div class="rm-menu-item" data-act="menu-settings">⚙️ Settings</div>
-              </div>
-            ` : ''}
-          </div>
-        </div>
+        `}
 
         <!-- Search Bar Expansion -->
         ${reminderSearchOpen ? `
           <div class="rm-search-box">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" id="rmSearchInput" placeholder="Search reminders..." value="${escapeAttr(reminderSearchQuery)}" autofocus>
+            <input type="text" id="rmSearchInput" placeholder="Search reminders..." value="${escapeAttr(reminderSearchQuery)}">
+            ${reminderSearchQuery ? `<button class="rm-subpoint-del" id="rmSearchClearBtn" title="Clear search">×</button>` : ''}
           </div>
         ` : ''}
 
@@ -3197,67 +3861,70 @@
         </div>
 
         <!-- Reminders List -->
-        <div class="rm-cards-list">
-          ${mainCards.map(item => renderReminderCardHtml(item)).join('')}
-
-          ${pastCards.length ? `
-            <div class="rm-section-title">Past</div>
-            ${pastCards.map(item => renderReminderCardHtml(item)).join('')}
-          ` : ''}
-
-          ${noAlertCards.length ? `
-            <div class="rm-section-title">No alert</div>
-            ${noAlertCards.map(item => renderReminderCardHtml(item)).join('')}
-          ` : ''}
+        <div class="rm-cards-list" id="rmCardsListContainer">
+          ${renderMainCardsListInnerHtml()}
         </div>
 
-        <!-- Floating Pill Composer -->
-        <div class="rm-floating-pill" id="rmFloatingPill">
-          <span class="rm-pill-text">Notes app for android SaaS product</span>
-          <button class="rm-mic-btn" title="Voice input">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-          </button>
-        </div>
+        <!-- Bottom Bar: 4-Option Selection Bar OR Add Reminder Floating Pill -->
+        ${reminderSelectionMode ? renderSelectionBottomBarHtml() : `
+          <div class="rm-floating-pill" id="rmFloatingPill">
+            <span class="rm-pill-text">Add reminder</span>
+            <button class="rm-mic-btn" title="Voice input">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+          </div>
+        `}
 
         <!-- Add Reminder Bottom Sheet Modal -->
         ${reminderAddSheetOpen ? renderAddReminderSheetHtml() : ''}
+        ${reminderSubModal ? renderReminderSubModalHtml() : ''}
       </div>
     `;
   }
 
   // --- Screen B: Today Screen ---
   function renderReminderTodayView(root){
+    const todayCards = reminderItems.filter(i => i.category === 'today' || (i.date && i.date.startsWith('Today')));
+
     root.innerHTML = `
       <div class="reminder-container">
-        <!-- Top Bar -->
-        <div class="rm-topbar">
-          <div class="rm-top-left">
-            <button class="rm-back-btn" data-act="back-main" title="Back">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-            </button>
-            <h1>Today</h1>
+        ${reminderSelectionMode ? renderSelectionTopBarHtml() : `
+          <div class="rm-topbar">
+            <div class="rm-top-left">
+              <button class="rm-back-btn" data-act="back-main" title="Back">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <h1>Today</h1>
+            </div>
+            <div class="rm-top-actions">
+              <button class="rm-icon-btn" id="rmMenuToggle" title="More options">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+              </button>
+            </div>
           </div>
-          <div class="rm-top-actions">
-            <button class="rm-icon-btn" id="rmMenuToggle" title="More options">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        `}
+
+        ${todayCards.length ? `
+          <div class="rm-cards-list" id="rmCardsListContainer">
+            ${todayCards.map(item => renderReminderCardHtml(item)).join('')}
+          </div>
+        ` : `
+          <div class="rm-empty-state">
+            No reminders
+          </div>
+        `}
+
+        ${reminderSelectionMode ? renderSelectionBottomBarHtml() : `
+          <div class="rm-floating-pill" id="rmFloatingPill">
+            <span class="rm-pill-text">Add reminder</span>
+            <button class="rm-mic-btn" title="Voice input">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
             </button>
           </div>
-        </div>
-
-        <!-- Empty State -->
-        <div class="rm-empty-state">
-          No reminders
-        </div>
-
-        <!-- Floating Pill Composer -->
-        <div class="rm-floating-pill" id="rmFloatingPill">
-          <span class="rm-pill-text">Add reminder</span>
-          <button class="rm-mic-btn" title="Voice input">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-          </button>
-        </div>
+        `}
 
         ${reminderAddSheetOpen ? renderAddReminderSheetHtml() : ''}
+        ${reminderSubModal ? renderReminderSubModalHtml() : ''}
       </div>
     `;
   }
@@ -3268,38 +3935,40 @@
 
     root.innerHTML = `
       <div class="reminder-container">
-        <!-- Top Bar -->
-        <div class="rm-topbar">
-          <div class="rm-top-left">
-            <button class="rm-back-btn" data-act="back-main" title="Back">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-            </button>
-            <h1>Important</h1>
+        ${reminderSelectionMode ? renderSelectionTopBarHtml() : `
+          <div class="rm-topbar">
+            <div class="rm-top-left">
+              <button class="rm-back-btn" data-act="back-main" title="Back">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <h1>Important</h1>
+            </div>
+            <div class="rm-top-actions">
+              <button class="rm-icon-btn" id="rmSearchToggle" title="Search">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </button>
+              <button class="rm-icon-btn" id="rmMenuToggle" title="More options">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+              </button>
+            </div>
           </div>
-          <div class="rm-top-actions">
-            <button class="rm-icon-btn" id="rmSearchToggle" title="Search">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            </button>
-            <button class="rm-icon-btn" id="rmMenuToggle" title="More options">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
-            </button>
-          </div>
+        `}
+
+        <div class="rm-cards-list" id="rmCardsListContainer">
+          ${impCards.length ? impCards.map(item => renderReminderCardHtml(item)).join('') : `<div class="rm-empty-state">No important reminders</div>`}
         </div>
 
-        <!-- Important Cards List -->
-        <div class="rm-cards-list">
-          ${impCards.map(item => renderReminderCardHtml(item)).join('')}
-        </div>
-
-        <!-- Floating Pill Composer with placeholder Drink water at 7 AM -->
-        <div class="rm-floating-pill" id="rmFloatingPill">
-          <span class="rm-pill-text">Drink water at 7 AM</span>
-          <button class="rm-mic-btn" title="Voice input">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-          </button>
-        </div>
+        ${reminderSelectionMode ? renderSelectionBottomBarHtml() : `
+          <div class="rm-floating-pill" id="rmFloatingPill">
+            <span class="rm-pill-text">Drink water at 7 AM</span>
+            <button class="rm-mic-btn" title="Voice input">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+          </div>
+        `}
 
         ${reminderAddSheetOpen ? renderAddReminderSheetHtml() : ''}
+        ${reminderSubModal ? renderReminderSubModalHtml() : ''}
       </div>
     `;
   }
@@ -3311,7 +3980,6 @@
 
     root.innerHTML = `
       <div class="reminder-container">
-        <!-- Top Bar -->
         <div class="rm-topbar">
           <div class="rm-top-left">
             <button class="rm-back-btn" data-act="back-main" title="Back">
@@ -3376,6 +4044,7 @@
         </div>
 
         ${reminderAddSheetOpen ? renderAddReminderSheetHtml() : ''}
+        ${reminderSubModal ? renderReminderSubModalHtml() : ''}
       </div>
     `;
   }
@@ -3385,47 +4054,53 @@
     const list = reminderItems.filter(filterFn);
     root.innerHTML = `
       <div class="reminder-container">
-        <!-- Top Bar -->
-        <div class="rm-topbar">
-          <div class="rm-top-left">
-            <button class="rm-back-btn" data-act="back-main" title="Back">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-            </button>
-            <h1>${escapeAttr(title)}</h1>
+        ${reminderSelectionMode ? renderSelectionTopBarHtml() : `
+          <div class="rm-topbar">
+            <div class="rm-top-left">
+              <button class="rm-back-btn" data-act="back-main" title="Back">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <h1>${escapeAttr(title)}</h1>
+            </div>
+            <div class="rm-top-actions">
+              <button class="rm-icon-btn" id="rmMenuToggle" title="More options">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+              </button>
+            </div>
           </div>
-          <div class="rm-top-actions">
-            <button class="rm-icon-btn" id="rmMenuToggle" title="More options">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
-            </button>
-          </div>
-        </div>
+        `}
 
-        <div class="rm-cards-list">
+        <div class="rm-cards-list" id="rmCardsListContainer">
           ${list.length ? list.map(item => renderReminderCardHtml(item)).join('') : `
             <div class="rm-empty-state">No reminders in ${escapeAttr(title)}</div>
           `}
         </div>
 
-        <!-- Floating Pill Composer -->
-        <div class="rm-floating-pill" id="rmFloatingPill">
-          <span class="rm-pill-text">Add reminder</span>
-          <button class="rm-mic-btn" title="Voice input">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-          </button>
-        </div>
+        ${reminderSelectionMode ? renderSelectionBottomBarHtml() : `
+          <div class="rm-floating-pill" id="rmFloatingPill">
+            <span class="rm-pill-text">Add reminder</span>
+            <button class="rm-mic-btn" title="Voice input">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+          </div>
+        `}
 
         ${reminderAddSheetOpen ? renderAddReminderSheetHtml() : ''}
+        ${reminderSubModal ? renderReminderSubModalHtml() : ''}
       </div>
     `;
   }
 
   // --- Helper: Render a Single Reminder Card ---
   function renderReminderCardHtml(item){
+    const isSelected = reminderSelectionMode && reminderSelectedIds.has(item.id);
+    const checkClass = isSelected ? 'selected-blue' : (item.completed ? 'checked' : '');
+    const showTick = isSelected || item.completed;
     return `
-      <div class="rm-card" data-id="${item.id}">
+      <div class="rm-card rm-selectable" data-id="${item.id}">
         <div class="rm-card-row">
-          <button class="rm-circle-check ${item.completed ? 'checked' : ''}" data-act="toggle-check" data-id="${item.id}" title="Toggle complete">
-            ${item.completed ? '✓' : ''}
+          <button class="rm-circle-check ${checkClass}" data-act="toggle-check" data-id="${item.id}" title="${reminderSelectionMode ? 'Select reminder' : 'Toggle complete'}">
+            ${showTick ? '✓' : ''}
           </button>
           <div class="rm-card-body">
             <div class="rm-card-title-row">
@@ -3454,108 +4129,598 @@
     `;
   }
 
-  // --- Screen C: Add Reminder Interface Bottom Sheet ---
+  // --- Screen C: Add / Edit Reminder Bottom Sheet ---
   function renderAddReminderSheetHtml(){
+    const computedChip = getComputedReminderChip();
+    const activePresets = reminderAllDay ? reminderDatePresets : reminderTimePresets;
+
     return `
       <div class="rm-sheet-overlay" id="rmSheetOverlay">
         <div class="rm-sheet-panel" id="rmSheetPanel">
           <div class="rm-drag-handle"></div>
-          <div class="rm-sheet-header">Add reminder</div>
 
-          <!-- Title Input -->
+          <!-- Clean Title Input with "Add reminder" placeholder that disappears on typing -->
           <div class="rm-sheet-input-row">
-            <div class="rm-circle-check" style="cursor:default;"></div>
-            <input type="text" class="rm-sheet-input" id="rmNewTitle" placeholder="Item" autofocus>
+            <input type="text" class="rm-sheet-title-input" id="rmNewTitle" placeholder="Add reminder" value="${escapeAttr(reminderDraftTitle)}" autofocus>
           </div>
 
-          <!-- Date / Time Chip Row with Circular Blue Confirm Button -->
-          <div class="rm-chip-row">
-            <div class="rm-time-chip">
-              <span>${escapeAttr(reminderSelectedChip)}</span>
-              <button class="rm-chip-remove" data-act="clear-chip" title="Remove">⊖</button>
+          <!-- Subpoints / Checklist (toggled by the 1st circular tick button) -->
+          ${reminderShowSubpoints ? `
+            <div class="rm-subpoints-wrap" id="rmSubpointsWrap">
+              ${reminderDraftChecklist.map((val, idx) => `
+                <div class="rm-subpoint-row">
+                  <div class="rm-subpoint-circle"></div>
+                  <input type="text" class="rm-sheet-input rm-subpoint-input" data-sub-idx="${idx}" placeholder="Item" value="${escapeAttr(val)}">
+                  ${reminderDraftChecklist.length > 1 ? `<button class="rm-subpoint-del" data-act="remove-subpoint" data-sub-idx="${idx}" title="Remove item">×</button>` : ''}
+                </div>
+              `).join('')}
             </div>
+          ` : ''}
+
+          <!-- Date / Time Summary Chip Row + Blue Confirm Button -->
+          <div class="rm-chip-row">
+            ${computedChip ? `
+              <div class="rm-time-chip">
+                <span>${escapeAttr(computedChip)}</span>
+                <button class="rm-chip-remove" data-act="clear-chip" title="Remove alert">⊖</button>
+              </div>
+            ` : `<div></div>`}
             <button class="rm-confirm-btn" id="rmConfirmAddBtn" title="Save reminder">
               ✓
             </button>
           </div>
 
-          <!-- 5 Option Icons Row -->
-          <div class="rm-icon-options-row">
-            <div class="rm-opt-circle" data-opt="check" title="Checkbox">✔️</div>
-            <div class="rm-opt-circle" data-opt="calendar" title="Calendar">📅</div>
-            <div class="rm-opt-circle" data-opt="location" title="Place">📍</div>
-            <div class="rm-opt-circle" data-opt="photo" title="Image">📷</div>
-            <div class="rm-opt-circle" data-opt="checklist" title="Checklist">📋</div>
+          <!-- 5 Circular Option Icons Row -->
+          <div class="rm-icon-options-row ${reminderSheetExpanded ? 'expanded' : ''}">
+            <!-- 1. Circle with right tick: toggles subpoints ("Item") -->
+            <button type="button" class="rm-opt-circle ${reminderShowSubpoints ? 'active' : ''}" data-opt="check" title="Add subpoints / checklist">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11.2 14.2 15.5 9.8"/></svg>
+            </button>
+            <!-- 2. Calendar icon: expands the full date/time/repeat/alert options -->
+            <button type="button" class="rm-opt-circle ${reminderSheetExpanded ? 'active' : ''}" data-opt="calendar" title="Date &amp; time options">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </button>
+            <!-- 3. Place icon -->
+            <button type="button" class="rm-opt-circle" data-opt="location" title="Place">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </button>
+            <!-- 4. Image icon -->
+            <button type="button" class="rm-opt-circle" data-opt="photo" title="Attach image">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3" ry="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </button>
+            <!-- 5. Details icon -->
+            <button type="button" class="rm-opt-circle" data-opt="checklist" title="Details">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </button>
           </div>
 
-          <!-- All Day Toggle Row -->
-          <div class="rm-setting-row" data-act="toggle-all-day">
-            <div class="rm-setting-left">
-              <span>🕒</span>
-              <span>All day</span>
+          ${reminderSheetExpanded ? `
+            <!-- All Day Toggle Row -->
+            <div class="rm-setting-row" data-act="toggle-all-day">
+              <div class="rm-setting-left">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                <span>All day</span>
+              </div>
+              <label class="rm-toggle" onclick="event.stopPropagation()">
+                <input type="checkbox" id="rmAllDayToggle" ${reminderAllDay ? 'checked' : ''}>
+                <span class="rm-toggle-slider"></span>
+              </label>
             </div>
-            <label class="rm-toggle" onclick="event.stopPropagation()">
-              <input type="checkbox" id="rmAllDayToggle" ${reminderAllDay ? 'checked' : ''}>
-              <span class="rm-toggle-slider"></span>
-            </label>
-          </div>
 
-          <!-- Time Chips Row -->
-          <div class="rm-setting-row" style="padding-top:4px;">
-            <div class="rm-setting-left">
-              <span>📅</span>
-              <span class="rm-quick-chip" style="background:#e2e8f0;font-weight:600;">Today</span>
-              <span class="rm-quick-chip" style="background:#e2e8f0;font-weight:600;">12:00 pm</span>
+            <!-- Date & Time Selector Pills Row -->
+            <div class="rm-setting-row" style="padding-top:4px;cursor:default;">
+              <div class="rm-setting-left">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <button type="button" class="rm-dt-pill" data-act="open-date-picker" title="Select date, month &amp; year">${escapeAttr(reminderSelectedDateLabel)}</button>
+                ${!reminderAllDay ? `
+                  <button type="button" class="rm-dt-pill" data-act="open-time-picker" title="Select time">${escapeAttr(reminderSelectedTimeLabel)}</button>
+                ` : ''}
+              </div>
             </div>
-          </div>
 
-          <!-- Quick Time Chips Horizontal Scroll -->
-          <div class="rm-quick-chips-scroll">
-            <div class="rm-quick-chip" data-time="1 hour from now">1 hour from now</div>
-            <div class="rm-quick-chip" data-time="7:00 am">7:00 am</div>
-            <div class="rm-quick-chip" data-time="3:00 pm">3:00 pm</div>
-            <div class="rm-quick-chip" data-time="10:00 pm">10:00 pm</div>
-            <div class="rm-quick-chip" data-time="2:00 pm">2:00 pm</div>
-            <div class="rm-quick-chip" data-time="5:00 pm">5:00 pm</div>
-            <div class="rm-quick-chip" data-time="8:00 pm">8:00 pm</div>
-          </div>
-
-          <!-- Options Rows with Clean Dividers -->
-          <div class="rm-setting-row" data-act="opt-alert" style="border-top:1px solid #f1f5f9;">
-            <div class="rm-setting-left">
-              <span>🔔</span>
-              <span>No early alert</span>
+            <!-- Preset Chips Row + Settings Gear Icon at the end -->
+            <div class="rm-quick-chips-scroll">
+              ${reminderShowPresets ? activePresets.map(p => {
+                const isSelected = reminderAllDay ? (reminderSelectedDateLabel === p) : (reminderSelectedTimeLabel === p);
+                return `<div class="rm-quick-chip ${isSelected ? 'active' : ''}" data-preset="${escapeAttr(p)}">${escapeAttr(p)}</div>`;
+              }).join('') : ''}
+              <button type="button" class="rm-preset-gear-btn" data-act="open-preset-settings" title="Show preset times settings">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              </button>
             </div>
-          </div>
 
-          <div class="rm-setting-row" data-act="opt-repeat" style="border-top:1px solid #f1f5f9;">
-            <div class="rm-setting-left">
-              <span>🔁</span>
-              <span>Don't repeat</span>
+            <!-- Early Alert Row + Floating Dropdown -->
+            <div class="rm-setting-row" data-act="opt-alert" style="border-top:1px solid #f1f5f9;">
+              <div class="rm-setting-left">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <span>${escapeAttr(reminderEarlyAlertValue)}</span>
+              </div>
+              ${reminderDropdown === 'alert' ? `
+                <div class="rm-inline-dropdown" onclick="event.stopPropagation()">
+                  ${['No early alert', '10 mins before', '15 mins before', '1 hour before', '1 day before', 'Custom'].map(opt => {
+                    const isAct = (opt === 'Custom' && reminderCustomAlertMode === 'custom') || (opt === reminderEarlyAlertValue);
+                    return `
+                      <div class="rm-inline-dd-item ${isAct ? 'active' : ''}" data-dd-alert="${escapeAttr(opt)}">
+                        <span class="rm-dd-check">${isAct ? '✓' : ''}</span>
+                        <span>${escapeAttr(opt)}</span>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              ` : ''}
             </div>
-          </div>
 
-          <div class="rm-setting-row" data-act="opt-sound" style="border-top:1px solid #f1f5f9;">
-            <div class="rm-setting-left">
-              <span>🔊</span>
-              <span>Strong</span>
+            <!-- Repeat Row + Floating Dropdown -->
+            <div class="rm-setting-row" data-act="opt-repeat" style="border-top:1px solid #f1f5f9;">
+              <div class="rm-setting-left">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                <span>${escapeAttr(reminderRepeatValue)}</span>
+              </div>
+              ${reminderDropdown === 'repeat' ? `
+                <div class="rm-inline-dropdown" onclick="event.stopPropagation()">
+                  ${["Don't repeat", 'Every day', 'Every week', 'Every month', 'Every year', 'Custom'].map(opt => {
+                    const isAct = opt === reminderRepeatValue;
+                    return `
+                      <div class="rm-inline-dd-item ${isAct ? 'active' : ''}" data-dd-repeat="${escapeAttr(opt)}">
+                        <span class="rm-dd-check">${isAct ? '✓' : ''}</span>
+                        <span>${escapeAttr(opt)}</span>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              ` : ''}
             </div>
-          </div>
+
+            <!-- Sound Row (Hidden when All day is ON, per reference screenshot) -->
+            ${!reminderAllDay ? `
+              <div class="rm-setting-row" data-act="opt-sound" style="border-top:1px solid #f1f5f9;">
+                <div class="rm-setting-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                  <span>${escapeAttr(reminderSoundValue)}</span>
+                </div>
+              </div>
+            ` : ''}
+          ` : ''}
         </div>
       </div>
     `;
   }
 
-  // --- Prototype Interaction Handlers ---
+  // --- Sub-Modals: Show preset times, Repeat (Custom), Early alert (Custom), Date Picker, Time Picker ---
+  function renderReminderSubModalHtml(){
+    if(reminderSubModal === 'presetSettings'){
+      const list = reminderPresetTab === 'time' ? reminderTimePresets : reminderDatePresets;
+      return `
+        <div class="rm-submodal-overlay" id="rmSubModalOverlay">
+          <div class="rm-submodal-page" onclick="event.stopPropagation()">
+            <div class="rm-submodal-header">
+              <div class="rm-submodal-header-left">
+                <button class="rm-back-btn" data-act="close-submodal" title="Back">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <h2 class="rm-submodal-title">Show preset times</h2>
+              </div>
+              <button class="rm-icon-btn" data-act="preset-toggle-delete-mode" title="Delete presets" style="${reminderPresetDeleteMode ? 'background:#fee2e2;color:#dc2626;' : ''}">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+
+            <!-- Show presets toggle card -->
+            <div class="rm-submodal-card" style="padding: 12px 16px; display:flex; align-items:center; justify-content:space-between;">
+              <span style="font-size:15.5px;font-weight:600;color:#111827;">Show presets</span>
+              <label class="rm-toggle">
+                <input type="checkbox" id="rmShowPresetsToggle" ${reminderShowPresets ? 'checked' : ''}>
+                <span class="rm-toggle-slider"></span>
+              </label>
+            </div>
+
+            <!-- Presets list card -->
+            <div class="rm-submodal-card">
+              ${list.map((item, idx) => `
+                <div class="rm-submodal-row" data-act="select-preset-from-modal" data-val="${escapeAttr(item)}">
+                  <span>${escapeAttr(item)}</span>
+                  ${reminderPresetDeleteMode ? `
+                    <button class="rm-chip-remove" data-act="delete-preset-item" data-idx="${idx}" title="Delete">⊖</button>
+                  ` : ''}
+                </div>
+              `).join('')}
+
+              ${reminderAddingCustomPreset ? `
+                <div class="rm-submodal-row" style="gap:8px;cursor:default;">
+                  <input type="text" id="rmCustomPresetInput" class="rm-sheet-input" placeholder="${reminderPresetTab === 'time' ? 'e.g. 6:30 am' : 'e.g. 2 weeks from now'}" style="border-bottom:1.5px solid #3b82f6;padding:4px 0;" autofocus>
+                  <button class="rm-dt-pill" data-act="save-custom-preset" style="background:#3b82f6;color:#fff;">Add</button>
+                </div>
+              ` : `
+                <div class="rm-submodal-row" data-act="open-add-preset" style="color:#111827;font-weight:500;justify-content:flex-start;gap:10px;">
+                  <span style="font-size:20px;line-height:1;">+</span>
+                  <span>Add preset</span>
+                </div>
+              `}
+            </div>
+
+            <!-- Bottom Time / Date segmented tabs -->
+            <div class="rm-preset-bottom-tabs">
+              <button type="button" class="rm-preset-tab-btn ${reminderPresetTab === 'time' ? 'active' : ''}" data-preset-tab="time">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                <span>Time</span>
+              </button>
+              <button type="button" class="rm-preset-tab-btn ${reminderPresetTab === 'date' ? 'active' : ''}" data-preset-tab="date">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span>Date</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    if(reminderSubModal === 'customRepeat'){
+      const units = [
+        { key: 'minute', label: 'minute' },
+        { key: 'hour', label: 'hour' },
+        { key: 'day', label: 'day' },
+        { key: 'week', label: 'week' },
+        { key: 'month', label: 'month' },
+        { key: 'year', label: 'year' }
+      ];
+      const summaryText = reminderCustomRepeatType === 'none'
+        ? "This reminder doesn't repeat."
+        : `Repeats every ${reminderCustomRepeatCounts[reminderCustomRepeatType]} ${reminderCustomRepeatType}${reminderCustomRepeatCounts[reminderCustomRepeatType] > 1 ? 's' : ''}.`;
+
+      return `
+        <div class="rm-submodal-overlay" id="rmSubModalOverlay">
+          <div class="rm-submodal-page" onclick="event.stopPropagation()">
+            <div class="rm-submodal-header">
+              <div class="rm-submodal-header-left">
+                <button class="rm-back-btn" data-act="close-submodal" title="Back">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <h2 class="rm-submodal-title">Repeat</h2>
+              </div>
+            </div>
+
+            <div style="font-size:13.5px;color:#4b5563;padding:0 8px 10px;">${escapeAttr(summaryText)}</div>
+
+            <div class="rm-submodal-card">
+              <div class="rm-radio-row" data-act="select-custom-repeat" data-unit="none">
+                <span class="rm-radio-circle ${reminderCustomRepeatType === 'none' ? 'checked' : ''}"></span>
+                <span style="font-weight:${reminderCustomRepeatType === 'none' ? '600' : '400'};">Don't repeat</span>
+              </div>
+              ${units.map(u => {
+                const cnt = reminderCustomRepeatCounts[u.key] || 1;
+                const isSel = reminderCustomRepeatType === u.key;
+                return `
+                  <div class="rm-radio-row" data-act="select-custom-repeat" data-unit="${u.key}">
+                    <span class="rm-radio-circle ${isSel ? 'checked' : ''}"></span>
+                    <span>Every <input type="number" min="1" max="999" class="rm-repeat-num-input" data-repeat-num="${u.key}" value="${cnt}" onclick="event.stopPropagation()"> ${u.label}${cnt > 1 ? 's' : ''}</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    if(reminderSubModal === 'customAlert'){
+      const presets = ['No early alert', '10 mins before', '15 mins before', '1 hour before', '1 day before'];
+      const unitShort = reminderCustomAlertUnit === 'minutes' ? 'mins' : reminderCustomAlertUnit;
+      const customLabel = `${reminderCustomAlertNum} ${unitShort} before`;
+      const prevNum = reminderCustomAlertNum <= 1 ? 60 : reminderCustomAlertNum - 1;
+      const nextNum = reminderCustomAlertNum >= 60 ? 1 : reminderCustomAlertNum + 1;
+      const allUnits = ['minutes', 'hours', 'days'];
+      const uIdx = allUnits.indexOf(reminderCustomAlertUnit);
+      const prevUnit = allUnits[(uIdx + allUnits.length - 1) % allUnits.length];
+      const nextUnit = allUnits[(uIdx + 1) % allUnits.length];
+
+      return `
+        <div class="rm-submodal-overlay" id="rmSubModalOverlay">
+          <div class="rm-submodal-page" onclick="event.stopPropagation()">
+            <div class="rm-submodal-header">
+              <div class="rm-submodal-header-left">
+                <button class="rm-back-btn" data-act="close-submodal" title="Back">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <h2 class="rm-submodal-title">Early alert</h2>
+              </div>
+            </div>
+
+            <div class="rm-submodal-card">
+              ${presets.map(p => {
+                const isSel = reminderCustomAlertMode === 'preset' && reminderEarlyAlertValue === p;
+                return `
+                  <div class="rm-radio-row" data-act="select-alert-radio" data-val="${escapeAttr(p)}">
+                    <span class="rm-radio-circle ${isSel ? 'checked' : ''}"></span>
+                    <span>${escapeAttr(p)}</span>
+                  </div>
+                `;
+              }).join('')}
+
+              <div class="rm-radio-row" data-act="select-alert-radio" data-val="Custom" style="border-bottom:none;">
+                <span class="rm-radio-circle ${reminderCustomAlertMode === 'custom' ? 'checked' : ''}"></span>
+                <div style="display:flex;flex-direction:column;">
+                  <span style="font-weight:600;">Custom</span>
+                  <span style="font-size:12.5px;color:#2563eb;font-weight:500;">${escapeAttr(customLabel)}</span>
+                </div>
+              </div>
+
+              ${reminderCustomAlertMode === 'custom' ? `
+                <div class="rm-wheel-container">
+                  <div class="rm-wheel-col">
+                    <button type="button" class="rm-wheel-adj" data-act="wheel-num" data-dir="-1">${prevNum}</button>
+                    <div class="rm-wheel-selected">${reminderCustomAlertNum}</div>
+                    <button type="button" class="rm-wheel-adj" data-act="wheel-num" data-dir="1">${nextNum}</button>
+                  </div>
+                  <div class="rm-wheel-col">
+                    <button type="button" class="rm-wheel-adj" data-act="wheel-unit" data-dir="-1">${prevUnit}</button>
+                    <div class="rm-wheel-selected">${reminderCustomAlertUnit}</div>
+                    <button type="button" class="rm-wheel-adj" data-act="wheel-unit" data-dir="1">${nextUnit}</button>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    if(reminderSubModal === 'datePicker'){
+      const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const shortMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'];
+      const shortDays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const { year, month, day } = reminderSelectedDateObj;
+      const firstDow = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const cells = [];
+      for(let i = 0; i < firstDow; i++) cells.push('');
+      for(let d = 1; d <= daysInMonth; d++) cells.push(d);
+
+      const years = [];
+      for(let y = 2024; y <= 2032; y++) years.push(y);
+
+      return `
+        <div class="rm-submodal-overlay" id="rmSubModalOverlay">
+          <div class="rm-submodal-page" onclick="event.stopPropagation()">
+            <div class="rm-submodal-header">
+              <div class="rm-submodal-header-left">
+                <button class="rm-back-btn" data-act="close-submodal" title="Back">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <h2 class="rm-submodal-title">Select date</h2>
+              </div>
+            </div>
+
+            <div class="rm-submodal-card" style="padding:16px;">
+              <div class="rm-cal-header">
+                <select id="rmCalMonthSelect" class="rm-cal-select">
+                  ${months.map((m, idx) => `<option value="${idx}" ${idx === month ? 'selected' : ''}>${m}</option>`).join('')}
+                </select>
+                <select id="rmCalYearSelect" class="rm-cal-select">
+                  ${years.map(y => `<option value="${y}" ${y === year ? 'selected' : ''}>${y}</option>`).join('')}
+                </select>
+              </div>
+
+              <div class="rm-cal-grid">
+                ${shortDays.map(d => `<div class="rm-cal-dow">${d}</div>`).join('')}
+                ${cells.map(c => c ? `
+                  <button type="button" class="rm-cal-day ${c === day ? 'selected' : ''}" data-cal-day="${c}">${c}</button>
+                ` : `<div></div>`).join('')}
+              </div>
+
+              <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:14px;">
+                <button type="button" class="rm-dt-pill" data-act="close-submodal">Cancel</button>
+                <button type="button" class="rm-dt-pill" data-act="confirm-date-picker" style="background:#2563eb;color:#ffffff;">Done</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    if(reminderSubModal === 'timePicker'){
+      const hours = [1,2,3,4,5,6,7,8,9,10,11,12];
+      const mins = [0,5,10,15,20,25,30,35,40,45,50,55];
+      return `
+        <div class="rm-submodal-overlay" id="rmSubModalOverlay">
+          <div class="rm-submodal-page" onclick="event.stopPropagation()">
+            <div class="rm-submodal-header">
+              <div class="rm-submodal-header-left">
+                <button class="rm-back-btn" data-act="close-submodal" title="Back">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <h2 class="rm-submodal-title">Select time</h2>
+              </div>
+            </div>
+
+            <div class="rm-submodal-card" style="padding:18px;">
+              <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px;">
+                <select id="rmTimeHourSelect" class="rm-cal-select" style="font-size:18px;">
+                  ${hours.map(h => `<option value="${h}" ${h === reminderPickerHour ? 'selected' : ''}>${h}</option>`).join('')}
+                </select>
+                <span style="font-size:20px;font-weight:700;">:</span>
+                <select id="rmTimeMinSelect" class="rm-cal-select" style="font-size:18px;">
+                  ${mins.map(m => `<option value="${m}" ${m === reminderPickerMinute ? 'selected' : ''}>${String(m).padStart(2, '0')}</option>`).join('')}
+                </select>
+                <select id="rmTimeAmPmSelect" class="rm-cal-select" style="font-size:18px;">
+                  <option value="am" ${reminderPickerAmPm === 'am' ? 'selected' : ''}>am</option>
+                  <option value="pm" ${reminderPickerAmPm === 'pm' ? 'selected' : ''}>pm</option>
+                </select>
+              </div>
+              <div style="display:flex;justify-content:flex-end;gap:10px;">
+                <button type="button" class="rm-dt-pill" data-act="close-submodal">Cancel</button>
+                <button type="button" class="rm-dt-pill" data-act="confirm-time-picker" style="background:#2563eb;color:#ffffff;">Done</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    return '';
+  }
+
+  // --- Interaction Handlers ---
   function reminderInit(){
-    // Setup delegated events for Reminder section
+    // Right-click (PC/Laptop) on any reminder card enters Selection Mode
+    document.addEventListener('contextmenu', (e) => {
+      const card = e.target.closest('.rm-card.rm-selectable');
+      if(card && section === 'reminder'){
+        e.preventDefault();
+        const id = card.getAttribute('data-id');
+        if(id){
+          reminderSelectionMode = true;
+          reminderSelectedIds.add(id);
+          renderReminderSection();
+        }
+      }
+    });
+
+    // Long-press / Tap-and-hold (Mobile/Phone) on any reminder card enters Selection Mode
+    document.addEventListener('touchstart', (e) => {
+      if(section !== 'reminder') return;
+      const card = e.target.closest('.rm-card.rm-selectable');
+      if(!card) return;
+      const id = card.getAttribute('data-id');
+      if(!id) return;
+      reminderLongPressTriggered = false;
+      clearTimeout(reminderLongPressTimer);
+      reminderLongPressTimer = setTimeout(() => {
+        reminderLongPressTriggered = true;
+        reminderSelectionMode = true;
+        reminderSelectedIds.add(id);
+        renderReminderSection();
+      }, 450);
+    }, { passive: true });
+
+    document.addEventListener('touchmove', () => {
+      clearTimeout(reminderLongPressTimer);
+    }, { passive: true });
+
+    document.addEventListener('touchend', () => {
+      clearTimeout(reminderLongPressTimer);
+    }, { passive: true });
+
+    // Delegated click events for Reminder section
     document.addEventListener('click', (e) => {
+      if(reminderLongPressTriggered){
+        reminderLongPressTriggered = false;
+        return;
+      }
+
+      // Close inline dropdown if clicking outside it
+      if(reminderDropdown && !e.target.closest('[data-act="opt-alert"]') && !e.target.closest('[data-act="opt-repeat"]') && !e.target.closest('.rm-inline-dropdown')){
+        syncDraftInputsFromDOM();
+        reminderDropdown = null;
+        renderReminderSection();
+        return;
+      }
+
+      // Selection Mode Top Bar: Select All & Cancel
+      if(e.target.closest('#rmSelectCancelBtn')){
+        reminderSelectionMode = false;
+        reminderSelectedIds.clear();
+        renderReminderSection();
+        return;
+      }
+      if(e.target.closest('#rmSelectAllBtn')){
+        const visible = getVisibleRemindersForCurrentView();
+        const allSelected = visible.length > 0 && visible.every(i => reminderSelectedIds.has(i.id));
+        if(allSelected){
+          reminderSelectedIds.clear();
+        } else {
+          visible.forEach(i => reminderSelectedIds.add(i.id));
+        }
+        renderReminderSection();
+        return;
+      }
+
+      // Selection Mode Bottom 4-Option Bar (Complete, Edit, Important, Delete)
+      const selActBtn = e.target.closest('[data-sel-act]');
+      if(selActBtn){
+        const act = selActBtn.getAttribute('data-sel-act');
+        const ids = Array.from(reminderSelectedIds);
+        if(!ids.length) return;
+
+        if(act === 'complete'){
+          reminderItems.forEach(item => {
+            if(reminderSelectedIds.has(item.id)){
+              item.completed = true;
+              completedReminderItems.unshift({
+                id: 'c-' + Date.now() + '-' + item.id,
+                month: 'Sept',
+                title: item.title,
+                declined: null,
+                date: item.date || 'Today',
+                completedAt: 'Completed: Just now',
+                contact: null,
+                important: item.important
+              });
+            }
+          });
+          reminderItems = reminderItems.filter(item => !reminderSelectedIds.has(item.id));
+          reminderSelectionMode = false;
+          reminderSelectedIds.clear();
+          showToast(ids.length > 1 ? `${ids.length} reminders completed` : 'Reminder completed');
+          renderReminderSection();
+          return;
+        }
+
+        if(act === 'edit'){
+          const targetItem = reminderItems.find(i => i.id === ids[0]);
+          reminderSelectionMode = false;
+          reminderSelectedIds.clear();
+          if(targetItem){
+            openNewReminderSheet(targetItem);
+          }
+          return;
+        }
+
+        if(act === 'important'){
+          const anyUnstarred = reminderItems.some(i => reminderSelectedIds.has(i.id) && !i.important);
+          reminderItems.forEach(item => {
+            if(reminderSelectedIds.has(item.id)){
+              item.important = anyUnstarred;
+            }
+          });
+          reminderSelectionMode = false;
+          reminderSelectedIds.clear();
+          showToast(anyUnstarred ? 'Marked as important' : 'Removed from important');
+          renderReminderSection();
+          return;
+        }
+
+        if(act === 'delete'){
+          reminderItems = reminderItems.filter(item => !reminderSelectedIds.has(item.id));
+          reminderSelectionMode = false;
+          reminderSelectedIds.clear();
+          showToast(ids.length > 1 ? `${ids.length} reminders deleted` : 'Reminder deleted');
+          renderReminderSection();
+          return;
+        }
+      }
+
+      // In Selection Mode, clicking any reminder card toggles its selection
+      if(reminderSelectionMode){
+        const selCard = e.target.closest('.rm-card.rm-selectable');
+        if(selCard){
+          const id = selCard.getAttribute('data-id');
+          if(id){
+            if(reminderSelectedIds.has(id)) reminderSelectedIds.delete(id);
+            else reminderSelectedIds.add(id);
+            renderReminderSection();
+          }
+          return;
+        }
+      }
+
       // 1. Navigation category cards
       const catCard = e.target.closest('[data-view]');
       if(catCard){
         const v = catCard.getAttribute('data-view');
         if(v){
           reminderCurrentView = v;
+          reminderSelectionMode = false;
+          reminderSelectedIds.clear();
           renderReminderSection();
           return;
         }
@@ -3564,15 +4729,32 @@
       // 2. Back button
       if(e.target.closest('[data-act="back-main"]')){
         reminderCurrentView = 'main';
+        reminderSelectionMode = false;
+        reminderSelectedIds.clear();
         renderReminderSection();
         return;
       }
 
-      // 3. Search toggle
+      // 3. Search toggle & clear
       if(e.target.closest('#rmSearchToggle')){
         reminderSearchOpen = !reminderSearchOpen;
         if(!reminderSearchOpen) reminderSearchQuery = '';
         renderReminderSection();
+        if(reminderSearchOpen){
+          const inp = document.getElementById('rmSearchInput');
+          if(inp) inp.focus();
+        }
+        return;
+      }
+      if(e.target.closest('#rmSearchClearBtn')){
+        reminderSearchQuery = '';
+        const inp = document.getElementById('rmSearchInput');
+        if(inp){
+          inp.value = '';
+          inp.focus();
+        }
+        const listContainer = document.getElementById('rmCardsListContainer');
+        if(listContainer) listContainer.innerHTML = renderMainCardsListInnerHtml();
         return;
       }
 
@@ -3586,21 +4768,328 @@
         renderReminderSection();
       }
 
-      // 5. Floating pill -> open add sheet
+      // 5. Floating pill -> open add sheet (compact up to 5 options)
       if(e.target.closest('#rmFloatingPill')){
-        reminderAddSheetOpen = true;
-        renderReminderSection();
+        openNewReminderSheet(null);
         return;
       }
 
-      // 6. Close bottom sheet
+      // 6. Close bottom sheet or sub-modal
       if(e.target.id === 'rmSheetOverlay'){
         reminderAddSheetOpen = false;
+        reminderDropdown = null;
+        renderReminderSection();
+        return;
+      }
+      if(e.target.id === 'rmSubModalOverlay' || e.target.closest('[data-act="close-submodal"]')){
+        reminderSubModal = null;
+        reminderPresetDeleteMode = false;
+        reminderAddingCustomPreset = false;
         renderReminderSection();
         return;
       }
 
-      // 7. Toggle checkmark on card
+      // 7. 5 Option Circular Icons inside Add Sheet
+      const optBtn = e.target.closest('.rm-opt-circle[data-opt]');
+      if(optBtn){
+        syncDraftInputsFromDOM();
+        const opt = optBtn.getAttribute('data-opt');
+        if(opt === 'check'){
+          reminderShowSubpoints = !reminderShowSubpoints;
+          if(reminderShowSubpoints && (!reminderDraftChecklist || !reminderDraftChecklist.length)){
+            reminderDraftChecklist = [''];
+          }
+          renderReminderSection();
+          const subInputs = document.querySelectorAll('.rm-subpoint-input');
+          if(subInputs.length) subInputs[subInputs.length - 1].focus();
+          return;
+        }
+        if(opt === 'calendar'){
+          reminderSheetExpanded = !reminderSheetExpanded;
+          reminderDateEnabled = true;
+          renderReminderSection();
+          return;
+        }
+        if(opt === 'location'){
+          showToast('Location alert option selected');
+          return;
+        }
+        if(opt === 'photo'){
+          showToast('Image attachment option selected');
+          return;
+        }
+        if(opt === 'checklist'){
+          reminderSheetExpanded = true;
+          renderReminderSection();
+          return;
+        }
+      }
+
+      // Remove subpoint item
+      const remSub = e.target.closest('[data-act="remove-subpoint"]');
+      if(remSub){
+        syncDraftInputsFromDOM();
+        const idx = Number(remSub.getAttribute('data-sub-idx'));
+        reminderDraftChecklist.splice(idx, 1);
+        if(!reminderDraftChecklist.length) reminderDraftChecklist = [''];
+        renderReminderSection();
+        return;
+      }
+
+      // 8. Toggle All Day row
+      if(e.target.closest('[data-act="toggle-all-day"]')){
+        syncDraftInputsFromDOM();
+        reminderAllDay = !reminderAllDay;
+        reminderDateEnabled = true;
+        renderReminderSection();
+        return;
+      }
+
+      // 9. Date pill -> Open Calendar Date Picker popup
+      if(e.target.closest('[data-act="open-date-picker"]')){
+        syncDraftInputsFromDOM();
+        reminderSubModal = 'datePicker';
+        renderReminderSection();
+        return;
+      }
+      const calDayBtn = e.target.closest('[data-cal-day]');
+      if(calDayBtn){
+        const d = Number(calDayBtn.getAttribute('data-cal-day'));
+        const mSel = document.getElementById('rmCalMonthSelect');
+        const ySel = document.getElementById('rmCalYearSelect');
+        if(mSel) reminderSelectedDateObj.month = Number(mSel.value);
+        if(ySel) reminderSelectedDateObj.year = Number(ySel.value);
+        reminderSelectedDateObj.day = d;
+        renderReminderSection();
+        return;
+      }
+      if(e.target.closest('[data-act="confirm-date-picker"]')){
+        const mSel = document.getElementById('rmCalMonthSelect');
+        const ySel = document.getElementById('rmCalYearSelect');
+        if(mSel) reminderSelectedDateObj.month = Number(mSel.value);
+        if(ySel) reminderSelectedDateObj.year = Number(ySel.value);
+        const shortDays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const shortMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'];
+        const dt = new Date(reminderSelectedDateObj.year, reminderSelectedDateObj.month, reminderSelectedDateObj.day);
+        reminderSelectedDateLabel = `${shortDays[dt.getDay()]}, ${reminderSelectedDateObj.day} ${shortMonths[reminderSelectedDateObj.month]} ${reminderSelectedDateObj.year}`;
+        reminderDateEnabled = true;
+        reminderSubModal = null;
+        renderReminderSection();
+        return;
+      }
+
+      // 10. Time pill -> Open Time Picker popup (updates time everywhere)
+      if(e.target.closest('[data-act="open-time-picker"]')){
+        syncDraftInputsFromDOM();
+        reminderSubModal = 'timePicker';
+        renderReminderSection();
+        return;
+      }
+      if(e.target.closest('[data-act="confirm-time-picker"]')){
+        const hSel = document.getElementById('rmTimeHourSelect');
+        const mSel = document.getElementById('rmTimeMinSelect');
+        const apSel = document.getElementById('rmTimeAmPmSelect');
+        if(hSel) reminderPickerHour = Number(hSel.value);
+        if(mSel) reminderPickerMinute = Number(mSel.value);
+        if(apSel) reminderPickerAmPm = apSel.value;
+        reminderSelectedTimeLabel = `${reminderPickerHour}:${String(reminderPickerMinute).padStart(2, '0')} ${reminderPickerAmPm}`;
+        reminderDateEnabled = true;
+        reminderSubModal = null;
+        renderReminderSection();
+        return;
+      }
+
+      // 11. Preset chip click -> updates time or date everywhere
+      const presetChip = e.target.closest('.rm-quick-chip[data-preset]');
+      if(presetChip){
+        syncDraftInputsFromDOM();
+        const val = presetChip.getAttribute('data-preset');
+        reminderDateEnabled = true;
+        if(reminderAllDay){
+          reminderSelectedDateLabel = val;
+        } else {
+          if(val === '1 hour from now'){
+            reminderSelectedTimeLabel = '1:00 pm';
+          } else {
+            reminderSelectedTimeLabel = val;
+          }
+        }
+        renderReminderSection();
+        return;
+      }
+
+      // 12. Settings icon at the end of presets list -> Open "Show preset times" modal
+      if(e.target.closest('[data-act="open-preset-settings"]')){
+        syncDraftInputsFromDOM();
+        reminderPresetTab = reminderAllDay ? 'date' : 'time';
+        reminderPresetDeleteMode = false;
+        reminderAddingCustomPreset = false;
+        reminderSubModal = 'presetSettings';
+        renderReminderSection();
+        return;
+      }
+      const presetTabBtn = e.target.closest('[data-preset-tab]');
+      if(presetTabBtn){
+        reminderPresetTab = presetTabBtn.getAttribute('data-preset-tab');
+        reminderAddingCustomPreset = false;
+        renderReminderSection();
+        return;
+      }
+      if(e.target.closest('[data-act="preset-toggle-delete-mode"]')){
+        reminderPresetDeleteMode = !reminderPresetDeleteMode;
+        renderReminderSection();
+        return;
+      }
+      const delPresetBtn = e.target.closest('[data-act="delete-preset-item"]');
+      if(delPresetBtn){
+        e.stopPropagation();
+        const idx = Number(delPresetBtn.getAttribute('data-idx'));
+        if(reminderPresetTab === 'time') reminderTimePresets.splice(idx, 1);
+        else reminderDatePresets.splice(idx, 1);
+        renderReminderSection();
+        return;
+      }
+      if(e.target.closest('[data-act="open-add-preset"]')){
+        reminderAddingCustomPreset = true;
+        renderReminderSection();
+        const inp = document.getElementById('rmCustomPresetInput');
+        if(inp) inp.focus();
+        return;
+      }
+      if(e.target.closest('[data-act="save-custom-preset"]')){
+        const inp = document.getElementById('rmCustomPresetInput');
+        const val = (inp ? inp.value : '').trim();
+        if(val){
+          if(reminderPresetTab === 'time') reminderTimePresets.push(val);
+          else reminderDatePresets.push(val);
+        }
+        reminderAddingCustomPreset = false;
+        renderReminderSection();
+        return;
+      }
+      const selPresetModalRow = e.target.closest('[data-act="select-preset-from-modal"]');
+      if(selPresetModalRow && !reminderPresetDeleteMode){
+        const val = selPresetModalRow.getAttribute('data-val');
+        reminderDateEnabled = true;
+        if(reminderPresetTab === 'time'){
+          reminderAllDay = false;
+          reminderSelectedTimeLabel = val === '1 hour from now' ? '1:00 pm' : val;
+        } else {
+          reminderAllDay = true;
+          reminderSelectedDateLabel = val;
+        }
+        reminderSubModal = null;
+        renderReminderSection();
+        return;
+      }
+
+      // 13. Early Alert Dropdown & Custom Early Alert Modal
+      if(e.target.closest('[data-act="opt-alert"]')){
+        syncDraftInputsFromDOM();
+        reminderDropdown = reminderDropdown === 'alert' ? null : 'alert';
+        renderReminderSection();
+        return;
+      }
+      const ddAlertItem = e.target.closest('[data-dd-alert]');
+      if(ddAlertItem){
+        syncDraftInputsFromDOM();
+        const val = ddAlertItem.getAttribute('data-dd-alert');
+        reminderDropdown = null;
+        if(val === 'Custom'){
+          reminderCustomAlertMode = 'custom';
+          const unitShort = reminderCustomAlertUnit === 'minutes' ? 'mins' : reminderCustomAlertUnit;
+          reminderEarlyAlertValue = `${reminderCustomAlertNum} ${unitShort} before`;
+          reminderSubModal = 'customAlert';
+        } else {
+          reminderCustomAlertMode = 'preset';
+          reminderEarlyAlertValue = val;
+        }
+        renderReminderSection();
+        return;
+      }
+      const alertRadioRow = e.target.closest('[data-act="select-alert-radio"]');
+      if(alertRadioRow){
+        const val = alertRadioRow.getAttribute('data-val');
+        if(val === 'Custom'){
+          reminderCustomAlertMode = 'custom';
+          const unitShort = reminderCustomAlertUnit === 'minutes' ? 'mins' : reminderCustomAlertUnit;
+          reminderEarlyAlertValue = `${reminderCustomAlertNum} ${unitShort} before`;
+        } else {
+          reminderCustomAlertMode = 'preset';
+          reminderEarlyAlertValue = val;
+        }
+        renderReminderSection();
+        return;
+      }
+      const wheelNumBtn = e.target.closest('[data-act="wheel-num"]');
+      if(wheelNumBtn){
+        const dir = Number(wheelNumBtn.getAttribute('data-dir'));
+        reminderCustomAlertNum += dir;
+        if(reminderCustomAlertNum < 1) reminderCustomAlertNum = 60;
+        if(reminderCustomAlertNum > 60) reminderCustomAlertNum = 1;
+        const unitShort = reminderCustomAlertUnit === 'minutes' ? 'mins' : reminderCustomAlertUnit;
+        reminderEarlyAlertValue = `${reminderCustomAlertNum} ${unitShort} before`;
+        renderReminderSection();
+        return;
+      }
+      const wheelUnitBtn = e.target.closest('[data-act="wheel-unit"]');
+      if(wheelUnitBtn){
+        const dir = Number(wheelUnitBtn.getAttribute('data-dir'));
+        const allUnits = ['minutes', 'hours', 'days'];
+        const idx = allUnits.indexOf(reminderCustomAlertUnit);
+        reminderCustomAlertUnit = allUnits[(idx + dir + allUnits.length) % allUnits.length];
+        const unitShort = reminderCustomAlertUnit === 'minutes' ? 'mins' : reminderCustomAlertUnit;
+        reminderEarlyAlertValue = `${reminderCustomAlertNum} ${unitShort} before`;
+        renderReminderSection();
+        return;
+      }
+
+      // 14. Repeat Dropdown & Custom Repeat Modal
+      if(e.target.closest('[data-act="opt-repeat"]')){
+        syncDraftInputsFromDOM();
+        reminderDropdown = reminderDropdown === 'repeat' ? null : 'repeat';
+        renderReminderSection();
+        return;
+      }
+      const ddRepeatItem = e.target.closest('[data-dd-repeat]');
+      if(ddRepeatItem){
+        syncDraftInputsFromDOM();
+        const val = ddRepeatItem.getAttribute('data-dd-repeat');
+        reminderDropdown = null;
+        if(val === 'Custom'){
+          reminderSubModal = 'customRepeat';
+        } else {
+          reminderRepeatValue = val;
+          reminderCustomRepeatType = 'none';
+        }
+        renderReminderSection();
+        return;
+      }
+      const repeatRadioRow = e.target.closest('[data-act="select-custom-repeat"]');
+      if(repeatRadioRow){
+        const unit = repeatRadioRow.getAttribute('data-unit');
+        reminderCustomRepeatType = unit;
+        if(unit === 'none'){
+          reminderRepeatValue = "Don't repeat";
+        } else {
+          const cnt = reminderCustomRepeatCounts[unit] || 1;
+          reminderRepeatValue = cnt === 1 ? `Every ${unit}` : `Every ${cnt} ${unit}s`;
+        }
+        renderReminderSection();
+        return;
+      }
+
+      // 15. Toggle Sound strength
+      if(e.target.closest('[data-act="opt-sound"]')){
+        syncDraftInputsFromDOM();
+        const levels = ['Strong', 'Medium', 'Soft', 'Silent'];
+        const nextIdx = (levels.indexOf(reminderSoundValue) + 1) % levels.length;
+        reminderSoundValue = levels[nextIdx];
+        renderReminderSection();
+        return;
+      }
+
+      // 16. Toggle checkmark on card
       const checkBtn = e.target.closest('[data-act="toggle-check"]');
       if(checkBtn){
         const id = checkBtn.getAttribute('data-id');
@@ -3612,7 +5101,7 @@
         return;
       }
 
-      // 8. Toggle star on card
+      // 17. Toggle star on card
       const starBtn = e.target.closest('[data-act="toggle-star"]');
       if(starBtn){
         const id = starBtn.getAttribute('data-id');
@@ -3624,7 +5113,7 @@
         return;
       }
 
-      // 9. Toggle checklist sub-item
+      // 18. Toggle checklist sub-item on card
       const subCheckBtn = e.target.closest('[data-act="toggle-subcheck"]');
       if(subCheckBtn){
         const id = subCheckBtn.getAttribute('data-id');
@@ -3637,74 +5126,172 @@
         return;
       }
 
-      // 10. Add sheet confirm button
+      // 19. Add / Edit sheet confirm button
       if(e.target.closest('#rmConfirmAddBtn')){
-        const titleInput = document.getElementById('rmNewTitle');
-        const title = (titleInput ? titleInput.value : '').trim();
-        if(title){
-          reminderItems.unshift({
-            id: 'rm-' + Date.now(),
-            title: title,
-            important: reminderCurrentView === 'important',
-            category: reminderCurrentView === 'today' ? 'today' : 'main',
-            section: 'main',
-            completed: false,
-            date: reminderSelectedChip,
-            checklist: []
-          });
-          showToast('Reminder added: ' + title);
+        syncDraftInputsFromDOM();
+        const title = (reminderDraftTitle || '').trim();
+        const validSubpoints = reminderShowSubpoints
+          ? reminderDraftChecklist.map(s => s.trim()).filter(Boolean).map(text => ({ text, done: false }))
+          : [];
+        const finalDate = getComputedReminderChip() || null;
+
+        if(title || validSubpoints.length){
+          const finalTitle = title || validSubpoints[0].text;
+          if(reminderEditingId){
+            const existing = reminderItems.find(i => i.id === reminderEditingId);
+            if(existing){
+              existing.title = finalTitle;
+              existing.date = finalDate;
+              existing.checklist = validSubpoints;
+              existing.category = finalDate ? (finalDate.startsWith('Today') ? 'today' : 'scheduled') : 'noAlert';
+              existing.section = finalDate ? 'main' : 'No alert';
+              showToast('Reminder updated');
+            }
+          } else {
+            reminderItems.unshift({
+              id: 'rm-' + Date.now(),
+              title: finalTitle,
+              important: reminderCurrentView === 'important',
+              category: reminderCurrentView === 'today' ? 'today' : (finalDate ? 'scheduled' : 'noAlert'),
+              section: finalDate ? 'main' : 'No alert',
+              completed: false,
+              date: finalDate,
+              checklist: validSubpoints
+            });
+            showToast('Reminder added: ' + finalTitle);
+          }
         }
         reminderAddSheetOpen = false;
+        reminderEditingId = null;
+        reminderDropdown = null;
         renderReminderSection();
         return;
       }
 
-      // 11. Quick time chip selection
-      const qChip = e.target.closest('.rm-quick-chip[data-time]');
-      if(qChip){
-        reminderSelectedChip = qChip.getAttribute('data-time');
-        renderReminderSection();
-        return;
-      }
-
-      // 12. Clear chip
+      // 20. Clear chip
       if(e.target.closest('[data-act="clear-chip"]')){
-        reminderSelectedChip = 'No date';
+        syncDraftInputsFromDOM();
+        reminderDateEnabled = false;
         renderReminderSection();
         return;
       }
 
-      // 13. Menu items
+      // 21. Menu items
       const mi = e.target.closest('[data-act^="menu-"]');
       if(mi){
         const act = mi.getAttribute('data-act');
-        showToast('Menu: ' + act.replace('menu-', ''));
         reminderMenuOpen = false;
+        if(act === 'menu-edit'){
+          reminderSelectionMode = true;
+        } else if(act === 'menu-settings'){
+          reminderSubModal = 'presetSettings';
+        } else if(act === 'menu-sort'){
+          reminderItems.reverse();
+          showToast('Sorted reminders');
+        }
         renderReminderSection();
         return;
       }
     });
 
-    // Handle search input typing
+    // Handle input & change events without losing cursor focus
     document.addEventListener('input', (e) => {
+      // Search input: update only the cards list container so cursor never jumps!
       if(e.target.id === 'rmSearchInput'){
         reminderSearchQuery = e.target.value;
-        renderReminderSection();
+        const listContainer = document.getElementById('rmCardsListContainer');
+        if(listContainer){
+          listContainer.innerHTML = renderMainCardsListInnerHtml();
+        }
+        return;
       }
-      if(e.target.id === 'rmAllDayToggle'){
-        reminderAllDay = e.target.checked;
+      if(e.target.id === 'rmNewTitle'){
+        reminderDraftTitle = e.target.value;
+        return;
+      }
+      if(e.target.classList.contains('rm-subpoint-input')){
+        const idx = Number(e.target.getAttribute('data-sub-idx'));
+        if(!isNaN(idx)){
+          reminderDraftChecklist[idx] = e.target.value;
+        }
+        return;
+      }
+      const repNumUnit = e.target.getAttribute('data-repeat-num');
+      if(repNumUnit){
+        const val = Math.max(1, Number(e.target.value) || 1);
+        reminderCustomRepeatCounts[repNumUnit] = val;
+        reminderCustomRepeatType = repNumUnit;
+        reminderRepeatValue = val === 1 ? `Every ${repNumUnit}` : `Every ${val} ${repNumUnit}s`;
+        return;
       }
     });
 
-    // Handle Enter key inside Add Reminder input
+    document.addEventListener('change', (e) => {
+      if(e.target.id === 'rmAllDayToggle'){
+        syncDraftInputsFromDOM();
+        reminderAllDay = e.target.checked;
+        reminderDateEnabled = true;
+        renderReminderSection();
+        return;
+      }
+      if(e.target.id === 'rmShowPresetsToggle'){
+        reminderShowPresets = e.target.checked;
+        renderReminderSection();
+        return;
+      }
+      if(e.target.id === 'rmCalMonthSelect' || e.target.id === 'rmCalYearSelect'){
+        const mSel = document.getElementById('rmCalMonthSelect');
+        const ySel = document.getElementById('rmCalYearSelect');
+        if(mSel) reminderSelectedDateObj.month = Number(mSel.value);
+        if(ySel) reminderSelectedDateObj.year = Number(ySel.value);
+        const maxD = new Date(reminderSelectedDateObj.year, reminderSelectedDateObj.month + 1, 0).getDate();
+        if(reminderSelectedDateObj.day > maxD) reminderSelectedDateObj.day = maxD;
+        renderReminderSection();
+        return;
+      }
+    });
+
+    // Handle Enter & Escape keys inside Add Reminder & Subpoints
     document.addEventListener('keydown', (e) => {
       if(e.key === 'Enter' && e.target.id === 'rmNewTitle'){
-        const btn = document.getElementById('rmConfirmAddBtn');
-        if(btn) btn.click();
+        if(reminderShowSubpoints){
+          e.preventDefault();
+          const firstSub = document.querySelector('.rm-subpoint-input');
+          if(firstSub) firstSub.focus();
+        } else {
+          const btn = document.getElementById('rmConfirmAddBtn');
+          if(btn) btn.click();
+        }
+        return;
       }
-      if(e.key === 'Escape' && reminderAddSheetOpen){
-        reminderAddSheetOpen = false;
+      if(e.key === 'Enter' && e.target.classList.contains('rm-subpoint-input')){
+        e.preventDefault();
+        syncDraftInputsFromDOM();
+        const idx = Number(e.target.getAttribute('data-sub-idx'));
+        reminderDraftChecklist.splice(idx + 1, 0, '');
         renderReminderSection();
+        const subInputs = document.querySelectorAll('.rm-subpoint-input');
+        if(subInputs[idx + 1]) subInputs[idx + 1].focus();
+        return;
+      }
+      if(e.key === 'Enter' && e.target.id === 'rmCustomPresetInput'){
+        e.preventDefault();
+        const saveBtn = document.querySelector('[data-act="save-custom-preset"]');
+        if(saveBtn) saveBtn.click();
+        return;
+      }
+      if(e.key === 'Escape'){
+        if(reminderSubModal){
+          reminderSubModal = null;
+          renderReminderSection();
+        } else if(reminderAddSheetOpen){
+          reminderAddSheetOpen = false;
+          renderReminderSection();
+        } else if(reminderSelectionMode){
+          reminderSelectionMode = false;
+          reminderSelectedIds.clear();
+          renderReminderSection();
+        }
       }
     });
   }
@@ -4020,7 +5607,7 @@
     if(t.matches('[data-select-plan]')){
       handleSelectPlan(t.getAttribute('data-select-plan'));
     }
-    if(t.id === 'topPlanBtn' || t.id === 'settingsUpgradeBtn' || t.id === 'gridUpgradeLink' || t.id === 'unlockProFromReportsBtn'){
+    if(t.closest('#topPlanBtn') || t.closest('#settingsUpgradeBtn') || t.id === 'gridUpgradeLink' || t.id === 'unlockProFromReportsBtn'){
       openPricingModal();
     }
     if(t.id === 'backToTrackerFromLockedReportsBtn'){
@@ -4028,7 +5615,7 @@
     }
 
     // Admin portal handlers
-    if(t.id === 'topAdminBtn' || t.id === 'settingsAdminBtn'){
+    if(t.closest('#topAdminBtn') || t.closest('#settingsAdminBtn')){
       openAdminModal();
     }
     if(t.id === 'adminCloseBtn' || t.id === 'adminCancelBtn' || t.id === 'adminOverlay'){
