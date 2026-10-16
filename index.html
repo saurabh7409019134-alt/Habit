@@ -4236,7 +4236,7 @@
                 <span>${escapeAttr(reminderEarlyAlertValue)}</span>
               </div>
               ${reminderDropdown === 'alert' ? `
-                <div class="rm-inline-dropdown" onclick="event.stopPropagation()">
+                <div class="rm-inline-dropdown">
                   ${['No early alert', '10 mins before', '15 mins before', '1 hour before', '1 day before', 'Custom'].map(opt => {
                     const isAct = (opt === 'Custom' && reminderCustomAlertMode === 'custom') || (opt === reminderEarlyAlertValue);
                     return `
@@ -4257,9 +4257,9 @@
                 <span>${escapeAttr(reminderRepeatValue)}</span>
               </div>
               ${reminderDropdown === 'repeat' ? `
-                <div class="rm-inline-dropdown" onclick="event.stopPropagation()">
+                <div class="rm-inline-dropdown">
                   ${["Don't repeat", 'Every day', 'Every week', 'Every month', 'Every year', 'Custom'].map(opt => {
-                    const isAct = opt === reminderRepeatValue;
+                    const isAct = (opt === 'Custom' && reminderCustomRepeatType !== 'none' && !['Every day','Every week','Every month','Every year'].includes(reminderRepeatValue)) || (opt === reminderRepeatValue);
                     return `
                       <div class="rm-inline-dd-item ${isAct ? 'active' : ''}" data-dd-repeat="${escapeAttr(opt)}">
                         <span class="rm-dd-check">${isAct ? '✓' : ''}</span>
@@ -4292,15 +4292,15 @@
       const list = reminderPresetTab === 'time' ? reminderTimePresets : reminderDatePresets;
       return `
         <div class="rm-submodal-overlay" id="rmSubModalOverlay">
-          <div class="rm-submodal-page" onclick="event.stopPropagation()">
+          <div class="rm-submodal-page">
             <div class="rm-submodal-header">
               <div class="rm-submodal-header-left">
-                <button class="rm-back-btn" data-act="close-submodal" title="Back">
+                <button type="button" class="rm-back-btn" data-act="close-submodal" title="Back">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
                 </button>
                 <h2 class="rm-submodal-title">Show preset times</h2>
               </div>
-              <button class="rm-icon-btn" data-act="preset-toggle-delete-mode" title="Delete presets" style="${reminderPresetDeleteMode ? 'background:#fee2e2;color:#dc2626;' : ''}">
+              <button type="button" class="rm-icon-btn" data-act="preset-toggle-delete-mode" title="Delete presets" style="${reminderPresetDeleteMode ? 'background:#fee2e2;color:#dc2626;' : ''}">
                 <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
               </button>
             </div>
@@ -4320,7 +4320,7 @@
                 <div class="rm-submodal-row" data-act="select-preset-from-modal" data-val="${escapeAttr(item)}">
                   <span>${escapeAttr(item)}</span>
                   ${reminderPresetDeleteMode ? `
-                    <button class="rm-chip-remove" data-act="delete-preset-item" data-idx="${idx}" title="Delete">⊖</button>
+                    <button type="button" class="rm-chip-remove" data-act="delete-preset-item" data-idx="${idx}" title="Delete">⊖</button>
                   ` : ''}
                 </div>
               `).join('')}
@@ -4328,7 +4328,7 @@
               ${reminderAddingCustomPreset ? `
                 <div class="rm-submodal-row" style="gap:8px;cursor:default;">
                   <input type="text" id="rmCustomPresetInput" class="rm-sheet-input" placeholder="${reminderPresetTab === 'time' ? 'e.g. 6:30 am' : 'e.g. 2 weeks from now'}" style="border-bottom:1.5px solid #3b82f6;padding:4px 0;" autofocus>
-                  <button class="rm-dt-pill" data-act="save-custom-preset" style="background:#3b82f6;color:#fff;">Add</button>
+                  <button type="button" class="rm-dt-pill" data-act="save-custom-preset" style="background:#3b82f6;color:#fff;">Add</button>
                 </div>
               ` : `
                 <div class="rm-submodal-row" data-act="open-add-preset" style="color:#111827;font-weight:500;justify-content:flex-start;gap:10px;">
@@ -4365,21 +4365,22 @@
       ];
       const summaryText = reminderCustomRepeatType === 'none'
         ? "This reminder doesn't repeat."
-        : `Repeats every ${reminderCustomRepeatCounts[reminderCustomRepeatType]} ${reminderCustomRepeatType}${reminderCustomRepeatCounts[reminderCustomRepeatType] > 1 ? 's' : ''}.`;
+        : `This reminder will repeat every ${reminderCustomRepeatCounts[reminderCustomRepeatType]} ${reminderCustomRepeatType}${reminderCustomRepeatCounts[reminderCustomRepeatType] > 1 ? 's' : ''}.`;
 
       return `
         <div class="rm-submodal-overlay" id="rmSubModalOverlay">
-          <div class="rm-submodal-page" onclick="event.stopPropagation()">
+          <div class="rm-submodal-page">
             <div class="rm-submodal-header">
               <div class="rm-submodal-header-left">
-                <button class="rm-back-btn" data-act="close-submodal" title="Back">
+                <button type="button" class="rm-back-btn" data-act="close-submodal" title="Back">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
                 </button>
                 <h2 class="rm-submodal-title">Repeat</h2>
               </div>
+              <button type="button" class="rm-dt-pill" data-act="close-submodal" style="background:#2563eb;color:#ffffff;">Done</button>
             </div>
 
-            <div style="font-size:13.5px;color:#4b5563;padding:0 8px 10px;">${escapeAttr(summaryText)}</div>
+            <div id="rmRepeatSummaryText" style="font-size:13.5px;color:#4b5563;padding:0 8px 10px;">${escapeAttr(summaryText)}</div>
 
             <div class="rm-submodal-card">
               <div class="rm-radio-row" data-act="select-custom-repeat" data-unit="none">
@@ -4392,7 +4393,7 @@
                 return `
                   <div class="rm-radio-row" data-act="select-custom-repeat" data-unit="${u.key}">
                     <span class="rm-radio-circle ${isSel ? 'checked' : ''}"></span>
-                    <span>Every <input type="number" min="1" max="999" class="rm-repeat-num-input" data-repeat-num="${u.key}" value="${cnt}" onclick="event.stopPropagation()"> ${u.label}${cnt > 1 ? 's' : ''}</span>
+                    <span>Every <input type="number" min="1" max="999" class="rm-repeat-num-input" data-repeat-num="${u.key}" value="${cnt}"> ${u.label}${cnt > 1 ? 's' : ''}</span>
                   </div>
                 `;
               }).join('')}
@@ -4415,14 +4416,15 @@
 
       return `
         <div class="rm-submodal-overlay" id="rmSubModalOverlay">
-          <div class="rm-submodal-page" onclick="event.stopPropagation()">
+          <div class="rm-submodal-page">
             <div class="rm-submodal-header">
               <div class="rm-submodal-header-left">
-                <button class="rm-back-btn" data-act="close-submodal" title="Back">
+                <button type="button" class="rm-back-btn" data-act="close-submodal" title="Back">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
                 </button>
                 <h2 class="rm-submodal-title">Early alert</h2>
               </div>
+              <button type="button" class="rm-dt-pill" data-act="close-submodal" style="background:#2563eb;color:#ffffff;">Done</button>
             </div>
 
             <div class="rm-submodal-card">
@@ -4466,7 +4468,6 @@
 
     if(reminderSubModal === 'datePicker'){
       const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-      const shortMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'];
       const shortDays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
       const { year, month, day } = reminderSelectedDateObj;
       const firstDow = new Date(year, month, 1).getDay();
@@ -4480,14 +4481,15 @@
 
       return `
         <div class="rm-submodal-overlay" id="rmSubModalOverlay">
-          <div class="rm-submodal-page" onclick="event.stopPropagation()">
+          <div class="rm-submodal-page">
             <div class="rm-submodal-header">
               <div class="rm-submodal-header-left">
-                <button class="rm-back-btn" data-act="close-submodal" title="Back">
+                <button type="button" class="rm-back-btn" data-act="close-submodal" title="Back">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
                 </button>
                 <h2 class="rm-submodal-title">Select date</h2>
               </div>
+              <button type="button" class="rm-icon-btn" data-act="close-submodal" title="Close">✕</button>
             </div>
 
             <div class="rm-submodal-card" style="padding:16px;">
@@ -4522,14 +4524,15 @@
       const mins = [0,5,10,15,20,25,30,35,40,45,50,55];
       return `
         <div class="rm-submodal-overlay" id="rmSubModalOverlay">
-          <div class="rm-submodal-page" onclick="event.stopPropagation()">
+          <div class="rm-submodal-page">
             <div class="rm-submodal-header">
               <div class="rm-submodal-header-left">
-                <button class="rm-back-btn" data-act="close-submodal" title="Back">
+                <button type="button" class="rm-back-btn" data-act="close-submodal" title="Back">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
                 </button>
                 <h2 class="rm-submodal-title">Select time</h2>
               </div>
+              <button type="button" class="rm-icon-btn" data-act="close-submodal" title="Close">✕</button>
             </div>
 
             <div class="rm-submodal-card" style="padding:18px;">
@@ -4860,6 +4863,12 @@
         if(mSel) reminderSelectedDateObj.month = Number(mSel.value);
         if(ySel) reminderSelectedDateObj.year = Number(ySel.value);
         reminderSelectedDateObj.day = d;
+        const shortDays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const shortMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'];
+        const dt = new Date(reminderSelectedDateObj.year, reminderSelectedDateObj.month, reminderSelectedDateObj.day);
+        reminderSelectedDateLabel = `${shortDays[dt.getDay()]}, ${reminderSelectedDateObj.day} ${shortMonths[reminderSelectedDateObj.month]} ${reminderSelectedDateObj.year}`;
+        reminderDateEnabled = true;
+        reminderSubModal = null; // Automatically close small calendar upon picking a date
         renderReminderSection();
         return;
       }
@@ -4942,7 +4951,6 @@
       }
       const delPresetBtn = e.target.closest('[data-act="delete-preset-item"]');
       if(delPresetBtn){
-        e.stopPropagation();
         const idx = Number(delPresetBtn.getAttribute('data-idx'));
         if(reminderPresetTab === 'time') reminderTimePresets.splice(idx, 1);
         else reminderDatePresets.splice(idx, 1);
@@ -4983,13 +4991,7 @@
         return;
       }
 
-      // 13. Early Alert Dropdown & Custom Early Alert Modal
-      if(e.target.closest('[data-act="opt-alert"]')){
-        syncDraftInputsFromDOM();
-        reminderDropdown = reminderDropdown === 'alert' ? null : 'alert';
-        renderReminderSection();
-        return;
-      }
+      // 13. Early Alert Dropdown Item & Custom Early Alert Modal (check dropdown items BEFORE parent row!)
       const ddAlertItem = e.target.closest('[data-dd-alert]');
       if(ddAlertItem){
         syncDraftInputsFromDOM();
@@ -5004,6 +5006,12 @@
           reminderCustomAlertMode = 'preset';
           reminderEarlyAlertValue = val;
         }
+        renderReminderSection();
+        return;
+      }
+      if(e.target.closest('[data-act="opt-alert"]')){
+        syncDraftInputsFromDOM();
+        reminderDropdown = reminderDropdown === 'alert' ? null : 'alert';
         renderReminderSection();
         return;
       }
@@ -5044,13 +5052,7 @@
         return;
       }
 
-      // 14. Repeat Dropdown & Custom Repeat Modal
-      if(e.target.closest('[data-act="opt-repeat"]')){
-        syncDraftInputsFromDOM();
-        reminderDropdown = reminderDropdown === 'repeat' ? null : 'repeat';
-        renderReminderSection();
-        return;
-      }
+      // 14. Repeat Dropdown Item & Custom Repeat Modal (check dropdown items BEFORE parent row!)
       const ddRepeatItem = e.target.closest('[data-dd-repeat]');
       if(ddRepeatItem){
         syncDraftInputsFromDOM();
@@ -5065,6 +5067,12 @@
         renderReminderSection();
         return;
       }
+      if(e.target.closest('[data-act="opt-repeat"]')){
+        syncDraftInputsFromDOM();
+        reminderDropdown = reminderDropdown === 'repeat' ? null : 'repeat';
+        renderReminderSection();
+        return;
+      }
       const repeatRadioRow = e.target.closest('[data-act="select-custom-repeat"]');
       if(repeatRadioRow){
         const unit = repeatRadioRow.getAttribute('data-unit');
@@ -5074,6 +5082,20 @@
         } else {
           const cnt = reminderCustomRepeatCounts[unit] || 1;
           reminderRepeatValue = cnt === 1 ? `Every ${unit}` : `Every ${cnt} ${unit}s`;
+        }
+        if(e.target.tagName === 'INPUT'){
+          // Keep focus inside the number input while updating radio circles & summary text in-place
+          document.querySelectorAll('[data-act="select-custom-repeat"] .rm-radio-circle').forEach(el => {
+            const parentUnit = el.closest('[data-act="select-custom-repeat"]').getAttribute('data-unit');
+            el.classList.toggle('checked', parentUnit === unit);
+          });
+          const sumEl = document.getElementById('rmRepeatSummaryText');
+          if(sumEl){
+            sumEl.textContent = unit === 'none'
+              ? "This reminder doesn't repeat."
+              : `This reminder will repeat every ${reminderCustomRepeatCounts[unit]} ${unit}${reminderCustomRepeatCounts[unit] > 1 ? 's' : ''}.`;
+          }
+          return;
         }
         renderReminderSection();
         return;
@@ -5222,6 +5244,10 @@
         reminderCustomRepeatCounts[repNumUnit] = val;
         reminderCustomRepeatType = repNumUnit;
         reminderRepeatValue = val === 1 ? `Every ${repNumUnit}` : `Every ${val} ${repNumUnit}s`;
+        const sumEl = document.getElementById('rmRepeatSummaryText');
+        if(sumEl){
+          sumEl.textContent = `This reminder will repeat every ${val} ${repNumUnit}${val > 1 ? 's' : ''}.`;
+        }
         return;
       }
     });
