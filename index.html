@@ -792,6 +792,392 @@
     flex: 0.7;
   }
 
+  /* ==========================================================================
+     CREATE WIDGET STUDIO & INTERACTIVE REMINDER / TRACKER WIDGETS
+     ========================================================================== */
+  .kw-studio-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 10, 6, 0.65);
+    backdrop-filter: blur(6px);
+    z-index: 9500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .kw-studio-modal {
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #ffffff;
+    color: #111827;
+    border-radius: 26px;
+    padding: 22px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    border: 1px solid #e2e8f0;
+  }
+  body.dark .kw-studio-modal {
+    background: #111827;
+    color: #f8fafc;
+    border-color: #1e293b;
+  }
+  .kw-studio-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .kw-studio-title {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+  .kw-studio-close {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: #f1f5f9;
+    color: #334155;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  body.dark .kw-studio-close {
+    background: #1e293b;
+    color: #cbd5e1;
+  }
+  .kw-section-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: #64748b;
+    margin: 14px 0 8px;
+  }
+  body.dark .kw-section-label {
+    color: #94a3b8;
+  }
+  .kw-seg-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .kw-seg-btn {
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+    color: #334155;
+    border-radius: 14px;
+    padding: 10px 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+  }
+  body.dark .kw-seg-btn {
+    background: #1e293b;
+    border-color: #334155;
+    color: #cbd5e1;
+  }
+  .kw-seg-btn.active {
+    border-color: #10b981;
+    background: #ecfdf5;
+    color: #065f46;
+    box-shadow: 0 2px 10px rgba(16, 185, 129, 0.16);
+  }
+  body.dark .kw-seg-btn.active {
+    border-color: #10b981;
+    background: #064e3b;
+    color: #6ee7b7;
+  }
+  .kw-theme-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .kw-theme-chip {
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 8px 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: #f8fafc;
+    color: #334155;
+  }
+  body.dark .kw-theme-chip {
+    background: #1e293b;
+    border-color: #334155;
+    color: #e2e8f0;
+  }
+  .kw-theme-chip.active {
+    border-color: #2563eb;
+    background: #eff6ff;
+    color: #1d4ed8;
+  }
+  body.dark .kw-theme-chip.active {
+    border-color: #3b82f6;
+    background: #1e3a8a;
+    color: #bfdbfe;
+  }
+  .kw-preview-stage {
+    margin-top: 14px;
+    padding: 18px;
+    border-radius: 22px;
+    background: radial-gradient(circle at top left, #e0f2fe, #dcfce7 60%, #f1f5f9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #cbd5e1;
+  }
+  body.dark .kw-preview-stage {
+    background: radial-gradient(circle at top left, #0f172a, #064e3b 65%, #111827);
+    border-color: #334155;
+  }
+
+  /* Actual Widget Card Styles (Used in Preview, Pinned Widget, and Pop-out Window) */
+  .kw-widget-card {
+    width: 100%;
+    border-radius: 22px;
+    padding: 16px;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .kw-widget-card.size-compact { max-width: 250px; padding: 14px; }
+  .kw-widget-card.size-medium { max-width: 380px; }
+  .kw-widget-card.size-large { max-width: 480px; }
+
+  .kw-widget-card.theme-emerald {
+    background: linear-gradient(145deg, #0b1324 0%, #064e3b 100%);
+    color: #f8fafc;
+    border: 1px solid rgba(52, 211, 153, 0.28);
+  }
+  .kw-widget-card.theme-light {
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
+  }
+  .kw-widget-card.theme-midnight {
+    background: linear-gradient(145deg, #0f172a 0%, #1e1b4b 100%);
+    color: #f8fafc;
+    border: 1px solid rgba(129, 140, 248, 0.3);
+  }
+  .kw-widget-card.theme-glass {
+    background: rgba(17, 24, 39, 0.78);
+    backdrop-filter: blur(16px);
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .kw-w-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .kw-w-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    opacity: 0.9;
+  }
+  .kw-w-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 9999px;
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+  }
+  .theme-light .kw-w-badge {
+    background: #dcfce7;
+    color: #047857;
+  }
+  .kw-w-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .kw-w-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.07);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .theme-light .kw-w-item {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+  .kw-w-item:hover {
+    background: rgba(255, 255, 255, 0.13);
+  }
+  .theme-light .kw-w-item:hover {
+    background: #e2e8f0;
+  }
+  .kw-w-check {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    border-radius: 50%;
+    border: 1.8px solid #34d399;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    color: #042f2e;
+    background: transparent;
+  }
+  .kw-w-check.done {
+    background: #10b981;
+    border-color: #10b981;
+    color: #042f2e;
+  }
+  .kw-w-quick-form {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .kw-w-quick-input {
+    flex: 1;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.08);
+    color: inherit;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 12px;
+    outline: none;
+  }
+  .theme-light .kw-w-quick-input {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    color: #0f172a;
+  }
+  .kw-w-quick-btn {
+    border: none;
+    background: #10b981;
+    color: #042f2e;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 6px 11px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .kw-studio-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .kw-action-btn {
+    border: none;
+    border-radius: 14px;
+    padding: 11px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+  }
+  .kw-action-btn.primary {
+    background: linear-gradient(90deg, #00e676, #a3ff5f);
+    color: #042f2e;
+  }
+  .kw-action-btn.secondary {
+    background: #2563eb;
+    color: #ffffff;
+  }
+  .kw-action-btn.outline {
+    grid-column: span 2;
+    background: #f1f5f9;
+    color: #1e293b;
+    border: 1px solid #cbd5e1;
+  }
+  body.dark .kw-action-btn.outline {
+    background: #1e293b;
+    color: #e2e8f0;
+    border-color: #334155;
+  }
+
+  /* Pinned Floating Screen Widget Dock */
+  .kw-pinned-dock {
+    position: fixed;
+    bottom: 88px;
+    right: 18px;
+    z-index: 8500;
+    width: 310px;
+    max-width: calc(100vw - 32px);
+  }
+  .kw-pinned-dock.minimized {
+    width: auto;
+  }
+  .kw-pinned-pill {
+    border: none;
+    background: linear-gradient(135deg, #064e3b, #10b981);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 10px 16px;
+    border-radius: 9999px;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .kw-pinned-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+    margin-bottom: 6px;
+  }
+  .kw-pin-ctrl-btn {
+    border: none;
+    background: rgba(15, 23, 42, 0.78);
+    color: #f8fafc;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 9999px;
+    cursor: pointer;
+  }
+
   /* Floating Composer Pill */
   .rm-floating-pill {
     position: fixed;
@@ -2886,6 +3272,7 @@
     if(eff === 'done') delete data.statuses[key];
     else data.statuses[key] = 'done';
     scheduleSave();
+    if(typeof refreshAllWidgetsUI === 'function') refreshAllWidgetsUI();
   }
   function dayCompletionPct(date){
     if(data.habits.length === 0) return null;
@@ -3244,6 +3631,7 @@
       <div class="tn-brand"><img src="${LOGO_SRC}" alt="KeepIt"><span>KeepIt</span></div>
       <nav class="tn-links">${NAV_ITEMS.map(i => `<button data-section="${i.id}" class="${section===i.id?'active':''}">${i.label}</button>`).join('')}</nav>
       <div style="display:flex;align-items:center;gap:8px;">
+        <button class="tn-plan-pill" data-open-widget-studio="auto" title="Create Reminder or Habit Tracker Widget" style="background:rgba(16,185,129,0.14);color:#10b981;border:1px solid rgba(16,185,129,0.35);">🧩 Widget</button>
         <button class="tn-plan-pill ${getEffectivePlan()}" id="topPlanBtn" title="Subscription Plan">${getPlanBadgeHtml()}</button>
         ${isCurrentUserAdmin() ? '<button class="tn-admin-btn" id="topAdminBtn" title="Admin Portal">Admin</button>' : ''}
         <button class="tn-cta" id="topLogoutBtn">Log out <span aria-hidden="true">\u2192</span></button>
@@ -3315,6 +3703,7 @@
         <div class="streak-badge">\ud83c\udfc6 Best: <b>${s.best}</b></div>
       </div>
       <div class="report-btns">
+        <button type="button" data-open-widget-studio="tracker" style="background:linear-gradient(90deg,#059669,#10b981);color:#fff;border:none;font-weight:700;">🧩 Create Widget</button>
         <button data-report="weekly">Weekly report</button>
         <button data-report="monthly">Monthly report</button>
       </div>
@@ -4133,6 +4522,7 @@
       localStorage.setItem('keepit_user_trash_reminders_v1', JSON.stringify(recycleBinReminderItems));
     } catch(e){}
     syncRemindersToServiceWorker();
+    if(typeof refreshAllWidgetsUI === 'function') refreshAllWidgetsUI();
   }
 
   function applyReminderSort(){
@@ -4374,6 +4764,7 @@
     return `
       <div class="rm-menu-dropdown" id="rmMenuDropdown">
         <div class="rm-menu-item" data-act="menu-sync"><span>Sync now</span></div>
+        <div class="rm-menu-item" data-open-widget-studio="reminder"><span>🧩 Create widget</span></div>
         <div class="rm-menu-divider"></div>
         <div class="rm-menu-item" data-act="menu-select"><span>Select</span></div>
         <div class="rm-menu-item" data-act="menu-open-sort"><span>Sort by</span></div>
@@ -4494,12 +4885,13 @@
 
     if(isGranted){
       return `
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;padding:0 2px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;padding:0 2px;flex-wrap:wrap;">
           <button type="button" class="rm-status-pill" data-act="open-preset-settings" title="Notification &amp; Preset Settings">
             <span>🔔</span>
             <span>Alerts Active</span>
           </button>
-          <div style="display:flex;align-items:center;gap:6px;">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <button type="button" class="rm-notify-btn-secondary" data-open-widget-studio="reminder" title="Create Reminder Widget" style="border-color:rgba(16,185,129,0.45);color:#059669;font-weight:700;">🧩 Create Widget</button>
             ${deferredPwaInstallPrompt ? `
               <button type="button" class="rm-notify-btn-secondary" data-act="install-pwa-app" title="Install KeepIt App">📲 Install App</button>
             ` : ''}
@@ -4526,6 +4918,7 @@
           <button type="button" class="rm-notify-btn-primary" data-act="enable-reminder-notifications">
             ${perm === 'denied' ? 'Retry' : 'Enable'}
           </button>
+          <button type="button" class="rm-notify-btn-secondary" data-open-widget-studio="reminder" title="Create Reminder Widget">🧩 Widget</button>
           <button type="button" class="rm-notify-btn-secondary" data-act="test-reminder-alert" title="Test sound &amp; alert banner">Test</button>
         </div>
       </div>
@@ -4545,6 +4938,7 @@
               <h1>Reminder</h1>
             </div>
             <div class="rm-top-actions">
+              <button class="rm-icon-btn" data-open-widget-studio="reminder" title="Create Reminder Widget" style="font-size:17px;">🧩</button>
               <button class="rm-icon-btn" id="rmSearchToggle" title="Search">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               </button>
@@ -7473,8 +7867,591 @@
   document.addEventListener('visibilitychange', () => {
     if(!document.hidden){
       checkDueUserReminders();
+      renderPinnedWidgetDock();
     }
   });
+
+  // ============================================================================
+  // CREATE WIDGET STUDIO & INTERACTIVE REMINDER / HABIT TRACKER WIDGET ENGINE
+  // ============================================================================
+  const KW_PINNED_STORAGE_KEY = 'keepit_pinned_widget_v1';
+  let kwStudioOpen = false;
+  let kwDraftConfig = {
+    type: 'reminder',   // 'reminder' | 'tracker' | 'combo'
+    size: 'medium',     // 'compact' | 'medium' | 'large'
+    theme: 'emerald',   // 'emerald' | 'light' | 'midnight' | 'glass'
+    showQuickAdd: true
+  };
+  let kwPinnedConfig = (function(){
+    try {
+      const raw = localStorage.getItem(KW_PINNED_STORAGE_KEY);
+      if(raw) return JSON.parse(raw);
+    } catch(_){}
+    return null;
+  })();
+  let kwPipWindowRef = null;
+
+  function savePinnedWidgetConfig(){
+    try {
+      if(kwPinnedConfig){
+        localStorage.setItem(KW_PINNED_STORAGE_KEY, JSON.stringify(kwPinnedConfig));
+      } else {
+        localStorage.removeItem(KW_PINNED_STORAGE_KEY);
+      }
+    } catch(_){}
+  }
+
+  function openWidgetStudioModal(defaultType){
+    reminderMenuOpen = false;
+    if(defaultType === 'reminder' || defaultType === 'tracker' || defaultType === 'combo'){
+      kwDraftConfig.type = defaultType;
+    } else if(defaultType === 'auto'){
+      kwDraftConfig.type = section === 'reminder' ? 'reminder' : 'tracker';
+    }
+    if(kwPinnedConfig && kwPinnedConfig.enabled && !defaultType){
+      kwDraftConfig.type = kwPinnedConfig.type || kwDraftConfig.type;
+      kwDraftConfig.size = kwPinnedConfig.size || kwDraftConfig.size;
+      kwDraftConfig.theme = kwPinnedConfig.theme || kwDraftConfig.theme;
+    }
+    kwStudioOpen = true;
+    renderWidgetStudioModal();
+  }
+
+  function closeWidgetStudioModal(){
+    kwStudioOpen = false;
+    const root = document.getElementById('widgetStudioRoot');
+    if(root) root.innerHTML = '';
+  }
+
+  function renderWidgetCardHtml(cfg, contextMode){
+    const type = (cfg && cfg.type) || 'reminder';
+    const size = (cfg && cfg.size) || 'medium';
+    const theme = (cfg && cfg.theme) || 'emerald';
+    const maxItems = size === 'compact' ? 3 : (size === 'large' ? 7 : 4);
+    const showQuick = size !== 'compact';
+
+    // 1. Gather Reminder Data
+    const activeReminders = Array.isArray(reminderItems) ? reminderItems.slice(0, maxItems) : [];
+    const totalReminders = Array.isArray(reminderItems) ? reminderItems.length : 0;
+
+    // 2. Gather Habit Tracker Data for Today
+    const todayDate = new Date();
+    const habitsList = (data && Array.isArray(data.habits)) ? data.habits : [];
+    const visibleHabits = habitsList.slice(0, maxItems);
+    let doneHabitsCount = 0;
+    habitsList.forEach(h => {
+      if(effectiveStatus(h.id, todayDate) === 'done') doneHabitsCount++;
+    });
+    const pctToday = habitsList.length ? Math.round((doneHabitsCount / habitsList.length) * 100) : 0;
+    const streakObj = (data && data.habits) ? computeStreaks() : { current: 0, best: 0 };
+
+    // Build Reminder List HTML
+    const reminderBlockHtml = `
+      <div>
+        <div class="kw-w-top">
+          <span class="kw-w-brand">🔔 Reminders</span>
+          <span class="kw-w-badge">${totalReminders} active</span>
+        </div>
+        <div class="kw-w-list">
+          ${activeReminders.length === 0 ? `
+            <div style="font-size:12px;opacity:0.75;padding:8px 4px;text-align:center;">No pending reminders — tap + below to add one!</div>
+          ` : activeReminders.map(item => {
+            const subTotal = Array.isArray(item.checklist) ? item.checklist.length : 0;
+            const subDone = subTotal ? item.checklist.filter(c => c.done).length : 0;
+            return `
+              <div class="kw-w-item" data-kw-complete-rm="${escapeAttr(item.id)}" title="Click to mark reminder completed">
+                <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;">
+                  <span class="kw-w-check">✓</span>
+                  <div style="min-width:0;flex:1;">
+                    <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeAttr(item.title)}</div>
+                    ${item.date || subTotal ? `
+                      <div style="font-size:10.5px;opacity:0.75;display:flex;align-items:center;gap:6px;margin-top:1px;">
+                        ${item.date ? `<span>⏰ ${escapeAttr(item.date)}</span>` : ''}
+                        ${subTotal ? `<span>📋 ${subDone}/${subTotal}</span>` : ''}
+                      </div>
+                    ` : ''}
+                  </div>
+                </div>
+                ${item.important ? '<span style="color:#fbbf24;font-size:13px;">★</span>' : ''}
+              </div>
+            `;
+          }).join('')}
+        </div>
+        ${showQuick ? `
+          <div class="kw-w-quick-form">
+            <input type="text" class="kw-w-quick-input" data-kw-input="reminder" placeholder="+ Quick add reminder (Today)..." />
+            <button type="button" class="kw-w-quick-btn" data-kw-quick-add="reminder">Add</button>
+          </div>
+        ` : ''}
+      </div>
+    `;
+
+    // Build Habit Tracker List HTML
+    const trackerBlockHtml = `
+      <div>
+        <div class="kw-w-top">
+          <span class="kw-w-brand">🔥 Habit Tracker</span>
+          <span class="kw-w-badge">🔥 ${streakObj.current}d · ${pctToday}%</span>
+        </div>
+        ${size !== 'compact' ? `
+          <div style="height:5px;border-radius:999px;background:rgba(255,255,255,0.12);overflow:hidden;margin-bottom:9px;">
+            <div style="height:100%;width:${pctToday}%;background:linear-gradient(90deg,#10b981,#a3ff5f);transition:width 0.25s ease;"></div>
+          </div>
+        ` : ''}
+        <div class="kw-w-list">
+          ${visibleHabits.length === 0 ? `
+            <div style="font-size:12px;opacity:0.75;padding:8px 4px;text-align:center;">No habits yet — add your first habit below!</div>
+          ` : visibleHabits.map(h => {
+            const isDone = effectiveStatus(h.id, todayDate) === 'done';
+            return `
+              <div class="kw-w-item" data-kw-toggle-habit="${escapeAttr(h.id)}" title="Click to toggle today's habit status">
+                <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;">
+                  <span class="kw-w-check ${isDone ? 'done' : ''}">${isDone ? '✓' : ''}</span>
+                  <span style="font-size:14px;">${h.emoji || '✨'}</span>
+                  <span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;${isDone ? 'text-decoration:line-through;opacity:0.68;' : ''}">${escapeAttr(h.name)}</span>
+                </div>
+                <span style="font-size:10.5px;opacity:0.7;font-weight:700;">${isDone ? 'Done' : 'Today'}</span>
+              </div>
+            `;
+          }).join('')}
+        </div>
+        ${showQuick ? `
+          <div class="kw-w-quick-form">
+            <input type="text" class="kw-w-quick-input" data-kw-input="tracker" placeholder="+ Quick add habit..." />
+            <button type="button" class="kw-w-quick-btn" data-kw-quick-add="tracker">Add</button>
+          </div>
+        ` : ''}
+      </div>
+    `;
+
+    let innerContent = '';
+    if(type === 'reminder'){
+      innerContent = reminderBlockHtml;
+    } else if(type === 'tracker'){
+      innerContent = trackerBlockHtml;
+    } else {
+      innerContent = `
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          ${trackerBlockHtml}
+          <div style="height:1px;background:rgba(255,255,255,0.12);"></div>
+          ${reminderBlockHtml}
+        </div>
+      `;
+    }
+
+    return `
+      <div class="kw-widget-card size-${escapeAttr(size)} theme-${escapeAttr(theme)}" data-kw-context="${escapeAttr(contextMode || 'preview')}">
+        ${innerContent}
+      </div>
+    `;
+  }
+
+  function renderWidgetStudioModal(){
+    const root = document.getElementById('widgetStudioRoot');
+    if(!root) return;
+    if(!kwStudioOpen){
+      root.innerHTML = '';
+      return;
+    }
+    const isPinned = Boolean(kwPinnedConfig && kwPinnedConfig.enabled);
+
+    root.innerHTML = `
+      <div class="kw-studio-overlay" id="kwStudioOverlay">
+        <div class="kw-studio-modal" role="dialog" aria-label="Create KeepIt Widget">
+          <div class="kw-studio-header">
+            <h2 class="kw-studio-title">🧩 Create KeepIt Widget</h2>
+            <button type="button" class="kw-studio-close" id="kwStudioCloseBtn" title="Close">✕</button>
+          </div>
+          <p style="margin:0 0 10px;font-size:13px;opacity:0.8;line-height:1.45;">
+            Build an interactive <b>Reminder</b> or <b>Habit Tracker</b> widget. Check off habits, complete reminders, or quick-add tasks directly from the widget!
+          </p>
+
+          <div class="kw-section-label">1. Choose Widget Feature</div>
+          <div class="kw-seg-group">
+            <button type="button" class="kw-seg-btn ${kwDraftConfig.type === 'reminder' ? 'active' : ''}" data-kw-set-type="reminder">
+              <span style="font-size:18px;">🔔</span>
+              <span>Reminder</span>
+            </button>
+            <button type="button" class="kw-seg-btn ${kwDraftConfig.type === 'tracker' ? 'active' : ''}" data-kw-set-type="tracker">
+              <span style="font-size:18px;">🔥</span>
+              <span>Habit Tracker</span>
+            </button>
+            <button type="button" class="kw-seg-btn ${kwDraftConfig.type === 'combo' ? 'active' : ''}" data-kw-set-type="combo">
+              <span style="font-size:18px;">⚡</span>
+              <span>Combined Both</span>
+            </button>
+          </div>
+
+          <div class="kw-section-label">2. Widget Size</div>
+          <div class="kw-seg-group">
+            <button type="button" class="kw-seg-btn ${kwDraftConfig.size === 'compact' ? 'active' : ''}" data-kw-set-size="compact">
+              <span>Compact (2×2)</span>
+            </button>
+            <button type="button" class="kw-seg-btn ${kwDraftConfig.size === 'medium' ? 'active' : ''}" data-kw-set-size="medium">
+              <span>Medium (4×2)</span>
+            </button>
+            <button type="button" class="kw-seg-btn ${kwDraftConfig.size === 'large' ? 'active' : ''}" data-kw-set-size="large">
+              <span>Large (4×4)</span>
+            </button>
+          </div>
+
+          <div class="kw-section-label">3. Visual Theme</div>
+          <div class="kw-theme-row">
+            <button type="button" class="kw-theme-chip ${kwDraftConfig.theme === 'emerald' ? 'active' : ''}" data-kw-set-theme="emerald">🌲 Emerald</button>
+            <button type="button" class="kw-theme-chip ${kwDraftConfig.theme === 'light' ? 'active' : ''}" data-kw-set-theme="light">☀️ Daylight</button>
+            <button type="button" class="kw-theme-chip ${kwDraftConfig.theme === 'midnight' ? 'active' : ''}" data-kw-set-theme="midnight">🌌 Midnight</button>
+            <button type="button" class="kw-theme-chip ${kwDraftConfig.theme === 'glass' ? 'active' : ''}" data-kw-set-theme="glass">🧊 Glass</button>
+          </div>
+
+          <div class="kw-section-label">Live Interactive Preview (Try clicking items below!)</div>
+          <div class="kw-preview-stage" id="kwStudioPreviewStage">
+            ${renderWidgetCardHtml(kwDraftConfig, 'studio')}
+          </div>
+
+          <div class="kw-studio-actions">
+            <button type="button" class="kw-action-btn primary" id="kwPinToScreenBtn">
+              📌 ${isPinned ? 'Update Pinned Widget' : 'Pin Widget on Screen'}
+            </button>
+            <button type="button" class="kw-action-btn secondary" id="kwPopoutDesktopBtn">
+              🪟 Pop-Out Desktop Widget
+            </button>
+            <button type="button" class="kw-action-btn outline" id="kwHomeScreenShortcutBtn">
+              📱 Install / Open Mobile Home Screen Widget Mode
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderPinnedWidgetDock(){
+    const root = document.getElementById('pinnedWidgetRoot');
+    if(!root) return;
+    if(!kwPinnedConfig || !kwPinnedConfig.enabled){
+      root.innerHTML = '';
+      return;
+    }
+    if(kwPinnedConfig.minimized){
+      const label = kwPinnedConfig.type === 'reminder'
+        ? `🔔 ${reminderItems.length} Reminders`
+        : (kwPinnedConfig.type === 'tracker' ? `🔥 Habits (${ computeStreaks().current }d)` : `⚡ KeepIt Widget`);
+      root.innerHTML = `
+        <div class="kw-pinned-dock minimized">
+          <button type="button" class="kw-pinned-pill" data-kw-dock-act="expand" title="Expand Pinned Widget">
+            <span>🧩</span>
+            <span>${label}</span>
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    root.innerHTML = `
+      <div class="kw-pinned-dock">
+        <div class="kw-pinned-controls">
+          <button type="button" class="kw-pin-ctrl-btn" data-kw-dock-act="customize" title="Customize Widget">⚙ Customize</button>
+          <button type="button" class="kw-pin-ctrl-btn" data-kw-dock-act="popout" title="Pop Out Floating Desktop Window">🪟 Pop Out</button>
+          <button type="button" class="kw-pin-ctrl-btn" data-kw-dock-act="minimize" title="Minimize to Pill">_ Minimize</button>
+          <button type="button" class="kw-pin-ctrl-btn" data-kw-dock-act="unpin" title="Remove Pinned Widget">✕</button>
+        </div>
+        ${renderWidgetCardHtml(kwPinnedConfig, 'dock')}
+      </div>
+    `;
+  }
+
+  function refreshAllWidgetsUI(){
+    if(kwStudioOpen){
+      const stage = document.getElementById('kwStudioPreviewStage');
+      if(stage) stage.innerHTML = renderWidgetCardHtml(kwDraftConfig, 'studio');
+    }
+    renderPinnedWidgetDock();
+    if(kwPipWindowRef && !kwPipWindowRef.closed){
+      try {
+        const pipRoot = kwPipWindowRef.document.getElementById('kwPipMount');
+        if(pipRoot){
+          pipRoot.innerHTML = renderWidgetCardHtml(kwPinnedConfig || kwDraftConfig, 'pip');
+        }
+      } catch(_){}
+    }
+  }
+
+  async function launchFloatingDesktopWidget(cfg){
+    const activeCfg = Object.assign({}, cfg || kwDraftConfig);
+    // Try Document Picture-in-Picture API first (Always-on-top desktop widget in Chrome/Edge)
+    if('documentPictureInPicture' in window){
+      try {
+        const pipWin = await window.documentPictureInPicture.requestWindow({
+          width: activeCfg.size === 'compact' ? 290 : 380,
+          height: activeCfg.type === 'combo' ? 520 : 390
+        });
+        kwPipWindowRef = pipWin;
+        // Copy stylesheets into PiP window
+        Array.from(document.querySelectorAll('style, link[rel="stylesheet"]')).forEach(node => {
+          pipWin.document.head.appendChild(node.cloneNode(true));
+        });
+        pipWin.document.body.style.margin = '0';
+        pipWin.document.body.style.padding = '10px';
+        pipWin.document.body.style.background = '#0b1324';
+        pipWin.document.body.style.display = 'flex';
+        pipWin.document.body.style.justifyContent = 'center';
+        pipWin.document.body.innerHTML = `<div id="kwPipMount" style="width:100%;">${renderWidgetCardHtml(activeCfg, 'pip')}</div>`;
+        pipWin.document.addEventListener('click', handleWidgetInteractionEvent);
+        pipWin.document.addEventListener('keydown', (ev) => {
+          if(ev.key === 'Enter' && ev.target.matches('[data-kw-input]')){
+            const kind = ev.target.getAttribute('data-kw-input');
+            handleWidgetQuickAdd(kind, ev.target);
+          }
+        });
+        showToast('Floating Desktop Widget launched (Always-on-Top)!');
+        return;
+      } catch(_){}
+    }
+
+    // Fallback: Compact standalone popup window
+    const url = new URL(window.location.href);
+    url.hash = `#widget-${activeCfg.type}`;
+    const popup = window.open(
+      url.toString(),
+      'KeepItFloatingWidget',
+      'width=380,height=500,menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes'
+    );
+    if(popup){
+      showToast('Floating Widget window opened!');
+    } else {
+      // If popup blocked, pin to screen automatically
+      kwPinnedConfig = Object.assign({}, activeCfg, { enabled: true, minimized: false });
+      savePinnedWidgetConfig();
+      renderPinnedWidgetDock();
+      showToast('Widget pinned to your screen!');
+    }
+  }
+
+  function handleWidgetQuickAdd(kind, inputEl){
+    if(!inputEl) return;
+    const text = (inputEl.value || '').trim();
+    if(!text) return;
+    inputEl.value = '';
+
+    if(kind === 'reminder'){
+      const soon = new Date(Date.now() + 5 * 60000);
+      const timeLabel = formatTime12hFromDate(soon);
+      const dateStr = `Today, ${timeLabel}`;
+      const scheduleTs = computeReminderScheduleTimestamps(dateStr, 'No early alert');
+      reminderItems.unshift({
+        id: 'rm-' + Date.now(),
+        title: text,
+        important: false,
+        category: 'today',
+        section: 'main',
+        completed: false,
+        date: dateStr,
+        earlyAlert: 'No early alert',
+        repeat: "Don't repeat",
+        sound: 'Strong',
+        alertAt: scheduleTs.alertAt,
+        earlyAlertAt: scheduleTs.earlyAlertAt,
+        notifiedMain: false,
+        notifiedEarly: false,
+        checklist: [],
+        modifiedAt: Date.now()
+      });
+      saveReminderState();
+      if(section === 'reminder') renderReminderSection();
+      refreshAllWidgetsUI();
+      showToast(`Reminder added: ${text} (${dateStr})`);
+    } else if(kind === 'tracker'){
+      const plan = getEffectivePlan();
+      if(PLAN_LIMITS[plan].habits !== Infinity && data.habits.length >= PLAN_LIMITS[plan].habits){
+        openPricingModal('habits');
+        return;
+      }
+      data.habits.push({ id: 'h' + Date.now(), name: text, emoji: suggestEmoji(text) });
+      scheduleSave();
+      if(section === 'tracker'){
+        renderGrid();
+        renderControlsBar();
+      }
+      refreshAllWidgetsUI();
+      showToast(`Habit added: ${text}`);
+    }
+  }
+
+  function handleWidgetInteractionEvent(e){
+    const t = e.target;
+
+    // Open Widget Studio button anywhere in app
+    const openBtn = t.closest('[data-open-widget-studio]');
+    if(openBtn){
+      const defaultType = openBtn.getAttribute('data-open-widget-studio');
+      openWidgetStudioModal(defaultType);
+      return;
+    }
+
+    // Close Studio
+    if(t.id === 'kwStudioCloseBtn' || t.id === 'kwStudioOverlay'){
+      closeWidgetStudioModal();
+      return;
+    }
+
+    // Studio Configuration Toggles
+    const typeBtn = t.closest('[data-kw-set-type]');
+    if(typeBtn){
+      kwDraftConfig.type = typeBtn.getAttribute('data-kw-set-type');
+      renderWidgetStudioModal();
+      return;
+    }
+    const sizeBtn = t.closest('[data-kw-set-size]');
+    if(sizeBtn){
+      kwDraftConfig.size = sizeBtn.getAttribute('data-kw-set-size');
+      renderWidgetStudioModal();
+      return;
+    }
+    const themeBtn = t.closest('[data-kw-set-theme]');
+    if(themeBtn){
+      kwDraftConfig.theme = themeBtn.getAttribute('data-kw-set-theme');
+      renderWidgetStudioModal();
+      return;
+    }
+
+    // Studio Action Buttons
+    if(t.closest('#kwPinToScreenBtn')){
+      kwPinnedConfig = Object.assign({}, kwDraftConfig, { enabled: true, minimized: false });
+      savePinnedWidgetConfig();
+      closeWidgetStudioModal();
+      renderPinnedWidgetDock();
+      showToast('Widget pinned to screen! You can use it across all tabs.');
+      return;
+    }
+    if(t.closest('#kwPopoutDesktopBtn')){
+      kwPinnedConfig = Object.assign({}, kwDraftConfig, { enabled: true, minimized: false });
+      savePinnedWidgetConfig();
+      renderPinnedWidgetDock();
+      launchFloatingDesktopWidget(kwDraftConfig);
+      closeWidgetStudioModal();
+      return;
+    }
+    if(t.closest('#kwHomeScreenShortcutBtn')){
+      kwPinnedConfig = Object.assign({}, kwDraftConfig, { enabled: true, minimized: false });
+      savePinnedWidgetConfig();
+      renderPinnedWidgetDock();
+      closeWidgetStudioModal();
+      if(deferredPwaInstallPrompt){
+        deferredPwaInstallPrompt.prompt();
+      } else {
+        showToast('Tip: Use browser "Add to Home Screen" or long-press the KeepIt app icon to launch Reminder & Tracker widgets!');
+      }
+      return;
+    }
+
+    // Pinned Dock Controls
+    const dockActBtn = t.closest('[data-kw-dock-act]');
+    if(dockActBtn){
+      const act = dockActBtn.getAttribute('data-kw-dock-act');
+      if(act === 'minimize' && kwPinnedConfig){
+        kwPinnedConfig.minimized = true;
+        savePinnedWidgetConfig();
+        renderPinnedWidgetDock();
+      } else if(act === 'expand' && kwPinnedConfig){
+        kwPinnedConfig.minimized = false;
+        savePinnedWidgetConfig();
+        renderPinnedWidgetDock();
+      } else if(act === 'unpin'){
+        kwPinnedConfig = null;
+        savePinnedWidgetConfig();
+        renderPinnedWidgetDock();
+        showToast('Pinned widget removed');
+      } else if(act === 'customize'){
+        if(kwPinnedConfig){
+          kwDraftConfig = {
+            type: kwPinnedConfig.type || 'reminder',
+            size: kwPinnedConfig.size || 'medium',
+            theme: kwPinnedConfig.theme || 'emerald',
+            showQuickAdd: true
+          };
+        }
+        openWidgetStudioModal(kwDraftConfig.type);
+      } else if(act === 'popout'){
+        launchFloatingDesktopWidget(kwPinnedConfig || kwDraftConfig);
+      }
+      return;
+    }
+
+    // Interactive Widget Item: Complete Reminder
+    const rmItem = t.closest('[data-kw-complete-rm]');
+    if(rmItem){
+      const rmId = rmItem.getAttribute('data-kw-complete-rm');
+      const idx = reminderItems.findIndex(i => i.id === rmId);
+      if(idx !== -1){
+        const [item] = reminderItems.splice(idx, 1);
+        completedReminderItems.unshift({
+          id: 'c-' + Date.now() + '-' + item.id,
+          month: 'Oct',
+          title: item.title,
+          declined: null,
+          date: item.date || 'Today',
+          completedAt: 'Completed: Just now',
+          contact: null,
+          important: item.important,
+          checklist: item.checklist || []
+        });
+        saveReminderState();
+        playReminderChime('Soft');
+        if(section === 'reminder') renderReminderSection();
+        refreshAllWidgetsUI();
+        showToast('Completed: ' + item.title);
+      }
+      return;
+    }
+
+    // Interactive Widget Item: Toggle Habit Today
+    const habitItem = t.closest('[data-kw-toggle-habit]');
+    if(habitItem){
+      const habitId = habitItem.getAttribute('data-kw-toggle-habit');
+      toggleStatus(habitId, new Date());
+      if(section === 'tracker'){
+        renderGrid();
+        renderControlsBar();
+      }
+      refreshAllWidgetsUI();
+      return;
+    }
+
+    // Interactive Widget Quick-Add Button
+    const quickBtn = t.closest('[data-kw-quick-add]');
+    if(quickBtn){
+      const kind = quickBtn.getAttribute('data-kw-quick-add');
+      const form = quickBtn.closest('.kw-w-quick-form');
+      const inputEl = form ? form.querySelector('[data-kw-input]') : null;
+      handleWidgetQuickAdd(kind, inputEl);
+      return;
+    }
+  }
+
+  document.addEventListener('click', handleWidgetInteractionEvent);
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' && e.target.matches('[data-kw-input]')){
+      e.preventDefault();
+      const kind = e.target.getAttribute('data-kw-input');
+      handleWidgetQuickAdd(kind, e.target);
+    }
+  });
+
+  function checkUrlWidgetShortcutHash(){
+    const h = window.location.hash;
+    if(h === '#widget-reminder' || h === '#widget-tracker' || h === '#widget-combo'){
+      const wType = h.replace('#widget-', '');
+      kwPinnedConfig = {
+        type: wType,
+        size: 'large',
+        theme: 'emerald',
+        enabled: true,
+        minimized: false
+      };
+      savePinnedWidgetConfig();
+      if(wType === 'reminder') section = 'reminder';
+      else if(wType === 'tracker') section = 'tracker';
+    }
+  }
 
   async function startApp(){
     data = await loadData();
@@ -7487,6 +8464,7 @@
         }
       } catch(e){}
     }
+    checkUrlWidgetShortcutHash();
     applyTheme();
     renderBottomNav();
     renderPage();
@@ -7498,6 +8476,7 @@
     syncRemindersToServiceWorker();
     checkDueUserReminders();
     reminderInit();
+    renderPinnedWidgetDock();
   }
 
   (async function init(){
@@ -7505,12 +8484,12 @@
       renderLoginScreen('', 'reset');
       return;
     }
-    const isGuestRequest = location.search.includes('guest') || location.search.includes('preview') || location.search.includes('demo') || location.hash === '#guest' || location.hash === '#reminder' || location.hash === '#preview';
+    const isGuestRequest = location.search.includes('guest') || location.search.includes('preview') || location.search.includes('demo') || location.hash === '#guest' || location.hash === '#reminder' || location.hash === '#preview' || location.hash.startsWith('#widget-');
     if(isGuestRequest){
       currentUserId = 'guest_demo';
       currentUserEmail = 'demo@keepit.app';
       setSavedCurrentUser({ id: currentUserId, email: currentUserEmail, isLocalOnly: true });
-      if(location.hash === '#reminder' || location.search.includes('reminder')) section = 'reminder';
+      if(location.hash === '#reminder' || location.hash === '#widget-reminder' || location.search.includes('reminder')) section = 'reminder';
       document.getElementById('app').style.display = '';
       await startApp();
       return;
@@ -7525,7 +8504,7 @@
           currentUserId = sessionData.session.user.id;
           currentUserEmail = sessionData.session.user.email || null;
           setSavedCurrentUser({ id: currentUserId, email: currentUserEmail, isLocalOnly: false });
-          if(location.hash === '#reminder') section = 'reminder';
+          if(location.hash === '#reminder' || location.hash === '#widget-reminder') section = 'reminder';
           document.getElementById('app').style.display = '';
           await startApp();
           return;
@@ -7537,7 +8516,7 @@
     if(savedUser && savedUser.id && savedUser.email){
       currentUserId = savedUser.id;
       currentUserEmail = savedUser.email;
-      if(location.hash === '#reminder') section = 'reminder';
+      if(location.hash === '#reminder' || location.hash === '#widget-reminder') section = 'reminder';
       document.getElementById('app').style.display = '';
       await startApp();
       return;
@@ -7562,5 +8541,7 @@
 </script>
   <div id="pricingModalRoot"></div>
   <div id="adminModalRoot"></div>
+  <div id="widgetStudioRoot"></div>
+  <div id="pinnedWidgetRoot"></div>
 </body>
 </html>

@@ -1,7 +1,7 @@
 {
   "name": "KeepIt — Habit & Reminder Tracker",
   "short_name": "KeepIt",
-  "description": "Build Habits. Keep Promises. Smart Habit & Reminder Tracker with Notifications.",
+  "description": "Build Habits. Keep Promises. Smart Habit & Reminder Tracker with Notifications & Widgets.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -14,6 +14,29 @@
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Reminder Widget",
+      "short_name": "Reminders",
+      "description": "Open KeepIt Reminder Widget",
+      "url": "./index.html#widget-reminder",
+      "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Habit Tracker Widget",
+      "short_name": "Tracker",
+      "description": "Open KeepIt Habit Tracker Widget",
+      "url": "./index.html#widget-tracker",
+      "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Combined Widget",
+      "short_name": "Combo Widget",
+      "description": "Open Combined Tracker & Reminder Widget",
+      "url": "./index.html#widget-combo",
+      "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }]
     }
   ]
 }
