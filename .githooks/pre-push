@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+# KeepIt Habit Tracker — Pre-Push Security Hook
+# Verifies repository state, staged/tracked files, and remote target before allowing a push.
+
+set -e
+
+REMOTE_NAME="$1"
+REMOTE_URL="$2"
+
+echo "🔒 Running KeepIt pre-push security & remote verification scan (remote: ${REMOTE_NAME:-origin})..."
+GIT_PUSH_REMOTE="$REMOTE_NAME" GIT_PUSH_URL="$REMOTE_URL" node "$(git rev-parse --show-toplevel)/scripts/security-scan.js" --pre-push

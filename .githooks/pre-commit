@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+# KeepIt Habit Tracker — Pre-Commit Security Hook
+# Blocks commits containing secrets, .env files, private keys, or prohibited backups.
+
+set -e
+
+echo "🔒 Running KeepIt pre-commit security scan..."
+node "$(git rev-parse --show-toplevel)/scripts/security-scan.js" --staged

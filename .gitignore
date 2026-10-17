@@ -1,6 +1,71 @@
-*.backup.html
-.DS_Store
-node_modules
+# Environment variables and secrets
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+!.env.template
+
+# Private backend code & local server scripts (kept local only, excluded from GitHub)
+server.js
+api/
+send_otp.js
+send_otp.py
+package.json
+package-lock.json
+
+# Local UI reference images & screenshots (not needed to run website)
+reference/
+refrence*.jpg
+*.png
+*.jpg
+*.jpeg
+
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.jks
+id_rsa
+id_ed25519
+credentials.json
+service-account*.json
+
+# Cloud and deployment credentials
+.aws/
+.azure/
+.gcloud/
+.vercel/
+.vercel/.env*
+
+# Logs and debugging
+*.log
+logs/
+debug.log
+npm-debug.log*
+
+# Database dumps and backups
+*.sql
+*.dump
+*.bak
+*.backup
+*.backup.html
+backups/
+database-dumps/
+
+# Local data and temporary files
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+
+# Dependencies and generated builds
+node_modules/
+dist/
+build/
+.next/
+coverage/
+
+# Local editor settings
+.vscode/
+.idea/

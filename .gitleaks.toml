@@ -1,0 +1,39 @@
+title = "KeepIt Habit Tracker — Gitleaks Security Configuration"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "google-gmail-app-password"
+description = "Google / Gmail 16-character App Password assignment"
+regex = '''(?i)(?:gmail_app_password|smtp_pass|mail_pass|app_password)\s*[:=]\s*['"]([a-z]{4}\s?[a-z]{4}\s?[a-z]{4}\s?[a-z]{4})['"]'''
+secretGroup = 1
+tags = ["credentials", "smtp", "gmail"]
+
+[[rules]]
+id = "supabase-service-role-secret"
+description = "Supabase secret or service_role API key"
+regex = '''(?i)(?:sb_secret_[A-Za-z0-9_\-]{16,}|supabase_service_role_key\s*[:=]\s*['"][A-Za-z0-9._\-]{20,}['"])'''
+tags = ["supabase", "secret", "backend"]
+
+[[rules]]
+id = "database-connection-uri"
+description = "Database connection string with embedded credentials"
+regex = '''(?i)(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?|redis)://[^:\s'"]+:[^@\s'"]+@[^\s'"]+'''
+tags = ["database", "credentials"]
+
+[allowlist]
+description = "Allow safe template files and intentionally public client identifiers"
+paths = [
+  '''^\.env\.example$''',
+  '''^\.env\.template$''',
+  '''^package-lock\.json$'''
+]
+regexTarget = "line"
+regexes = [
+  '''sb_publishable_[A-Za-z0-9_\-]+''',
+  '''your-16-char-google-app-password''',
+  '''your-supabase-service-role-key''',
+  '''your-supabase-publishable-or-anon-key''',
+  '''your-email@gmail\.com'''
+]
